@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Snowflake and dbt Orchestration Options</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Snowflake and dbt Orchestration Options</h1>
+  <p class="subtitle">A quick decision reference for Snowflake on Azure with part of the SQL transformation layer in dbt.</p>
+
+  <h2>Recommended Default</h2>
+  <div class="callout">
+    Keep CI/CD in GitHub Actions or Azure DevOps. Use dbt Cloud jobs for dbt model builds. Use Snowflake Tasks for simple in-Snowflake schedules and task graphs. Use Azure Data Factory when Azure-native ingestion or enterprise scheduling is already the control plane.
+  </div>
+
+  <h2>Option Matrix</h2>
+  <div class="grid">
+    <div class="tile"><strong>Snowflake Tasks</strong><br>Best for SQL, stored procedures, streams, task graphs, and workloads that should live entirely inside Snowflake.</div>
+    <div class="tile"><strong>dbt Cloud Jobs</strong><br>Best for scheduled or event-triggered dbt builds, dbt artifacts, job history, model logs, and dbt-owned dependencies.</div>
+    <div class="tile"><strong>Azure Data Factory</strong><br>Best for Azure-native ingestion, copy activity, enterprise triggers, and pipelines that span Azure services plus Snowflake.</div>
+    <div class="tile"><strong>GitHub Actions</strong><br>Best for CI/CD: tests, packaging, deploys, and manual release workflows. Not ideal as the main recurring data scheduler.</div>
+    <div class="tile"><strong>Azure DevOps Pipelines</strong><br>Best if the organization standardizes on Azure DevOps for repos, approvals, environments, and releases.</div>
+    <div class="tile"><strong>Airflow</strong><br>Best for mature DAG orchestration across many systems when the team can operate Airflow reliably.</div>
+    <div class="tile"><strong>Dagster</strong><br>Best for asset-aware orchestration, especially when dbt models, Python assets, and lineage should be modeled together.</div>
+    <div class="tile"><strong>Prefect</strong><br>Best for Python-first flows with flexible runtime behavior and simpler operational ergonomics than heavy DAG platforms.</div>
+  </div>
+
+  <h2>Selection Rules</h2>
+  <ul>
+    <li>If the dependency is between dbt models, let dbt own it.</li>
+    <li>If the dependency is inside Snowflake and close to data, consider Snowflake Tasks.</li>
+    <li>If the dependency starts in Azure storage, Event Grid, Data Factory, Synapse, or enterprise Azure scheduling, consider Azure Data Factory.</li>
+    <li>If the dependency is deploy-time, not run-time, use GitHub Actions or Azure DevOps.</li>
+    <li>If the workflow spans many systems and needs DAG-level observability, evaluate Airflow, Dagster, or Prefect.</li>
+  </ul>
+
+  <h2>Sources</h2>
+  <ul>
+    <li><a href="https://docs.snowflake.com/en/user-guide/tasks-intro">Snowflake Tasks</a></li>
+    <li><a href="https://docs.getdbt.com/docs/deploy/deploy-jobs">dbt Deploy Jobs</a></li>
+    <li><a href="https://learn.microsoft.com/en-us/azure/data-factory/connector-snowflake">Azure Data Factory Snowflake connector</a></li>
+    <li><a href="https://airflow.apache.org/docs/apache-airflow-providers-snowflake/stable/index.html">Apache Airflow Snowflake provider</a></li>
+    <li><a href="https://docs.dagster.io/integrations/libraries/snowflake">Dagster Snowflake integration</a></li>
+    <li><a href="https://docs.dagster.io/integrations/libraries/dbt">Dagster dbt integration</a></li>
+    <li><a href="https://docs.prefect.io/integrations/prefect-snowflake">Prefect Snowflake integration</a></li>
+  </ul>
+</main>
+</body>
+</html>

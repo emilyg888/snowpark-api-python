@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0005: CI/CD for Snowpark Workspace Deploy</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>CI/CD for Snowpark Workspace Deploy</h1>
+  <p class="subtitle">Goal: explain the GitHub Actions path from local Snowpark code to tested code in a Snowflake workspace.</p>
+
+  <div class="callout">
+    CI answers “does the code still work?” CD answers “can we publish this code to the target environment?”
+  </div>
+
+  <h2>The Repo Control Plane</h2>
+  <p>Your VS Code codebase now has two GitHub Actions workflows with different jobs.</p>
+  <div class="grid">
+    <div class="tile"><strong>CI</strong><br><code>.github/workflows/ci.yml</code> runs unit tests and a Snowflake smoke test.</div>
+    <div class="tile"><strong>CD</strong><br><code>.github/workflows/deploy-workspace.yml</code> runs deploy gates, then copies lesson files to the Snowflake workspace.</div>
+    <div class="tile"><strong>Secrets</strong><br>GitHub repository secrets become temporary environment variables inside the runner.</div>
+    <div class="tile"><strong>Runner</strong><br>GitHub creates a clean Ubuntu machine for each run. Its <code>~/.snowflake/connections.toml</code> is temporary.</div>
+  </div>
+
+  <h2>CI Steps We Covered</h2>
+  <ol>
+    <li><strong>Trigger</strong>: run on pushes, pull requests, or manual <code>workflow_dispatch</code>.</li>
+    <li><strong>Check out repo</strong>: download the GitHub repo into the runner workspace.</li>
+    <li><strong>Set up Python 3.12</strong>: match the local Snowpark learning environment closely enough for tests.</li>
+    <li><strong>Install dependencies</strong>: install <code>requirements-ci.txt</code>.</li>
+    <li><strong>Run unit tests</strong>: execute <code>python -m pytest tests</code>.</li>
+    <li><strong>Inject secrets</strong>: map GitHub repository secrets into job environment variables.</li>
+    <li><strong>Create temporary Snowflake config</strong>: generate <code>~/.snowflake/connections.toml</code> inside the runner.</li>
+    <li><strong>Run smoke test</strong>: execute <code>python src/smoke_connection.py</code>.</li>
+  </ol>
+
+  <h2>CD Steps We Covered</h2>
+  <ol>
+    <li><strong>Manual trigger</strong>: run <code>deploy-workspace.yml</code> only when you choose to deploy.</li>
+    <li><strong>Repeat deploy gates</strong>: install dependencies, run unit tests, require secrets, configure Snowflake, and smoke test.</li>
+    <li><strong>Install Snowflake CLI</strong>: make the <code>snow</code> command available in the runner.</li>
+    <li><strong>Copy files</strong>: run <code>snow stage copy</code> for <code>LESSON1.py</code>, <code>LESSON2.py</code>, and <code>LESSON3.py</code>.</li>
+    <li><strong>Verify logs</strong>: confirm the GitHub Action shows each file as uploaded.</li>
+  </ol>
+
+  <h2>Current Deployment Map</h2>
+  <pre><code>src/LESSON1.py
+  -> snow://workspace/USER$.PUBLIC.DEFAULT$/versions/head/LESSON1/
+
+src/LESSON2.py
+  -> snow://workspace/USER$.PUBLIC.DEFAULT$/versions/head/LESSON2/
+
+src/LESSON3.py
+  -> snow://workspace/USER$.PUBLIC.DEFAULT$/versions/head/LESSON3/</code></pre>
+
+  <h2>Key Mental Model</h2>
+  <p>The runner is not your Mac. It starts empty, receives the repo, receives secrets from GitHub, builds its own temporary Snowflake connection file, runs checks, and then disappears.</p>
+
+  <h2>Check Yourself</h2>
+  <div class="quiz" data-answer="1">
+    <p><strong>Where is the GitHub runner's Snowflake config file created?</strong></p>
+    <button>On local Mac</button>
+    <button>In temp runner</button>
+    <button>Inside SnowSight</button>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="quiz" data-answer="2">
+    <p><strong>Which workflow copies code to the Snowflake workspace?</strong></p>
+    <button>ci.yml only</button>
+    <button>pytest only</button>
+    <button>deploy-workspace.yml</button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>Your Turn</h2>
+  <p>Open the GitHub Actions run and explain it in four sentences:</p>
+  <ol>
+    <li>What triggered the workflow?</li>
+    <li>Which job proved the Python code works locally?</li>
+    <li>Which step proved Snowflake credentials work?</li>
+    <li>Which step published files to the Snowflake workspace?</li>
+  </ol>
+
+  <p>Ask the agent to review your explanation before adding automated deployment on push.</p>
+
+  <h2>References</h2>
+  <p>Primary sources: <a href="https://docs.github.com/en/actions">GitHub Actions documentation</a>, <a href="https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions">GitHub Actions secrets</a>, and <a href="https://docs.snowflake.com/en/developer-guide/snowflake-cli/index">Snowflake CLI documentation</a>. Quick reference: <a href="../reference/0005-cicd-snowpark-deploy.html">CI/CD Snowpark Deploy</a>.</p>
+</main>
+<script>
+  document.querySelectorAll(".quiz").forEach((quiz) => {
+    const buttons = Array.from(quiz.querySelectorAll("button"));
+    const feedback = quiz.querySelector(".feedback");
+    const answer = Number(quiz.dataset.answer);
+
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        if (index === answer) {
+          feedback.textContent = "Correct. Keep local, runner, and Snowflake environments separate.";
+          feedback.className = "feedback good";
+        } else {
+          feedback.textContent = "Not yet. Ask which machine or service owns this step.";
+          feedback.className = "feedback warn";
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

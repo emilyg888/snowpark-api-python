@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0006: Joining Snowpark DataFrames</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Joining Snowpark DataFrames</h1>
+  <p class="subtitle">Goal: combine rows from two Snowflake tables with a clear join condition and predictable output columns.</p>
+
+  <div class="callout">
+    A join is still a lazy DataFrame transformation. Snowflake does not execute it until an action such as <code>show()</code>, <code>collect()</code>, or <code>count()</code>.
+  </div>
+
+  <h2>The Mental Model</h2>
+  <div class="grid">
+    <div class="tile"><strong>Left DataFrame</strong><br>The main table you start from, such as <code>ORDERS</code>.</div>
+    <div class="tile"><strong>Right DataFrame</strong><br>The lookup or detail table you attach, such as <code>CUSTOMER</code>.</div>
+    <div class="tile"><strong>Join condition</strong><br>The rule that matches rows, such as order customer key equals customer key.</div>
+    <div class="tile"><strong>Join type</strong><br>The row-preservation rule: <code>inner</code>, <code>left</code>, <code>right</code>, or <code>full</code>.</div>
+  </div>
+
+  <h2>Read This Code</h2>
+  <pre><code>from snowflake.snowpark.functions import col
+
+orders = session.table("SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.ORDERS")
+customers = session.table("SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.CUSTOMER")
+
+orders_with_customers = (
+    orders
+    .join(
+        customers,
+        orders["O_CUSTKEY"] == customers["C_CUSTKEY"],
+        join_type="inner"
+    )
+    .select(
+        orders["O_ORDERKEY"].as_("ORDER_KEY"),
+        customers["C_NAME"].as_("CUSTOMER_NAME"),
+        customers["C_NATIONKEY"].as_("CUSTOMER_NATION_KEY"),
+        orders["O_ORDERSTATUS"].as_("ORDER_STATUS"),
+        orders["O_TOTALPRICE"].as_("ORDER_TOTAL")
+    )
+    .sort(col("ORDER_TOTAL").desc())
+)
+
+orders_with_customers.show()</code></pre>
+
+  <p>This joins each order to its customer, then projects only the columns the result should expose. The explicit <code>select</code> matters because joined tables often contain many columns and sometimes overlapping names.</p>
+
+  <h2>Why Select After Join?</h2>
+  <p>After a join, avoid carrying every source column forward by accident. A post-join <code>select</code> gives the output a clean contract for notebooks, Streamlit, tests, and downstream transformations.</p>
+
+  <pre><code>.select(
+    orders["O_ORDERKEY"].as_("ORDER_KEY"),
+    customers["C_NAME"].as_("CUSTOMER_NAME"),
+    orders["O_TOTALPRICE"].as_("ORDER_TOTAL")
+)</code></pre>
+
+  <h2>Check Yourself</h2>
+  <div class="quiz" data-answer="1">
+    <p><strong>Which part tells Snowflake how two rows match?</strong></p>
+    <button>The sort column</button>
+    <button>The join condition</button>
+    <button>The output alias</button>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="quiz" data-answer="2">
+    <p><strong>Why use <code>select</code> after a join?</strong></p>
+    <button>To execute query</button>
+    <button>To change warehouse</button>
+    <button>To shape output</button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>Your Turn</h2>
+  <p>Create <code>src/LESSON4.py</code>. Build a joined DataFrame that combines TPCH orders with customers.</p>
+  <ol>
+    <li>Create a builder function named <code>build_orders_with_customers(session)</code>.</li>
+    <li>Read <code>SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.ORDERS</code> and <code>SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.CUSTOMER</code>.</li>
+    <li>Join where <code>O_CUSTKEY</code> equals <code>C_CUSTKEY</code>.</li>
+    <li>Select <code>ORDER_KEY</code>, <code>CUSTOMER_NAME</code>, <code>ORDER_STATUS</code>, <code>ORDER_TOTAL</code>, and <code>ORDER_DATE</code>.</li>
+    <li>Sort by <code>ORDER_TOTAL</code> descending.</li>
+    <li>Call <code>show()</code> only inside <code>main()</code>.</li>
+  </ol>
+
+  <p>Ask the agent to review <code>src/LESSON4.py</code> when you finish. The review should include a unit test before deployment.</p>
+
+  <h2>References</h2>
+  <p>Primary source: <a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/snowpark/api/snowflake.snowpark.DataFrame.join">Snowflake DataFrame.join reference</a>. Quick reference: <a href="../reference/0006-joining-dataframes.html">Joining DataFrames</a>.</p>
+</main>
+<script>
+  document.querySelectorAll(".quiz").forEach((quiz) => {
+    const buttons = Array.from(quiz.querySelectorAll("button"));
+    const feedback = quiz.querySelector(".feedback");
+    const answer = Number(quiz.dataset.answer);
+
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        if (index === answer) {
+          feedback.textContent = "Correct. Joins are query-plan transformations until an action runs.";
+          feedback.className = "feedback good";
+        } else {
+          feedback.textContent = "Not yet. Separate matching rows from shaping output.";
+          feedback.className = "feedback warn";
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

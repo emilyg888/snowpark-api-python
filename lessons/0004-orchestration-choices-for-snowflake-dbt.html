@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0004: Orchestration Choices for Snowflake and dbt</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Orchestration Choices for Snowflake and dbt</h1>
+  <p class="subtitle">Goal: choose the right orchestrator for a Snowflake-on-Azure pipeline where some SQL transformations run in dbt.</p>
+
+  <div class="callout">
+    Orchestration is not deployment. CI/CD publishes code. Orchestration runs data work on schedules, events, or dependencies.
+  </div>
+
+  <h2>The Stack Assumption</h2>
+  <p>Your likely stack has four different control planes:</p>
+  <div class="grid">
+    <div class="tile"><strong>GitHub Actions</strong><br>Runs tests and deployment workflows from the repo.</div>
+    <div class="tile"><strong>Snowflake</strong><br>Runs Snowpark code, SQL, stored procedures, streams, and tasks.</div>
+    <div class="tile"><strong>dbt</strong><br>Owns SQL transformation dependency graphs for dbt models.</div>
+    <div class="tile"><strong>Azure</strong><br>May own ingestion events, storage, enterprise networking, and platform scheduling.</div>
+  </div>
+
+  <h2>Applicable Orchestration Apps</h2>
+  <p>Use this shortlist before adding a new orchestration platform.</p>
+
+  <div class="grid">
+    <div class="tile"><strong>Snowflake Tasks</strong><br>Use for schedules, stream-triggered work, SQL, stored procedures, and Snowflake task graphs. Strong default when the workflow starts and ends inside Snowflake.</div>
+    <div class="tile"><strong>dbt Cloud Jobs</strong><br>Use for production dbt builds. dbt jobs provide schedules, job completion triggers, run history, logs, artifacts, source freshness, and docs generation.</div>
+    <div class="tile"><strong>Azure Data Factory</strong><br>Use when Azure is the enterprise orchestrator or when ingestion/copy steps live in Azure. Good fit for Azure-hosted Snowflake accounts with Azure-native upstream systems.</div>
+    <div class="tile"><strong>GitHub Actions</strong><br>Use for CI/CD and manual release workflows. Avoid making it the long-term recurring data scheduler unless the workflow is tiny.</div>
+    <div class="tile"><strong>Azure DevOps Pipelines</strong><br>Use instead of GitHub Actions if your organization standardizes on Azure DevOps approvals, environments, and release governance.</div>
+    <div class="tile"><strong>Airflow</strong><br>Use for a mature cross-system DAG platform when the team already operates Airflow or needs complex dependency orchestration.</div>
+    <div class="tile"><strong>Dagster</strong><br>Use when assets, lineage, dbt models, Python transformations, and materialization state should be modeled together.</div>
+    <div class="tile"><strong>Prefect</strong><br>Use when the workflow is Python-first and benefits from dynamic runtime flow control.</div>
+  </div>
+
+  <h2>Decision Rule for Your Project</h2>
+  <p>For the current Snowpark learning repo, do not introduce Airflow, Dagster, or Prefect yet. Use this order:</p>
+  <ol>
+    <li><strong>GitHub Actions</strong> for CI/CD: tests, smoke test, workspace deploy.</li>
+    <li><strong>dbt Cloud jobs</strong> for dbt model builds if dbt Cloud is available.</li>
+    <li><strong>Snowflake Tasks</strong> for in-Snowflake scheduled SQL/Snowpark/stored procedure execution.</li>
+    <li><strong>Azure Data Factory</strong> when ingestion or enterprise scheduling comes from Azure.</li>
+  </ol>
+
+  <h2>Architecture Sketch</h2>
+  <pre><code>GitHub Actions
+  -> tests Snowpark code
+  -> deploys code to Snowflake workspace/stage
+
+dbt Cloud Job
+  -> builds dbt SQL models in Snowflake
+  -> emits run history/artifacts
+
+Snowflake Task
+  -> runs small in-Snowflake post-dbt work
+  -> can call SQL or stored procedures
+
+Azure Data Factory
+  -> coordinates Azure ingestion/copy steps
+  -> can trigger or surround Snowflake/dbt work</code></pre>
+
+  <h2>Check Yourself</h2>
+  <div class="quiz" data-answer="1">
+    <p><strong>Which tool should own normal pull-request unit tests?</strong></p>
+    <button>Snowflake Tasks</button>
+    <button>GitHub Actions</button>
+    <button>Azure Data Factory</button>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="quiz" data-answer="2">
+    <p><strong>Which tool is the natural owner of dbt model dependency builds?</strong></p>
+    <button>Prefect flows</button>
+    <button>Snowflake stages</button>
+    <button>dbt Cloud jobs</button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>Your Turn</h2>
+  <p>Write a one-page orchestration decision for this repo:</p>
+  <ol>
+    <li>What runs in CI/CD?</li>
+    <li>What runs as a dbt job?</li>
+    <li>What, if anything, should become a Snowflake Task?</li>
+    <li>What would justify adding Azure Data Factory, Airflow, Dagster, or Prefect?</li>
+  </ol>
+
+  <p>Ask the agent to review the decision before implementing another orchestrator.</p>
+
+  <h2>References</h2>
+  <p>Primary sources: <a href="https://docs.snowflake.com/en/user-guide/tasks-intro">Snowflake Tasks</a>, <a href="https://docs.getdbt.com/docs/deploy/deploy-jobs">dbt Deploy Jobs</a>, and <a href="https://learn.microsoft.com/en-us/azure/data-factory/connector-snowflake">Azure Data Factory Snowflake connector</a>. Quick reference: <a href="../reference/0004-orchestration-options.html">Orchestration Options</a>.</p>
+</main>
+<script>
+  document.querySelectorAll(".quiz").forEach((quiz) => {
+    const buttons = Array.from(quiz.querySelectorAll("button"));
+    const feedback = quiz.querySelector(".feedback");
+    const answer = Number(quiz.dataset.answer);
+
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        if (index === answer) {
+          feedback.textContent = "Correct. Keep orchestration ownership explicit.";
+          feedback.className = "feedback good";
+        } else {
+          feedback.textContent = "Not yet. Separate deploy-time checks from run-time data work.";
+          feedback.className = "feedback warn";
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

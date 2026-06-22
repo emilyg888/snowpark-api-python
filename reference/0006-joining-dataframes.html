@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Joining Snowpark DataFrames</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Joining Snowpark DataFrames</h1>
+  <p class="subtitle">A quick reference for combining related Snowflake tables with Snowpark.</p>
+
+  <h2>Core Pattern</h2>
+  <pre><code>joined_df = (
+    left_df
+    .join(
+        right_df,
+        left_df["LEFT_KEY"] == right_df["RIGHT_KEY"],
+        join_type="inner"
+    )
+    .select(
+        left_df["LEFT_COL"].as_("LEFT_COL"),
+        right_df["RIGHT_COL"].as_("RIGHT_COL")
+    )
+)</code></pre>
+
+  <h2>Join Types</h2>
+  <div class="grid">
+    <div class="tile"><strong>inner</strong><br>Keep only rows with matches on both sides.</div>
+    <div class="tile"><strong>left</strong><br>Keep all left rows and matching right rows when found.</div>
+    <div class="tile"><strong>right</strong><br>Keep all right rows and matching left rows when found.</div>
+    <div class="tile"><strong>full</strong><br>Keep rows from both sides, matched where possible.</div>
+  </div>
+
+  <h2>Practical Rules</h2>
+  <ul>
+    <li>Use bracket references such as <code>orders["O_CUSTKEY"]</code> when both DataFrames are in scope.</li>
+    <li>Alias output columns with <code>.as_("NAME")</code> so tests and downstream code are stable.</li>
+    <li>Select after joining so the output contract is explicit.</li>
+    <li>Keep <code>show()</code>, <code>collect()</code>, and <code>count()</code> outside builder functions.</li>
+    <li>Start with <code>inner</code> joins unless you intentionally need unmatched rows.</li>
+  </ul>
+
+  <h2>TPCH Example</h2>
+  <pre><code>orders = session.table("SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.ORDERS")
+customers = session.table("SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.CUSTOMER")
+
+orders_with_customers = (
+    orders
+    .join(customers, orders["O_CUSTKEY"] == customers["C_CUSTKEY"])
+    .select(
+        orders["O_ORDERKEY"].as_("ORDER_KEY"),
+        customers["C_NAME"].as_("CUSTOMER_NAME"),
+        orders["O_TOTALPRICE"].as_("ORDER_TOTAL")
+    )
+)</code></pre>
+
+  <h2>Common Mistakes</h2>
+  <ul>
+    <li>Joining on columns that look similar but use different business meanings.</li>
+    <li>Forgetting to choose output columns after the join.</li>
+    <li>Calling <code>show()</code> inside a builder, which makes testing harder.</li>
+    <li>Using a left join when an inner join is enough.</li>
+  </ul>
+
+  <h2>Source</h2>
+  <p><a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/snowpark/api/snowflake.snowpark.DataFrame.join">Snowflake DataFrame.join reference</a></p>
+</main>
+</body>
+</html>

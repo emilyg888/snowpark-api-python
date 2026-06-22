@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CI/CD Snowpark Deploy Reference</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>CI/CD Snowpark Deploy Reference</h1>
+  <p class="subtitle">A compact map of the GitHub Actions setup for this Snowpark project.</p>
+
+  <h2>CI Workflow</h2>
+  <div class="callout">
+    <code>.github/workflows/ci.yml</code> validates code. It does not deploy files to Snowflake.
+  </div>
+  <ol>
+    <li>Check out repository.</li>
+    <li>Set up Python 3.12.</li>
+    <li>Install <code>requirements-ci.txt</code>.</li>
+    <li>Run <code>python -m pytest tests</code>.</li>
+    <li>Load Snowflake secrets into environment variables.</li>
+    <li>Create temporary <code>~/.snowflake/connections.toml</code>.</li>
+    <li>Run <code>python src/smoke_connection.py</code>.</li>
+  </ol>
+
+  <h2>CD Workflow</h2>
+  <div class="callout">
+    <code>.github/workflows/deploy-workspace.yml</code> validates code and copies selected source files to Snowflake workspace folders.
+  </div>
+  <ol>
+    <li>Manual trigger with <code>workflow_dispatch</code>.</li>
+    <li>Install Python dependencies and Snowflake CLI.</li>
+    <li>Run unit tests.</li>
+    <li>Require all Snowflake secrets.</li>
+    <li>Create temporary Snowflake connection config.</li>
+    <li>Run smoke test.</li>
+    <li>Upload files with <code>snow stage copy ... --overwrite</code>.</li>
+  </ol>
+
+  <h2>Secrets Boundary</h2>
+  <ul>
+    <li>Secrets live in GitHub repository settings.</li>
+    <li>The workflow reads them with <code>${{ secrets.SECRET_NAME }}</code>.</li>
+    <li>The runner receives them as environment variables for that job.</li>
+    <li>The temporary connection file exists only on the GitHub-hosted runner.</li>
+    <li>Never commit <code>connections.toml</code> or plaintext passwords.</li>
+  </ul>
+
+  <h2>Command Cheatsheet</h2>
+  <pre><code># Run CI manually
+gh workflow run CI --repo emilyg888/snowpark-api-python --ref main
+
+# List latest CI runs
+gh run list --workflow="ci.yml" --limit 5
+
+# View a run
+gh run view RUN_ID
+
+# Run workspace deploy manually
+gh workflow run deploy-workspace.yml --repo emilyg888/snowpark-api-python --ref main
+
+# Watch latest deploy
+gh run watch RUN_ID</code></pre>
+
+  <h2>Decision Rules</h2>
+  <ul>
+    <li>If it proves code behavior, put it in CI.</li>
+    <li>If it publishes code or artifacts, put it in CD.</li>
+    <li>If it schedules production data work, use orchestration instead of CI/CD.</li>
+    <li>If it needs Snowflake credentials in GitHub Actions, use repository secrets.</li>
+  </ul>
+</main>
+</body>
+</html>
