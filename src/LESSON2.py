@@ -10,13 +10,14 @@ OUTPUT_COLUMNS = [
     "O_CUSTKEY",
     "O_ORDERSTATUS",
     "O_TOTALPRICE",
+    "ROUNDED_ORDERS",
     "O_ORDERDATE",
     "O_ORDERPRIORITY",
     "O_CLERK",
     "O_SHIPPRIORITY",
     "O_COMMENT",
-    "IS_BIG_ORDER",
-    "PRIORITY_BAND"
+    "IS_HIGH_VALUE",
+    "ORDER_URGENCY"
 ]
 
 
@@ -27,12 +28,16 @@ def build_urgent_shipped_orders(session):
         .filter(col("O_ORDERSTATUS") == lit("F"))
         .filter(col("O_TOTALPRICE") >= 30000)
         .filter(col("O_ORDERPRIORITY") == lit("1-URGENT"))
-        .with_column("IS_BIG_ORDER", col("O_TOTALPRICE") >= lit(30000))
+        .with_column("IS_HIGH_VALUE", col("O_TOTALPRICE") >= lit(30000))
         .with_column(
-            "PRIORITY_BAND",
+            "ORDER_URGENCY",
             when(col("O_ORDERPRIORITY") == lit("1-URGENT"), lit("URGENT"))
             .otherwise(lit("NORMAL"))
         )
+        .with_column(
+            "ROUNDED_ORDERS",
+            (col("O_TOTALPRICE") / lit(1000))
+    )
         .select(*OUTPUT_COLUMNS)
     )
 
