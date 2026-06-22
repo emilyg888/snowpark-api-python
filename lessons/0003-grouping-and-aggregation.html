@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0003: Grouping and Aggregation</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Grouping and Aggregation</h1>
+  <p class="subtitle">Goal: summarize Snowflake rows by a business category using <code>group_by</code> and <code>agg</code>.</p>
+
+  <div class="callout">
+    Grouping changes the shape of a DataFrame: many input rows become fewer summary rows. Each output row represents one group.
+  </div>
+
+  <h2>The Mental Model</h2>
+  <div class="grid">
+    <div class="tile"><strong>Group key</strong><br>The column or columns that define one bucket, such as <code>O_ORDERPRIORITY</code>.</div>
+    <div class="tile"><strong>Aggregate</strong><br>A summary calculation per bucket, such as <code>count</code>, <code>sum</code>, or <code>avg</code>.</div>
+    <div class="tile"><strong>Alias</strong><br>A stable name for the output measure, such as <code>TOTAL_REVENUE</code>.</div>
+  </div>
+
+  <h2>Read This Code</h2>
+  <pre><code>from snowflake.snowpark.functions import col
+from snowflake.snowpark.functions import count, sum as sum_, avg
+
+orders = session.table("SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.ORDERS")
+
+priority_summary = (
+    orders
+    .group_by("O_ORDERPRIORITY")
+    .agg(
+        count("*").as_("ORDER_COUNT"),
+        sum_("O_TOTALPRICE").as_("TOTAL_REVENUE"),
+        avg("O_TOTALPRICE").as_("AVG_ORDER_VALUE")
+    )
+    .sort(col("TOTAL_REVENUE").desc())
+)
+
+priority_summary.show()</code></pre>
+
+  <p>This builds one row per order priority. For each priority, Snowflake counts orders, sums total price, and calculates average order value. <code>show()</code> remains the action boundary.</p>
+
+  <h2>Why Alias Aggregates?</h2>
+  <p>Without aliases, aggregate output names can be awkward, such as <code>SUM(O_TOTALPRICE)</code>. Aliases make later code and tests predictable.</p>
+
+  <pre><code>sum_("O_TOTALPRICE").as_("TOTAL_REVENUE")</code></pre>
+
+  <h2>Check Yourself</h2>
+  <div class="quiz" data-answer="1">
+    <p><strong>After grouping by <code>O_ORDERPRIORITY</code>, what does one output row represent?</strong></p>
+    <button>A single source order</button>
+    <button>One priority bucket</button>
+    <button>One Snowflake table</button>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="quiz" data-answer="2">
+    <p><strong>Which method chooses the summary calculations?</strong></p>
+    <button><code>filter(...)</code></button>
+    <button><code>select(...)</code></button>
+    <button><code>agg(...)</code></button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>Your Turn</h2>
+  <p>Create <code>src/LESSON3.py</code>. Build a summary of TPCH orders grouped by <code>O_ORDERSTATUS</code> and <code>O_ORDERPRIORITY</code>.</p>
+  <ol>
+    <li>Create a builder function named <code>build_order_priority_summary(session)</code>.</li>
+    <li>Use <code>group_by("O_ORDERSTATUS", "O_ORDERPRIORITY")</code>.</li>
+    <li>Aggregate <code>ORDER_COUNT</code>, <code>TOTAL_REVENUE</code>, and <code>AVG_ORDER_VALUE</code>.</li>
+    <li>Sort by <code>O_ORDERSTATUS</code>, then <code>O_ORDERPRIORITY</code>.</li>
+    <li>Call <code>show()</code> only inside <code>main()</code>.</li>
+  </ol>
+
+  <p>Ask the agent to review <code>src/LESSON3.py</code> when you finish. The review should include a matching unit test before deployment.</p>
+
+  <h2>References</h2>
+  <p>Primary source: <a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/snowpark/api/snowflake.snowpark.DataFrame.group_by">Snowflake DataFrame.group_by reference</a>. Quick reference: <a href="../reference/0003-grouping-and-aggregation.html">Grouping and Aggregation</a>.</p>
+</main>
+<script>
+  document.querySelectorAll(".quiz").forEach((quiz) => {
+    const buttons = Array.from(quiz.querySelectorAll("button"));
+    const feedback = quiz.querySelector(".feedback");
+    const answer = Number(quiz.dataset.answer);
+
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        if (index === answer) {
+          feedback.textContent = "Correct. That is the key aggregation idea.";
+          feedback.className = "feedback good";
+        } else {
+          feedback.textContent = "Not yet. Think about how many rows remain after grouping.";
+          feedback.className = "feedback warn";
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

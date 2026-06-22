@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Snowpark Grouping and Aggregation</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Snowpark Grouping and Aggregation</h1>
+  <p class="subtitle">Quick reference for turning row-level Snowpark data into grouped summaries.</p>
+
+  <h2>Imports</h2>
+  <pre><code>from snowflake.snowpark.functions import col
+from snowflake.snowpark.functions import count, sum as sum_, avg, min as min_, max as max_</code></pre>
+
+  <h2>Basic Pattern</h2>
+  <pre><code>summary = (
+    df
+    .group_by("O_ORDERPRIORITY")
+    .agg(
+        count("*").as_("ORDER_COUNT"),
+        sum_("O_TOTALPRICE").as_("TOTAL_REVENUE"),
+        avg("O_TOTALPRICE").as_("AVG_ORDER_VALUE")
+    )
+    .sort(col("TOTAL_REVENUE").desc())
+)</code></pre>
+
+  <h2>Multiple Group Keys</h2>
+  <pre><code>summary = (
+    df
+    .group_by("O_ORDERSTATUS", "O_ORDERPRIORITY")
+    .agg(count("*").as_("ORDER_COUNT"))
+)</code></pre>
+
+  <h2>Rules</h2>
+  <ul>
+    <li><code>group_by(...)</code> creates grouped rows, similar to SQL <code>GROUP BY</code>.</li>
+    <li><code>agg(...)</code> chooses the summary measures for each group.</li>
+    <li>Alias aggregate columns with <code>as_(...)</code> so downstream code has stable names.</li>
+    <li>Sorting after aggregation makes summaries readable.</li>
+    <li>The query is still lazy until an action such as <code>show()</code> or <code>collect()</code>.</li>
+  </ul>
+
+  <p>Primary source: <a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/snowpark/api/snowflake.snowpark.DataFrame.group_by">Snowflake DataFrame.group_by reference</a>.</p>
+</main>
+</body>
+</html>
