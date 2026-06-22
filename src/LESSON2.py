@@ -41,7 +41,7 @@ def build_urgent_shipped_orders(session):
         .with_column(
             "ORDER_URGENCY",
             when(col("O_ORDERPRIORITY") == lit("1-URGENT"), lit("URGENT"))
-            .otherwise(lit("NORMAL"))
+            .otherwise(lit("STANDARD"))
         )
         # Express total price in thousands to make large order values easier to scan.
         .with_column(
