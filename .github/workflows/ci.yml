@@ -23,6 +23,7 @@ jobs:
         with:
           python-version: "3.12"
           cache: "pip"
+          cache-dependency-path: requirements-ci.txt
 
       - name: Install test dependencies
         run: |
@@ -56,6 +57,7 @@ jobs:
         with:
           python-version: "3.12"
           cache: "pip"
+          cache-dependency-path: requirements-ci.txt
 
       - name: Install Snowpark dependency
         run: |
