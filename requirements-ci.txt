@@ -1,0 +1,2 @@
+pytest
+snowflake-snowpark-python
