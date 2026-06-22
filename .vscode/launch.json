@@ -1,0 +1,25 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: Current File (Snowpark)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal",
+      "env": {
+        "SNOWFLAKE_CONNECTION_NAME": "default"
+      }
+    },
+    {
+      "name": "Snowpark: Smoke Connection",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/smoke_connection.py",
+      "console": "integratedTerminal",
+      "env": {
+        "SNOWFLAKE_CONNECTION_NAME": "default"
+      }
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Snowpark Derived Columns</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Snowpark Derived Columns</h1>
+  <p class="subtitle">Quick reference for adding columns with DataFrame expressions.</p>
+
+  <h2>Imports</h2>
+  <pre><code>from snowflake.snowpark.functions import col, lit, when</code></pre>
+
+  <h2>Add One Column</h2>
+  <pre><code>df2 = df.with_column("IS_HIGH_VALUE", col("O_TOTALPRICE") >= lit(30000))</code></pre>
+
+  <h2>Add Conditional Column</h2>
+  <pre><code>df2 = df.with_column(
+    "ORDER_URGENCY",
+    when(col("O_ORDERPRIORITY") == lit("1-URGENT"), lit("URGENT"))
+    .otherwise(lit("STANDARD"))
+)</code></pre>
+
+  <h2>Replace Existing Column</h2>
+  <pre><code>df2 = df.with_column("O_TOTALPRICE", col("O_TOTALPRICE") / lit(1000))</code></pre>
+
+  <h2>Select With Alias</h2>
+  <pre><code>df2 = df.select(
+    col("O_ORDERKEY").as_("ORDER_ID"),
+    col("O_TOTALPRICE").as_("TOTAL_PRICE")
+)</code></pre>
+
+  <h2>Rules</h2>
+  <ul>
+    <li>Use <code>col("NAME")</code> to reference a column.</li>
+    <li>Use <code>lit(value)</code> for constants inside expressions.</li>
+    <li><code>with_column</code> returns a new DataFrame; it does not mutate the original.</li>
+    <li>Reusing an existing column name replaces that column in the returned DataFrame.</li>
+  </ul>
+</main>
+</body>
+</html>

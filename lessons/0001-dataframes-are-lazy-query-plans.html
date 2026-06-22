@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0001: DataFrames Are Lazy Query Plans</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>DataFrames Are Lazy Query Plans</h1>
+  <p class="subtitle">Goal: read Snowpark DataFrame code and know what runs now, what only builds a plan, and where to inspect the result.</p>
+
+  <div class="callout">
+    A Snowpark DataFrame is not the data itself. It is a relational query plan that Snowflake evaluates only when an action asks for results.
+  </div>
+
+  <h2>The Core Loop</h2>
+  <div class="grid">
+    <div class="tile"><strong>1. Create</strong><br>Point Snowpark at a table, SQL query, stage file, or small local dataset.</div>
+    <div class="tile"><strong>2. Transform</strong><br>Chain methods like <code>filter</code>, <code>select</code>, <code>group_by</code>, and <code>join</code>.</div>
+    <div class="tile"><strong>3. Act</strong><br>Call <code>show</code>, <code>collect</code>, <code>count</code>, or <code>to_pandas</code> to execute.</div>
+  </div>
+
+  <h2>Read This Code</h2>
+  <pre><code>from snowflake.snowpark.functions import col, lit
+
+orders = session.table("ORDERS")
+
+big_shipped_orders = (
+    orders
+    .filter(col("STATUS") == lit("SHIPPED"))
+    .filter(col("AMOUNT") >= 1000)
+    .select("ORDER_ID", "CUSTOMER_ID", "AMOUNT")
+)
+
+big_shipped_orders.show()</code></pre>
+
+  <p><code>session.table</code> creates a DataFrame from a table. The two <code>filter</code> calls and the <code>select</code> call each return a new DataFrame. Snowflake executes the query when <code>show()</code> asks for rows.</p>
+
+  <h2>Useful First Patterns</h2>
+  <pre><code># Create
+df = session.table("SAMPLE_PRODUCT_DATA")
+
+# Transform
+df2 = (
+    df
+    .filter(col("CATEGORY_ID") == 5)
+    .select("ID", "NAME", col("SERIAL_NUMBER").as_("SKU"))
+)
+
+# Act
+df2.show()</code></pre>
+
+  <p>Use <code>col("COLUMN_NAME")</code> when you need comparison, arithmetic, aliasing, or function calls. Plain strings are fine for simple column selection.</p>
+
+  <h2>Check Yourself</h2>
+  <div class="quiz" data-answer="1">
+    <p><strong>Which line first asks Snowflake to execute work?</strong></p>
+    <button>orders = session.table("ORDERS")</button>
+    <button>big_shipped_orders.show()</button>
+    <button>.filter(col("AMOUNT") &gt;= 1000)</button>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="quiz" data-answer="2">
+    <p><strong>Which expression should you use for a comparison?</strong></p>
+    <button>"AMOUNT" &gt;= 1000</button>
+    <button>AMOUNT &gt;= 1000</button>
+    <button>col("AMOUNT") &gt;= 1000</button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>Your Turn</h2>
+  <p>In a notebook using the <code>Python 3.12 (Snowpark)</code> kernel, write a three-step DataFrame chain:</p>
+  <ol>
+    <li>Create a DataFrame from a table with <code>session.table(...)</code>.</li>
+    <li>Filter one column and select three columns.</li>
+    <li>Call <code>show()</code> only at the end.</li>
+  </ol>
+
+  <p>Ask the agent to review your chain if anything is unclear. The next lesson should use your real table names so the API becomes concrete.</p>
+
+  <h2>References</h2>
+  <p>Primary source: <a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/working-with-dataframes">Snowflake Docs: Working with DataFrames in Snowpark Python</a>. Quick reference: <a href="../reference/0001-dataframe-api-basics.html">DataFrame API Basics</a>.</p>
+</main>
+<script>
+  document.querySelectorAll(".quiz").forEach((quiz) => {
+    const buttons = Array.from(quiz.querySelectorAll("button"));
+    const feedback = quiz.querySelector(".feedback");
+    const answer = Number(quiz.dataset.answer);
+
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        if (index === answer) {
+          feedback.textContent = "Correct. That is the durable idea to keep.";
+          feedback.className = "feedback good";
+        } else {
+          feedback.textContent = "Not yet. Look for the method that asks for rows.";
+          feedback.className = "feedback warn";
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0002: Derived Columns With Expressions</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Derived Columns With Expressions</h1>
+  <p class="subtitle">Goal: add useful columns to a Snowpark DataFrame without leaving the lazy DataFrame API.</p>
+
+  <div class="callout">
+    <code>with_column(name, expression)</code> returns a new DataFrame with one added or replaced column. The expression is still part of the lazy query plan.
+  </div>
+
+  <h2>The Pattern</h2>
+  <pre><code>from snowflake.snowpark.functions import col, lit, when
+
+orders = session.table("SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.ORDERS")
+
+scored_orders = (
+    orders
+    .with_column("IS_BIG_ORDER", col("O_TOTALPRICE") >= lit(30000))
+    .with_column(
+        "PRIORITY_BAND",
+        when(col("O_ORDERPRIORITY") == lit("1-URGENT"), lit("URGENT"))
+        .otherwise(lit("NORMAL"))
+    )
+    .select(
+        "O_ORDERKEY",
+        "O_CUSTKEY",
+        "O_TOTALPRICE",
+        "O_ORDERPRIORITY",
+        "IS_BIG_ORDER",
+        "PRIORITY_BAND"
+    )
+)
+
+scored_orders.show()</code></pre>
+
+  <p>Read that chain left to right: start with a table, add a boolean column, add a label column, project the columns you care about, then execute with <code>show()</code>.</p>
+
+  <h2>Three Expression Building Blocks</h2>
+  <div class="grid">
+    <div class="tile"><strong><code>col("X")</code></strong><br>Reference a Snowflake column named <code>X</code>.</div>
+    <div class="tile"><strong><code>lit(5)</code></strong><br>Create a literal value inside the SQL expression.</div>
+    <div class="tile"><strong><code>when(...).otherwise(...)</code></strong><br>Create conditional logic like SQL <code>CASE</code>.</div>
+  </div>
+
+  <h2>Add vs Replace</h2>
+  <p>If the column name does not exist, <code>with_column</code> adds it. If the name already exists, <code>with_column</code> replaces that column in the returned DataFrame.</p>
+
+  <pre><code>rounded_orders = orders.with_column(
+    "O_TOTALPRICE",
+    (col("O_TOTALPRICE") / lit(1000))
+)</code></pre>
+
+  <p>That example does not mutate the original <code>orders</code> DataFrame. It returns a new plan where <code>O_TOTALPRICE</code> has a new expression.</p>
+
+  <h2>Check Yourself</h2>
+  <div class="quiz" data-answer="2">
+    <p><strong>What does <code>with_column</code> return?</strong></p>
+    <button>A local pandas copy</button>
+    <button>A modified table file</button>
+    <button>A new DataFrame plan</button>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="quiz" data-answer="1">
+    <p><strong>Which expression creates a constant value?</strong></p>
+    <button>col("URGENT")</button>
+    <button>lit("URGENT")</button>
+    <button>as_("URGENT")</button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>Your Turn</h2>
+  <p>Create <code>src/lesson2.py</code>. Start from your TPCH orders query and add two derived columns:</p>
+  <ol>
+    <li><code>IS_HIGH_VALUE</code>: true when <code>O_TOTALPRICE &gt;= 30000</code>.</li>
+    <li><code>ORDER_URGENCY</code>: <code>"URGENT"</code> when priority is <code>"1-URGENT"</code>, else <code>"STANDARD"</code>.</li>
+  </ol>
+
+  <p>Keep the action boundary at the end: transformations first, then one <code>show()</code>. Ask the agent to review the file when you finish.</p>
+
+  <h2>References</h2>
+  <p>Primary source: <a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/snowpark/api/snowflake.snowpark.DataFrame.with_column">Snowflake DataFrame.with_column reference</a>. Function list: <a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/snowpark/functions">Snowpark Python functions reference</a>. Quick reference: <a href="../reference/0002-derived-columns.html">Derived Columns</a>.</p>
+</main>
+<script>
+  document.querySelectorAll(".quiz").forEach((quiz) => {
+    const buttons = Array.from(quiz.querySelectorAll("button"));
+    const feedback = quiz.querySelector(".feedback");
+    const answer = Number(quiz.dataset.answer);
+
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        if (index === answer) {
+          feedback.textContent = "Correct. Keep that rule available while coding.";
+          feedback.className = "feedback good";
+        } else {
+          feedback.textContent = "Not yet. Re-read the pattern above and try again.";
+          feedback.className = "feedback warn";
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "python.defaultInterpreterPath": "/Users/emilygao/miniconda3/envs/snowpark-py312/bin/python",
+  "python.terminal.activateEnvironment": true,
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestArgs": [
+    "tests"
+  ],
+  "terminal.integrated.env.osx": {
+    "SNOWFLAKE_CONNECTION_NAME": "default"
+  },
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/.pytest_cache": true
+  }
+}

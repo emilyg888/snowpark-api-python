@@ -1,0 +1,36 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Snowflake: connection test",
+      "type": "shell",
+      "command": "snow connection test",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Snowpark: smoke connection",
+      "type": "shell",
+      "command": "/Users/emilygao/miniconda3/envs/snowpark-py312/bin/python src/smoke_connection.py",
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "SNOWFLAKE_CONNECTION_NAME": "default"
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Snowpark: unit tests",
+      "type": "shell",
+      "command": "/Users/emilygao/miniconda3/envs/snowpark-py312/bin/python -m pytest tests",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "test",
+      "problemMatcher": []
+    }
+  ]
+}
