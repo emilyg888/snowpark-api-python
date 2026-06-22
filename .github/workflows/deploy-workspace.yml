@@ -1,0 +1,79 @@
+name: Deploy Workspace
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy-workspace:
+    name: Deploy lesson files to Snowflake workspace
+    runs-on: ubuntu-latest
+
+    env:
+      SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+      SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+      SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+      SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
+      SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+      SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DATABASE }}
+      SNOWFLAKE_SCHEMA: ${{ secrets.SNOWFLAKE_SCHEMA }}
+      SNOWFLAKE_CONNECTION_NAME: default
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: requirements-ci.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-ci.txt
+          python -m pip install snowflake-cli
+
+      - name: Run unit tests
+        run: python -m pytest tests
+
+      - name: Require Snowflake secrets
+        run: |
+          for name in \
+            SNOWFLAKE_ACCOUNT \
+            SNOWFLAKE_USER \
+            SNOWFLAKE_PASSWORD \
+            SNOWFLAKE_ROLE \
+            SNOWFLAKE_WAREHOUSE \
+            SNOWFLAKE_DATABASE \
+            SNOWFLAKE_SCHEMA
+          do
+            if [ -z "${!name}" ]; then
+              echo "::error::$name is required for workspace deployment."
+              exit 1
+            fi
+          done
+
+      - name: Configure Snowflake connection
+        run: |
+          mkdir -p ~/.snowflake
+          cat > ~/.snowflake/connections.toml <<EOF
+          [default]
+          account = "${SNOWFLAKE_ACCOUNT}"
+          user = "${SNOWFLAKE_USER}"
+          password = "${SNOWFLAKE_PASSWORD}"
+          role = "${SNOWFLAKE_ROLE}"
+          warehouse = "${SNOWFLAKE_WAREHOUSE}"
+          database = "${SNOWFLAKE_DATABASE}"
+          schema = "${SNOWFLAKE_SCHEMA}"
+          EOF
+          chmod 600 ~/.snowflake/connections.toml
+
+      - name: Run Snowflake smoke test
+        run: python src/smoke_connection.py
+
+      - name: Upload lesson files to Snowflake workspace
+        run: |
+          snow stage copy src/LESSON1.py 'snow://workspace/USER$.PUBLIC.DEFAULT$/versions/head/LESSON1/' --overwrite
+          snow stage copy src/LESSON2.py 'snow://workspace/USER$.PUBLIC.DEFAULT$/versions/head/LESSON2/' --overwrite
