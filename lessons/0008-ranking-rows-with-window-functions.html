@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0008: Ranking Rows With Window Functions</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Ranking Rows With Window Functions</h1>
+  <p class="subtitle">Goal: rank rows inside business groups without collapsing the rows into an aggregate summary.</p>
+
+  <div class="callout">
+    A window function keeps the row-level shape of a DataFrame. It adds a calculation that looks across related rows, such as ranking orders inside each order status.
+  </div>
+
+  <h2>The Mental Model</h2>
+  <div class="grid">
+    <div class="tile"><strong>Partition</strong><br>The group of rows the window calculation can see, such as one <code>O_ORDERSTATUS</code>.</div>
+    <div class="tile"><strong>Order</strong><br>The sequence inside each partition, such as highest <code>O_TOTALPRICE</code> first.</div>
+    <div class="tile"><strong>Window value</strong><br>The derived value added to each row, such as <code>STATUS_RANK</code>.</div>
+  </div>
+
+  <h2>Read This Code</h2>
+  <pre><code>from snowflake.snowpark import Window
+from snowflake.snowpark.functions import col, row_number
+
+orders = session.table("SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.ORDERS")
+
+status_window = (
+    Window
+    .partition_by("O_ORDERSTATUS")
+    .order_by(col("O_TOTALPRICE").desc())
+)
+
+top_orders_by_status = (
+    orders
+    .with_column("STATUS_RANK", row_number().over(status_window))
+    .filter(col("STATUS_RANK") &lt;= 5)
+    .select(
+        "O_ORDERKEY",
+        "O_ORDERSTATUS",
+        "O_ORDERPRIORITY",
+        "O_TOTALPRICE",
+        "STATUS_RANK"
+    )
+    .sort("O_ORDERSTATUS", "STATUS_RANK")
+)
+
+top_orders_by_status.show()</code></pre>
+
+  <p>This builds a rank inside each order-status bucket. Unlike <code>group_by</code>, the output still has order rows. The new column explains each row's position within its partition.</p>
+
+  <h2>Window vs Group</h2>
+  <p>Use <code>group_by</code> when you want fewer summary rows. Use a window when you want to keep the original row grain and add context from related rows.</p>
+
+  <pre><code># Summary shape: one row per status
+orders.group_by("O_ORDERSTATUS").count()
+
+# Row shape: each order can keep its own rank
+orders.with_column("STATUS_RANK", row_number().over(status_window))</code></pre>
+
+  <h2>Check Yourself</h2>
+  <div class="quiz" data-answer="1">
+    <p><strong>What does <code>partition_by("O_ORDERSTATUS")</code> define?</strong></p>
+    <button>The final column list</button>
+    <button>The ranking groups</button>
+    <button>The warehouse size</button>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="quiz" data-answer="2">
+    <p><strong>Which pattern keeps row-level detail?</strong></p>
+    <button><code>group_by(...).agg(...)</code></button>
+    <button><code>count("*").as_(...)</code></button>
+    <button><code>row_number().over(...)</code></button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>Your Turn</h2>
+  <p>Create <code>src/LESSON8.py</code>. Build the top five TPCH orders inside each order status.</p>
+  <ol>
+    <li>Create <code>build_top_orders_by_status(session)</code>.</li>
+    <li>Read <code>SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.ORDERS</code>.</li>
+    <li>Create a window partitioned by <code>O_ORDERSTATUS</code> and ordered by <code>O_TOTALPRICE</code> descending.</li>
+    <li>Add <code>STATUS_RANK</code> with <code>row_number().over(...)</code>.</li>
+    <li>Filter to ranks less than or equal to five.</li>
+    <li>Call <code>show()</code> only inside <code>main()</code>.</li>
+  </ol>
+
+  <p>Ask the agent to review <code>src/LESSON8.py</code> when you finish. The review should check that the builder returns a lazy DataFrame.</p>
+
+  <h2>References</h2>
+  <p>Primary source: <a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/snowpark/api/snowflake.snowpark.Window">Snowflake Window API reference</a>. Previous lessons: <a href="0003-grouping-and-aggregation.html">Grouping and Aggregation</a> and <a href="0007-debugging-snowpark-dataframes.html">Debugging Snowpark DataFrames</a>.</p>
+</main>
+<script>
+  document.querySelectorAll(".quiz").forEach((quiz) => {
+    const buttons = Array.from(quiz.querySelectorAll("button"));
+    const feedback = quiz.querySelector(".feedback");
+    const answer = Number(quiz.dataset.answer);
+
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        if (index === answer) {
+          feedback.textContent = "Correct. Windows add context while preserving row grain.";
+          feedback.className = "feedback good";
+        } else {
+          feedback.textContent = "Not yet. Separate grouped summaries from row-level ranking.";
+          feedback.className = "feedback warn";
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

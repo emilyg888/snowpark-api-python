@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0010: Crossing the Result Boundary</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Crossing the Result Boundary</h1>
+  <p class="subtitle">Goal: choose when to keep data in Snowflake and when to bring a small result back to Python.</p>
+
+  <div class="callout">
+    <code>show()</code>, <code>collect()</code>, and <code>to_pandas()</code> are actions. They execute the lazy DataFrame plan and cross from Snowflake into display output or local Python memory.
+  </div>
+
+  <h2>The Mental Model</h2>
+  <div class="grid">
+    <div class="tile"><strong><code>show()</code></strong><br>Preview rows for human inspection. Good for lessons and debugging.</div>
+    <div class="tile"><strong><code>collect()</code></strong><br>Return a small result as Snowpark <code>Row</code> objects in Python.</div>
+    <div class="tile"><strong><code>to_pandas()</code></strong><br>Return a small result as a local pandas DataFrame for charts or Streamlit widgets.</div>
+    <div class="tile"><strong><code>to_pandas_batches()</code></strong><br>Use batches when a pandas result is too large to fit comfortably in memory at once.</div>
+  </div>
+
+  <h2>Read This Code</h2>
+  <pre><code>from snowflake.snowpark.functions import col
+from snowflake.snowpark.functions import sum as sum_
+
+orders = session.table("SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.ORDERS")
+
+revenue_by_status = (
+    orders
+    .group_by("O_ORDERSTATUS")
+    .agg(sum_("O_TOTALPRICE").as_("TOTAL_REVENUE"))
+    .sort(col("TOTAL_REVENUE").desc())
+)
+
+# Human preview action.
+revenue_by_status.show()
+
+# Small Python result action.
+rows = revenue_by_status.collect()
+
+# Small notebook or Streamlit chart action.
+chart_df = revenue_by_status.to_pandas()</code></pre>
+
+  <p>The builder should create the DataFrame. The caller should decide which action is appropriate for the notebook, test, command-line script, or Streamlit app.</p>
+
+  <h2>Boundary Rules</h2>
+  <ul>
+    <li>Keep broad filtering, joining, grouping, sorting, and ranking in Snowflake.</li>
+    <li>Use <code>limit(...).show()</code> for quick visual inspection.</li>
+    <li>Use <code>collect()</code> only for small results that Python code needs directly.</li>
+    <li>Use <code>to_pandas()</code> only after the DataFrame is already small enough for local memory.</li>
+    <li>Keep actions out of reusable builder functions unless the function name clearly says it runs an action.</li>
+  </ul>
+
+  <h2>Check Yourself</h2>
+  <div class="quiz" data-answer="1">
+    <p><strong>Which method returns Snowpark rows to Python?</strong></p>
+    <button><code>select(...)</code></button>
+    <button><code>collect()</code></button>
+    <button><code>group_by(...)</code></button>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="quiz" data-answer="2">
+    <p><strong>When is <code>to_pandas()</code> safest?</strong></p>
+    <button>Before filtering rows</button>
+    <button>Before joining tables</button>
+    <button>After reducing data</button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>Your Turn</h2>
+  <p>Create <code>src/LESSON10.py</code>. Build a dashboard-ready revenue summary and cross the result boundary intentionally.</p>
+  <ol>
+    <li>Create <code>build_revenue_by_status(session)</code> with no actions inside it.</li>
+    <li>Group TPCH orders by <code>O_ORDERSTATUS</code>.</li>
+    <li>Aggregate <code>TOTAL_REVENUE</code> and sort descending.</li>
+    <li>In <code>main()</code>, call <code>show()</code> for a preview.</li>
+    <li>Then call <code>to_pandas()</code> and print the pandas shape.</li>
+    <li>Explain which lines execute Snowflake work.</li>
+  </ol>
+
+  <p>Ask the agent to review <code>src/LESSON10.py</code> before wiring the result into Streamlit. The review should check that the result is small before converting to pandas.</p>
+
+  <h2>References</h2>
+  <p>Primary sources: <a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/snowpark/api/snowflake.snowpark.DataFrame.collect">Snowflake DataFrame.collect reference</a>, <a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/snowpark/api/snowflake.snowpark.DataFrame.to_pandas">Snowflake DataFrame.to_pandas reference</a>, and <a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/working-with-dataframes">Snowflake: Working with DataFrames in Snowpark Python</a>.</p>
+</main>
+<script>
+  document.querySelectorAll(".quiz").forEach((quiz) => {
+    const buttons = Array.from(quiz.querySelectorAll("button"));
+    const feedback = quiz.querySelector(".feedback");
+    const answer = Number(quiz.dataset.answer);
+
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        if (index === answer) {
+          feedback.textContent = "Correct. Reduce in Snowflake before returning data to Python.";
+          feedback.className = "feedback good";
+        } else {
+          feedback.textContent = "Not yet. Ask whether this line transforms the plan or returns data.";
+          feedback.className = "feedback warn";
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

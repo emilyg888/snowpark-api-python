@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0009: Reading Semi-Structured Data</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Reading Semi-Structured Data</h1>
+  <p class="subtitle">Goal: extract fields from nested Snowflake values without leaving the Snowpark DataFrame API.</p>
+
+  <div class="callout">
+    Semi-structured columns can hold objects and arrays. Snowpark lets you traverse those values with column indexing, then cast the result into ordinary typed columns.
+  </div>
+
+  <h2>The Mental Model</h2>
+  <div class="grid">
+    <div class="tile"><strong>Object field</strong><br>Use <code>col("SRC")["dealership"]</code> to access a named field.</div>
+    <div class="tile"><strong>Array item</strong><br>Use <code>col("SRC")["vehicle"][0]</code> to access an item by position.</div>
+    <div class="tile"><strong>Cast</strong><br>Convert nested values into predictable output types for later code.</div>
+  </div>
+
+  <h2>Read This Code</h2>
+  <pre><code>from snowflake.snowpark.functions import col
+from snowflake.snowpark.types import IntegerType, StringType
+
+car_sales = session.table("CAR_SALES")
+
+vehicle_prices = (
+    car_sales
+    .select(
+        col("SRC")["dealership"].cast(StringType()).as_("DEALERSHIP"),
+        col("SRC")["vehicle"][0]["make"].cast(StringType()).as_("MAKE"),
+        col("SRC")["vehicle"][0]["model"].cast(StringType()).as_("MODEL"),
+        col("SRC")["vehicle"][0]["year"].cast(IntegerType()).as_("YEAR"),
+        col("SRC")["vehicle"][0]["price"].cast(IntegerType()).as_("PRICE")
+    )
+    .sort(col("PRICE").desc())
+)
+
+vehicle_prices.show()</code></pre>
+
+  <p>Each nested lookup returns a Snowpark column expression. The <code>cast(...)</code> calls turn nested values into columns that are easier to sort, filter, test, and display.</p>
+
+  <h2>Why Cast?</h2>
+  <p>Nested values may not behave like plain strings or numbers until you cast them. Cast near the extraction point so downstream code receives a clean table-shaped contract.</p>
+
+  <pre><code>col("SRC")["vehicle"][0]["price"].cast(IntegerType()).as_("PRICE")</code></pre>
+
+  <h2>Check Yourself</h2>
+  <div class="quiz" data-answer="0">
+    <p><strong>Which expression reads a field from an object?</strong></p>
+    <button><code>col("SRC")["dealership"]</code></button>
+    <button><code>col("SRC").group_by(...)</code></button>
+    <button><code>col("SRC").collect()</code></button>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="quiz" data-answer="2">
+    <p><strong>Why cast extracted nested values?</strong></p>
+    <button>To start scheduler</button>
+    <button>To delete nesting</button>
+    <button>To set types</button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>Your Turn</h2>
+  <p>Create <code>src/LESSON9.py</code>. Build a DataFrame that extracts useful columns from a semi-structured source.</p>
+  <ol>
+    <li>Create <code>build_vehicle_prices(session)</code>.</li>
+    <li>Read a table with a nested <code>SRC</code> column, such as the Snowflake semi-structured example table.</li>
+    <li>Select dealership, make, model, year, and price from the nested value.</li>
+    <li>Cast year and price to integers.</li>
+    <li>Sort by price descending.</li>
+    <li>Call <code>print_schema()</code> before <code>show()</code> inside <code>main()</code>.</li>
+  </ol>
+
+  <p>Ask the agent to review <code>src/LESSON9.py</code> if your field path or cast fails. The fastest fix is usually to inspect the schema and one small sample.</p>
+
+  <h2>References</h2>
+  <p>Primary source: <a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/working-with-dataframes#working-with-semi-structured-data">Snowflake: Working with semi-structured data in DataFrames</a>. Previous lesson: <a href="0007-debugging-snowpark-dataframes.html">Debugging Snowpark DataFrames</a>.</p>
+</main>
+<script>
+  document.querySelectorAll(".quiz").forEach((quiz) => {
+    const buttons = Array.from(quiz.querySelectorAll("button"));
+    const feedback = quiz.querySelector(".feedback");
+    const answer = Number(quiz.dataset.answer);
+
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        if (index === answer) {
+          feedback.textContent = "Correct. Extract, cast, then shape the result.";
+          feedback.className = "feedback good";
+        } else {
+          feedback.textContent = "Not yet. Look for the expression that traverses nested data.";
+          feedback.className = "feedback warn";
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

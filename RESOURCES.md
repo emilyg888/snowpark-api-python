@@ -6,6 +6,8 @@
   Primary learning source for creating DataFrames, applying transformations, using columns, joining, and triggering actions.
 - [Snowflake Docs: Snowpark Python DataFrame API Reference](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/snowpark/api/snowflake.snowpark.DataFrame)
   Method-level reference for exact DataFrame signatures and edge cases.
+- [Snowflake Docs: DataFrame.explain](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/snowpark/api/snowflake.snowpark.DataFrame.explain)
+  Use for inspecting query plans while debugging or tuning Snowpark DataFrames.
 - [Snowflake Docs: DataFrame.group_by](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/snowpark/api/snowflake.snowpark.DataFrame.group_by)
   Use for grouping rows and applying aggregate functions such as count, sum, average, minimum, and maximum.
 - [Snowflake Docs: DataFrame.join](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/snowpark/api/snowflake.snowpark.DataFrame.join)

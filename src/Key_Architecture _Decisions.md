@@ -1,5 +1,10 @@
 # Key Architecture Decisions
 
+## Which python
+Use the course environment: snowpark-py312.
+In a terminal:
+snowpark-env
+
 ## What runs in CI?
 
 Unit tests and Snowflake smoke tests.
@@ -54,16 +59,20 @@ python -m pytest tests
 
 Which step proved Snowflake credentials work?
 Smoke testing:
-python src/smoke_connection.py
+python src/smoke_connection.py 
+checks that the secrets exists and actually work.
 
-gh secret list --repo emilyg888/snowpart-api-python
-checks that secret names exist. `python src/smoke_connection.py` checks that the secrets actually work.
 
 Which step published files to the Snowflake workspace?
-CD, Current Deployment Map
+ gh workflow run deploy-workspace.yml \
+  --repo emilyg888/snowpark-api-python \
+  --ref main
+
 The Upload lesson files to Snowflake workspace step in deploy-workspace.yml publishes:
 
 src/LESSON1.py -> snow://workspace/USER$.PUBLIC.DEFAULT$/versions/head/LESSON1/
 src/LESSON2.py -> snow://workspace/USER$.PUBLIC.DEFAULT$/versions/head/LESSON2/
 src/LESSON3.py -> snow://workspace/USER$.PUBLIC.DEFAULT$/versions/head/LESSON3/
 ```
+### Check secret exists
+gh secret list --repo emilyg888/snowpart-api-python

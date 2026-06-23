@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Debugging Snowpark DataFrames</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Debugging Snowpark DataFrames</h1>
+  <p class="subtitle">A quick reference for inspecting schema, generated SQL, query plans, and small samples.</p>
+
+  <h2>Debugging Ladder</h2>
+  <ol>
+    <li><strong>Schema</strong>: confirm column names and types with <code>df.print_schema()</code>.</li>
+    <li><strong>Plan</strong>: inspect the Snowflake query plan with <code>df.explain()</code>.</li>
+    <li><strong>SQL</strong>: inspect generated SQL with <code>df.queries</code>.</li>
+    <li><strong>Sample</strong>: run a small action with <code>df.limit(10).show()</code>.</li>
+  </ol>
+
+  <h2>Reusable Helper</h2>
+  <pre><code>def debug_dataframe(df, sample_size=10):
+    df.print_schema()
+    df.explain()
+
+    for query in df.queries["queries"]:
+        print(query)
+
+    df.limit(sample_size).show()</code></pre>
+
+  <h2>When to Use Each Tool</h2>
+  <div class="grid">
+    <div class="tile"><strong>Column error</strong><br>Start with <code>print_schema()</code>.</div>
+    <div class="tile"><strong>Unexpected SQL</strong><br>Check <code>df.queries</code>.</div>
+    <div class="tile"><strong>Performance concern</strong><br>Start with <code>explain()</code>.</div>
+    <div class="tile"><strong>Result check</strong><br>Use <code>limit(...).show()</code>.</div>
+  </div>
+
+  <h2>Testing Boundary</h2>
+  <ul>
+    <li>Builder functions should return DataFrames and avoid actions.</li>
+    <li>Debug helpers may call actions intentionally.</li>
+    <li>Unit tests should verify the builder is lazy.</li>
+    <li>Unit tests for debug helpers can use mocks to verify <code>print_schema</code>, <code>explain</code>, <code>limit</code>, and <code>show</code>.</li>
+  </ul>
+
+  <h2>Source</h2>
+  <p><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/working-with-dataframes">Snowflake: Working with DataFrames in Snowpark Python</a></p>
+</main>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0007: Debugging Snowpark DataFrames</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Debugging Snowpark DataFrames</h1>
+  <p class="subtitle">Goal: inspect a DataFrame safely before running a large query or wiring it into Streamlit.</p>
+
+  <div class="callout">
+    Debugging Snowpark means separating three questions: what columns exist, what SQL will run, and what small sample comes back.
+  </div>
+
+  <h2>The Debugging Ladder</h2>
+  <div class="grid">
+    <div class="tile"><strong>Schema</strong><br>Check column names and types before assuming downstream code can use them.</div>
+    <div class="tile"><strong>Plan</strong><br>Use <code>explain()</code> to inspect how Snowflake plans the query.</div>
+    <div class="tile"><strong>SQL</strong><br>Inspect generated SQL when Snowpark behavior is unclear.</div>
+    <div class="tile"><strong>Sample</strong><br>Use <code>limit(...).show()</code> to run a small, intentional action.</div>
+  </div>
+
+  <h2>Read This Code</h2>
+  <pre><code>def debug_orders_with_customers(df):
+    print("Schema")
+    df.print_schema()
+
+    print("Query plan")
+    df.explain()
+
+    print("Generated SQL")
+    for query in df.queries["queries"]:
+        print(query)
+
+    print("Small sample")
+    df.limit(10).show()</code></pre>
+
+  <p>This function is intentionally separate from the builder. The builder creates a lazy DataFrame. The debug helper decides when to inspect metadata and when to trigger a small action.</p>
+
+  <h2>Safe Debugging Rules</h2>
+  <ul>
+    <li>Use <code>print_schema()</code> before debugging column errors.</li>
+    <li>Use <code>explain()</code> before tuning or questioning how a query runs.</li>
+    <li>Use <code>df.queries</code> when you need to compare Snowpark code with generated SQL.</li>
+    <li>Use <code>limit(...).show()</code> instead of <code>show()</code> on a broad DataFrame.</li>
+    <li>Keep debug helpers out of unit-tested builder functions.</li>
+  </ul>
+
+  <h2>Check Yourself</h2>
+  <div class="quiz" data-answer="0">
+    <p><strong>Which method helps check column names and types?</strong></p>
+    <button><code>print_schema()</code></button>
+    <button><code>join(...)</code></button>
+    <button><code>as_(...)</code></button>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="quiz" data-answer="2">
+    <p><strong>Which expression runs a small sample action?</strong></p>
+    <button><code>df.queries</code></button>
+    <button><code>df.explain()</code></button>
+    <button><code>df.limit(10).show()</code></button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>Your Turn</h2>
+  <p>Create <code>src/LESSON7.py</code>. Reuse the join from <code>src/LESSON6.py</code>, then add a debug helper.</p>
+  <ol>
+    <li>Import <code>build_orders_with_customers</code> from <code>LESSON6</code>.</li>
+    <li>Create <code>debug_dataframe(df, sample_size=10)</code>.</li>
+    <li>Inside the helper, call <code>print_schema()</code>, <code>explain()</code>, print generated SQL from <code>df.queries["queries"]</code>, and run <code>df.limit(sample_size).show()</code>.</li>
+    <li>In <code>main()</code>, create a session, build the DataFrame, call the debug helper, and close the session.</li>
+    <li>Do not call the debug helper from inside <code>build_orders_with_customers</code>.</li>
+  </ol>
+
+  <p>Ask the agent to review <code>src/LESSON7.py</code> when you finish. The review should separate builder tests from debug-helper tests.</p>
+
+  <h2>References</h2>
+  <p>Primary source: <a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/working-with-dataframes">Snowflake: Working with DataFrames in Snowpark Python</a>. Quick reference: <a href="../reference/0007-debugging-dataframes.html">Debugging DataFrames</a>.</p>
+</main>
+<script>
+  document.querySelectorAll(".quiz").forEach((quiz) => {
+    const buttons = Array.from(quiz.querySelectorAll("button"));
+    const feedback = quiz.querySelector(".feedback");
+    const answer = Number(quiz.dataset.answer);
+
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        if (index === answer) {
+          feedback.textContent = "Correct. Inspect first, then run the smallest useful action.";
+          feedback.className = "feedback good";
+        } else {
+          feedback.textContent = "Not yet. Ask whether you need columns, SQL, plan, or rows.";
+          feedback.className = "feedback warn";
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>
