@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reference 0022: dbt Cloud Star Schema Flow</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>dbt Cloud Star Schema Flow</h1>
+  <p class="subtitle">A compact reference for converting the Lesson 16 Snowflake SQL into dbt Cloud models, tests, and jobs.</p>
+
+  <h2>Flow</h2>
+  <pre><code>source('car_sales_source', 'CAR_SALES')
+  -> stg_car_sales_base
+  -> stg_car_sales_customers
+  -> stg_car_sales_vehicles
+  -> dim_sales_persons
+  -> dim_customers
+  -> dim_vehicles
+  -> fact_vehicle_sales
+  -> bridge_vehicle_sale_extras</code></pre>
+
+  <h2>dbt Concepts</h2>
+  <div class="grid">
+    <div class="tile"><strong>source</strong><br>A declared raw table. Use it for <code>SNOWPARK_SAMPLE_DATA.PUBLIC.CAR_SALES</code>.</div>
+    <div class="tile"><strong>staging model</strong><br>A thin extraction layer that flattens JSON arrays and normalizes names.</div>
+    <div class="tile"><strong>mart model</strong><br>A business-facing dimension, fact, or bridge table.</div>
+    <div class="tile"><strong>test</strong><br>A query that returns failing rows. Zero rows means pass.</div>
+  </div>
+
+  <h2>Commands</h2>
+  <pre><code>dbt build --select source:car_sales_source+
+dbt build --select staging
+dbt build --select marts
+dbt test --select marts</code></pre>
+
+  <h2>Key Files</h2>
+  <pre><code>dbt_car_sales/dbt_project.yml
+dbt_car_sales/models/sources.yml
+dbt_car_sales/models/staging/*.sql
+dbt_car_sales/models/marts/*.sql
+dbt_car_sales/models/marts/schema.yml
+dbt_car_sales/tests/generic/unique_combination_of_columns.sql</code></pre>
+</main>
+</body>
+</html>

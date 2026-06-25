@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0015: Intro to External Functions</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Intro to External Functions</h1>
+  <p class="subtitle">Goal: understand when Snowflake should call an external HTTPS service instead of running logic inside Snowflake.</p>
+
+  <div class="callout">
+    Snowflake calls these external functions. They are SQL functions whose work happens outside Snowflake through a secure proxy and remote service.
+  </div>
+
+  <h2>The Mental Model</h2>
+  <div class="grid">
+    <div class="tile"><strong>Python UDF</strong><br>Handler code runs inside Snowflake.</div>
+    <div class="tile"><strong>External function</strong><br>Snowflake sends a request through an API integration to an external HTTPS endpoint.</div>
+    <div class="tile"><strong>Remote service</strong><br>A cloud service receives rows, runs logic, and returns results.</div>
+  </div>
+
+  <h2>Read This Shape</h2>
+  <pre><code>create or replace api integration VEHICLE_API_INTEGRATION
+  api_provider = aws_api_gateway
+  api_aws_role_arn = 'arn:aws:iam::123456789012:role/snowflake_external_function'
+  enabled = true
+  api_allowed_prefixes = ('https://example.execute-api.ap-southeast-2.amazonaws.com/prod/');
+
+create or replace external function ENRICH_MAKE(make string)
+returns variant
+api_integration = VEHICLE_API_INTEGRATION
+as 'https://example.execute-api.ap-southeast-2.amazonaws.com/prod/enrich-make';
+
+select
+  MAKE,
+  ENRICH_MAKE(MAKE) as MAKE_PROFILE
+from SNOWPARK_SAMPLE_DATA.PUBLIC.VEHICLE_PRICES;</code></pre>
+
+  <p>This is a design shape, not a copy-paste deployment. Real external functions need cloud infrastructure, security configuration, endpoint testing, and governance review.</p>
+
+  <h2>Use It Last</h2>
+  <ul>
+    <li>Use built-in SQL or Snowpark expressions when possible.</li>
+    <li>Use a Python UDF when logic can run safely inside Snowflake.</li>
+    <li>Use an external function only when the logic must call a remote system.</li>
+  </ul>
+
+  <h2>Check Yourself</h2>
+  <div class="quiz" data-answer="1">
+    <p><strong>Where does external function work run?</strong></p>
+    <button>Inside worksheet</button>
+    <button>Remote service</button>
+    <button>Local notebook</button>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="quiz" data-answer="2">
+    <p><strong>What extra concern appears first?</strong></p>
+    <button>Column alias</button>
+    <button>Local import</button>
+    <button>Network security</button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>Your Turn</h2>
+  <p>Create <code>docs/LESSON15-external-function-design.md</code>. Do not deploy the external function yet.</p>
+  <ol>
+    <li>Draw the path: SQL query, external function, API integration, proxy, remote service.</li>
+    <li>Write the proposed input and output contract for <code>ENRICH_MAKE</code>.</li>
+    <li>List the security objects that would be required.</li>
+    <li>Decide whether a normal Python UDF would be enough.</li>
+    <li>Ask the agent to review the design before creating cloud infrastructure.</li>
+  </ol>
+
+  <p>Ask the agent to review the design before implementation. The review should challenge whether the external call is actually necessary.</p>
+
+  <h2>References</h2>
+  <p>Primary source: <a href="https://docs.snowflake.com/en/sql-reference/external-functions-introduction">Snowflake: Introduction to external functions</a>. Quick reference: <a href="../reference/0015-external-functions.html">External Functions</a>. Previous lesson: <a href="0014-intro-to-python-udfs.html">Intro to Python UDFs</a>.</p>
+</main>
+<script>
+  document.querySelectorAll(".quiz").forEach((quiz) => {
+    const buttons = Array.from(quiz.querySelectorAll("button"));
+    const feedback = quiz.querySelector(".feedback");
+    const answer = Number(quiz.dataset.answer);
+
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        if (index === answer) {
+          feedback.textContent = "Correct. External functions add a network boundary.";
+          feedback.className = "feedback good";
+        } else {
+          feedback.textContent = "Not yet. Compare where normal UDF code runs with where this logic runs.";
+          feedback.className = "feedback warn";
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

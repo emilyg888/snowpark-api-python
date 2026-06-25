@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Python Stored Procedures</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Python Stored Procedures</h1>
+  <p class="subtitle">Quick reference for moving Snowpark workflow code into a callable Snowflake object.</p>
+
+  <h2>Use For</h2>
+  <ul>
+    <li>Pipeline steps and refresh commands.</li>
+    <li>Controlled table writes.</li>
+    <li>Work that should be called by SQL or scheduled later by a task.</li>
+  </ul>
+
+  <h2>Core Shape</h2>
+  <pre><code>create or replace procedure NAME()
+returns string
+language python
+runtime_version = '3.12'
+packages = ('snowflake-snowpark-python')
+handler = 'handler_name'
+as
+$$
+def handler_name(session):
+    ...
+    return "done"
+$$;
+
+call NAME();</code></pre>
+
+  <h2>Boundary Rule</h2>
+  <p>A stored procedure is a command boundary. It is appropriate for table-changing work when the target table and write mode are explicit.</p>
+
+  <h2>Source</h2>
+  <p><a href="https://docs.snowflake.com/en/developer-guide/stored-procedure/python/procedure-python-overview">Snowflake: Writing stored procedures with SQL and Python</a></p>
+</main>
+</body>
+</html>

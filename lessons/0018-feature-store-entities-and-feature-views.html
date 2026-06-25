@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0018: Feature Store Entities and Feature Views</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Feature Store Entities and Feature Views</h1>
+  <p class="subtitle">Goal: define reusable mortgage features with a clear entity and timestamp.</p>
+
+  <div class="callout">
+    In Snowflake Feature Store, an entity is the business subject of features. A feature view is the DataFrame pipeline that computes related features for that entity.
+  </div>
+
+  <h2>The Mental Model</h2>
+  <div class="grid">
+    <div class="tile"><strong>Feature store</strong><br>A schema-backed feature catalog created through <code>FeatureStore(...)</code>.</div>
+    <div class="tile"><strong>Entity</strong><br>The subject and join key, such as <code>LOAN_ENTITY</code> with <code>LOAN_ID</code>.</div>
+    <div class="tile"><strong>Feature view</strong><br>A registered DataFrame with features, timestamp, refresh cadence, and descriptions.</div>
+  </div>
+
+  <h2>Read This Code</h2>
+  <pre><code>from snowflake.ml.feature_store import FeatureStore, FeatureView, Entity, CreationMode
+
+fs = FeatureStore(
+    session=session,
+    database=DB,
+    name=SCHEMA,
+    default_warehouse=COMPUTE_WAREHOUSE,
+    creation_mode=CreationMode.CREATE_IF_NOT_EXIST,
+)
+
+loan_entity = Entity(
+    name="LOAN_ENTITY",
+    join_keys=["LOAN_ID"],
+    desc="Features defined on a per loan level",
+)
+fs.register_entity(loan_entity)
+
+feature_df = df.select(["LOAN_ID", "TIMESTAMP", "MONTH", "DAY_OF_YEAR",
+                        "DOTW", "LOAN_AMOUNT", "INCOME", "INCOME_LOAN_RATIO"])
+
+loan_fv = FeatureView(
+    name="Mortgage_Feature_View",
+    entities=[loan_entity],
+    feature_df=feature_df,
+    timestamp_col="TIMESTAMP",
+    refresh_freq="1 day",
+)
+
+fs.register_feature_view(loan_fv, version=VERSION_NUM, overwrite=True)</code></pre>
+
+  <p>The lab first engineers timestamp, calendar, loan amount, income, and ratio columns, then registers them as reusable loan-level features.</p>
+
+  <h2>Check Yourself</h2>
+  <div class="quiz" data-answer="1">
+    <p><strong>What is the entity join key?</strong></p>
+    <button><code>TIMESTAMP</code></button>
+    <button><code>LOAN_ID</code></button>
+    <button><code>MONTH</code></button>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="quiz" data-answer="2">
+    <p><strong>What does a feature view store?</strong></p>
+    <button>Model version</button>
+    <button>Notebook state</button>
+    <button>Feature pipeline</button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>Your Turn</h2>
+  <p>Create <code>src/LESSON18.py</code>. Register the mortgage entity and feature view.</p>
+  <ol>
+    <li>Build engineered columns with Snowpark expressions.</li>
+    <li>Create or retrieve <code>LOAN_ENTITY</code>.</li>
+    <li>Create <code>Mortgage_Feature_View</code> with timestamp <code>TIMESTAMP</code>.</li>
+    <li>Attach descriptions for each engineered feature.</li>
+    <li>Register the feature view with <code>VERSION_NUM</code>.</li>
+  </ol>
+
+  <p>Ask the agent to review the feature grain and timestamp choice before registering.</p>
+
+  <h2>References</h2>
+  <p>Primary source: <a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview">Snowflake Feature Store</a>. Quick reference: <a href="../reference/0018-feature-store.html">Feature Store</a>.</p>
+</main>
+<script>
+  document.querySelectorAll(".quiz").forEach((quiz) => {
+    const buttons = Array.from(quiz.querySelectorAll("button"));
+    const feedback = quiz.querySelector(".feedback");
+    const answer = Number(quiz.dataset.answer);
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        if (index === answer) {
+          feedback.textContent = "Correct. Feature grain starts with the entity.";
+          feedback.className = "feedback good";
+        } else {
+          feedback.textContent = "Not yet. Ask what one feature row describes.";
+          feedback.className = "feedback warn";
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0026: Deploying the dbt Cloud Flow</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Deploying the dbt Cloud Flow</h1>
+  <p class="subtitle">Goal: turn the car-sales dbt models into a repeatable dbt Cloud job.</p>
+
+  <div class="callout">
+    In dbt Cloud, development proves the DAG works. A deployment job makes it repeatable with run history, logs, and artifacts.
+  </div>
+
+  <h2>Recommended Job</h2>
+  <pre><code>Job name: Build car sales mart
+Environment: Production
+Commands:
+  dbt build --select source:car_sales_source+
+Schedule:
+  Manual first, then scheduled when stable</code></pre>
+
+  <h2>What The Job Builds</h2>
+  <pre><code>SNOWPARK_SAMPLE_DATA.STAGING.*
+SNOWPARK_SAMPLE_DATA.MART.DIM_SALES_PERSONS
+SNOWPARK_SAMPLE_DATA.MART.DIM_CUSTOMERS
+SNOWPARK_SAMPLE_DATA.MART.DIM_VEHICLES
+SNOWPARK_SAMPLE_DATA.MART.FACT_VEHICLE_SALES
+SNOWPARK_SAMPLE_DATA.MART.BRIDGE_VEHICLE_SALE_EXTRAS</code></pre>
+
+  <h2>Your Turn</h2>
+  <ol>
+    <li>Create a dbt Cloud deployment environment pointed at Snowflake.</li>
+    <li>Create a job named <code>Build car sales mart</code>.</li>
+    <li>Use <code>dbt build --select source:car_sales_source+</code>.</li>
+    <li>Run it manually and inspect failed tests before scheduling it.</li>
+  </ol>
+
+  <h2>Check Yourself</h2>
+  <div class="quiz" data-answer="0">
+    <p><strong>Why use <code>dbt build</code> instead of only <code>dbt run</code>?</strong></p>
+    <button>It runs tests too</button>
+    <button>It skips models</button>
+    <button>It changes SQL</button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>References</h2>
+  <p>Primary reading: <a href="https://docs.getdbt.com/docs/deploy/deploy-jobs">dbt deploy jobs</a>. Quick reference: <a href="../reference/0022-dbt-cloud-star-schema-flow.html">dbt Cloud Star Schema Flow</a>.</p>
+</main>
+<script>
+document.querySelectorAll(".quiz").forEach((quiz)=>{const buttons=[...quiz.querySelectorAll("button")];const feedback=quiz.querySelector(".feedback");const answer=Number(quiz.dataset.answer);buttons.forEach((button,index)=>button.addEventListener("click",()=>{feedback.textContent=index===answer?"Correct. dbt build runs models and their tests in DAG order.":"Not yet. Think about validation, not only object creation.";feedback.className=index===answer?"feedback good":"feedback warn";}));});
+</script>
+</body>
+</html>

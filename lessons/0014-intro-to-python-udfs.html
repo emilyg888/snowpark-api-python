@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0014: Intro to Python UDFs</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Intro to Python UDFs</h1>
+  <p class="subtitle">Goal: use a Python UDF for small row-level logic that SQL and Snowpark can call.</p>
+
+  <div class="callout">
+    A UDF is for expression logic: one row supplies inputs and one value comes back. It is not the right tool for writing tables or running a pipeline.
+  </div>
+
+  <h2>The Mental Model</h2>
+  <div class="grid">
+    <div class="tile"><strong>Input</strong><br>SQL passes scalar values, such as one <code>EXTRA</code> string.</div>
+    <div class="tile"><strong>Handler</strong><br>Python code transforms that one value.</div>
+    <div class="tile"><strong>Output</strong><br>The UDF returns one scalar value that can be used in <code>select</code> or <code>where</code>.</div>
+  </div>
+
+  <h2>Read This Code</h2>
+  <pre><code>create or replace function NORMALIZE_EXTRA(extra string)
+returns string
+language python
+runtime_version = '3.12'
+handler = 'normalize_extra'
+as
+$$
+def normalize_extra(extra):
+    if extra is None:
+        return None
+    return extra.strip().lower().replace(" ", "_")
+$$;
+
+select
+  EXTRA,
+  NORMALIZE_EXTRA(EXTRA) as NORMALIZED_EXTRA
+from SNOWPARK_SAMPLE_DATA.PUBLIC.VEHICLE_EXTRAS;</code></pre>
+
+  <p>The UDF does not know about DataFrames. Snowflake calls the Python handler for values passed by SQL expressions.</p>
+
+  <h2>Stored Procedure vs UDF</h2>
+  <div class="grid">
+    <div class="tile"><strong>Procedure</strong><br>Use for commands, workflows, table refreshes, and multi-step Snowpark work.</div>
+    <div class="tile"><strong>UDF</strong><br>Use for reusable row-level calculations inside SQL expressions.</div>
+  </div>
+
+  <h2>Check Yourself</h2>
+  <div class="quiz" data-answer="0">
+    <p><strong>What should a scalar UDF return?</strong></p>
+    <button>One value</button>
+    <button>Many tables</button>
+    <button>Open session</button>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="quiz" data-answer="2">
+    <p><strong>Which task fits a UDF best?</strong></p>
+    <button>Refresh table</button>
+    <button>Deploy workflow</button>
+    <button>Normalize string</button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>Your Turn</h2>
+  <p>Create <code>sql/LESSON14.sql</code>. Add a UDF that normalizes vehicle extras.</p>
+  <ol>
+    <li>Create <code>NORMALIZE_EXTRA(extra string)</code>.</li>
+    <li>Return <code>None</code> when input is null.</li>
+    <li>Trim whitespace, lowercase the value, and replace spaces with underscores.</li>
+    <li>Call it in a <code>select</code> against <code>VEHICLE_EXTRAS</code>.</li>
+    <li>Explain why this is a UDF, not a stored procedure.</li>
+  </ol>
+
+  <p>Ask the agent to review <code>sql/LESSON14.sql</code> when you finish. The review should check null handling and whether the logic really belongs in a scalar UDF.</p>
+
+  <h2>References</h2>
+  <p>Primary source: <a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-creating">Snowflake: Creating Python UDFs</a>. Quick reference: <a href="../reference/0014-python-udfs.html">Python UDFs</a>. Previous lesson: <a href="0013-intro-to-python-stored-procedures.html">Intro to Python Stored Procedures</a>.</p>
+</main>
+<script>
+  document.querySelectorAll(".quiz").forEach((quiz) => {
+    const buttons = Array.from(quiz.querySelectorAll("button"));
+    const feedback = quiz.querySelector(".feedback");
+    const answer = Number(quiz.dataset.answer);
+
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        if (index === answer) {
+          feedback.textContent = "Correct. UDFs are expression-level tools.";
+          feedback.className = "feedback good";
+        } else {
+          feedback.textContent = "Not yet. Ask whether the code returns one value or runs a workflow.";
+          feedback.className = "feedback warn";
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

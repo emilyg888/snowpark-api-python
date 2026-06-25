@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Snowpark Result Boundaries</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Snowpark Result Boundaries</h1>
+  <p class="subtitle">A quick reference for deciding when a lazy DataFrame becomes local output.</p>
+
+  <h2>Rule</h2>
+  <p>Transform broadly in Snowflake. Return only small, intentional results to Python, pandas, notebooks, or Streamlit.</p>
+
+  <h2>Common Actions</h2>
+  <div class="grid">
+    <div class="tile"><strong><code>show()</code></strong><br>Execute and print a preview for humans.</div>
+    <div class="tile"><strong><code>collect()</code></strong><br>Execute and return Snowpark <code>Row</code> objects.</div>
+    <div class="tile"><strong><code>to_pandas()</code></strong><br>Execute and return a local pandas DataFrame.</div>
+    <div class="tile"><strong><code>to_pandas_batches()</code></strong><br>Execute and stream pandas batches.</div>
+  </div>
+
+  <h2>Safe Pattern</h2>
+  <pre><code>summary = (
+    df
+    .filter(...)
+    .group_by(...)
+    .agg(...)
+)
+
+summary.limit(20).show()
+chart_df = summary.to_pandas()</code></pre>
+
+  <h2>Source</h2>
+  <p><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/working-with-dataframes">Snowflake: Working with DataFrames in Snowpark Python</a></p>
+</main>
+</body>
+</html>

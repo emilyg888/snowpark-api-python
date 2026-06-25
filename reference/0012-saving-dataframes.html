@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Saving Snowpark DataFrames</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Saving Snowpark DataFrames</h1>
+  <p class="subtitle">Quick reference for materializing DataFrames as Snowflake tables.</p>
+
+  <h2>Core Pattern</h2>
+  <pre><code>df.write.save_as_table("DATABASE.SCHEMA.TABLE_NAME", mode="overwrite")</code></pre>
+
+  <h2>Mode Cheatsheet</h2>
+  <div class="grid">
+    <div class="tile"><strong><code>overwrite</code></strong><br>Replace the target table.</div>
+    <div class="tile"><strong><code>append</code></strong><br>Add rows to the target table.</div>
+    <div class="tile"><strong><code>errorifexists</code></strong><br>Fail if the target table exists.</div>
+    <div class="tile"><strong><code>ignore</code></strong><br>Skip the write if the target table exists.</div>
+  </div>
+
+  <h2>Boundary Rule</h2>
+  <p>Keep writers out of reusable builder functions. A write is a Snowflake state change, so name it and test it separately.</p>
+
+  <h2>Source</h2>
+  <p><a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/snowpark/api/snowflake.snowpark.DataFrameWriter.save_as_table">Snowflake DataFrameWriter.save_as_table reference</a></p>
+</main>
+</body>
+</html>

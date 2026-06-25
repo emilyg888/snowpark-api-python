@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0025: Building Facts and Bridges in dbt</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Building Facts and Bridges in dbt</h1>
+  <p class="subtitle">Goal: build the fact table and extras bridge while preserving the intended customer x vehicle grain.</p>
+
+  <div class="callout">
+    Your fact grain is deliberate: one row per source sale, customer element, and vehicle element combination.
+  </div>
+
+  <h2>Fact Key</h2>
+  <pre><code>md5(
+  base.src::string || '|' ||
+  customer.customer_index::string || '|' ||
+  vehicle.vehicle_index::string
+) as sale_key</code></pre>
+
+  <p>The key includes both indexes because one source sale can create multiple fact rows.</p>
+
+  <h2>Bridge Grain</h2>
+  <pre><code>one row = sale_key + extra</code></pre>
+
+  <p>The bridge model flattens <code>vehicle.extras</code> after the customer and vehicle grain has already been established.</p>
+
+  <h2>Your Turn</h2>
+  <ol>
+    <li>Open <code>fact_vehicle_sales.sql</code> and find both joins to staging models.</li>
+    <li>Open <code>bridge_vehicle_sale_extras.sql</code> and find the nested <code>flatten</code>.</li>
+    <li>Run <code>dbt build --select fact_vehicle_sales bridge_vehicle_sale_extras</code>.</li>
+  </ol>
+
+  <h2>Check Yourself</h2>
+  <div class="quiz" data-answer="2">
+    <p><strong>If one source sale has 2 customers and 2 vehicles, how many fact rows should dbt build?</strong></p>
+    <button>Two rows</button>
+    <button>Three rows</button>
+    <button>Four rows</button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>References</h2>
+  <p>Primary reading: <a href="https://docs.getdbt.com/reference/dbt-jinja-functions/ref">dbt ref function</a>. Previous lesson: <a href="0024-building-dimensions-with-dbt-tests.html">Building Dimensions with dbt Tests</a>.</p>
+</main>
+<script>
+document.querySelectorAll(".quiz").forEach((quiz)=>{const buttons=[...quiz.querySelectorAll("button")];const feedback=quiz.querySelector(".feedback");const answer=Number(quiz.dataset.answer);buttons.forEach((button,index)=>button.addEventListener("click",()=>{feedback.textContent=index===answer?"Correct. Two customers times two vehicles equals four combinations.":"Not yet. Multiply customer elements by vehicle elements.";feedback.className=index===answer?"feedback good":"feedback warn";}));});
+</script>
+</body>
+</html>

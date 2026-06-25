@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Python UDFs</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Python UDFs</h1>
+  <p class="subtitle">Quick reference for Python functions called from SQL expressions.</p>
+
+  <h2>Use For</h2>
+  <ul>
+    <li>Scalar transformations.</li>
+    <li>Reusable row-level business rules.</li>
+    <li>Logic that returns one value for each input row.</li>
+  </ul>
+
+  <h2>Core Shape</h2>
+  <pre><code>create or replace function NAME(input string)
+returns string
+language python
+runtime_version = '3.12'
+handler = 'handler_name'
+as
+$$
+def handler_name(input):
+    return input
+$$;</code></pre>
+
+  <h2>Boundary Rule</h2>
+  <p>Use a UDF for expression logic. Use a stored procedure when the job needs to write tables or orchestrate multiple steps.</p>
+
+  <h2>Source</h2>
+  <p><a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-creating">Snowflake: Creating Python UDFs</a></p>
+</main>
+</body>
+</html>

@@ -1,0 +1,39 @@
+version: 2
+
+models:
+  - name: stg_car_sales_base
+    description: Source rows with top-level sale fields extracted from the JSON payload.
+    columns:
+      - name: SOURCE_SALE_KEY
+        data_tests:
+          - not_null
+          - unique
+      - name: SRC
+        data_tests:
+          - not_null
+
+  - name: stg_car_sales_customers
+    description: One row per source sale and customer array element.
+    columns:
+      - name: SOURCE_SALE_KEY
+        data_tests:
+          - not_null
+      - name: CUSTOMER_INDEX
+        data_tests:
+          - not_null
+      - name: CUSTOMER_KEY
+        data_tests:
+          - not_null
+
+  - name: stg_car_sales_vehicles
+    description: One row per source sale and vehicle array element.
+    columns:
+      - name: SOURCE_SALE_KEY
+        data_tests:
+          - not_null
+      - name: VEHICLE_INDEX
+        data_tests:
+          - not_null
+      - name: VEHICLE_KEY
+        data_tests:
+          - not_null

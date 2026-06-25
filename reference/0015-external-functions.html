@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>External Functions</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>External Functions</h1>
+  <p class="subtitle">Quick reference for SQL functions backed by remote HTTPS services.</p>
+
+  <h2>Call Path</h2>
+  <pre><code>SQL query
+  -> external function
+  -> API integration
+  -> cloud proxy
+  -> remote service
+  -> result returned to Snowflake</code></pre>
+
+  <h2>Use Only When</h2>
+  <ul>
+    <li>The logic must call a system outside Snowflake.</li>
+    <li>A normal SQL expression, Snowpark expression, or Python UDF is not enough.</li>
+    <li>The team can own network security, service reliability, cost, and latency.</li>
+  </ul>
+
+  <h2>Boundary Rule</h2>
+  <p>An external function adds a network boundary. Design and review the contract before creating infrastructure.</p>
+
+  <h2>Source</h2>
+  <p><a href="https://docs.snowflake.com/en/sql-reference/external-functions-introduction">Snowflake: Introduction to external functions</a></p>
+</main>
+</body>
+</html>

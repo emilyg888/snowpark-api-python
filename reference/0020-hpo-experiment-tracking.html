@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>HPO and Experiment Tracking</title><link rel="stylesheet" href="../assets/course.css"></head>
+<body><main>
+  <h1>HPO and Experiment Tracking</h1>
+  <p class="subtitle">Quick reference for tuning model hyperparameters and recording results.</p>
+  <h2>Objects</h2>
+  <div class="grid">
+    <div class="tile"><strong>DataConnector</strong><br>Wraps train/test Snowpark DataFrames for tuning.</div>
+    <div class="tile"><strong>Tuner</strong><br>Runs trials across a search space.</div>
+    <div class="tile"><strong>ExperimentTracking</strong><br>Records parameters and metrics for comparison.</div>
+  </div>
+  <h2>Rule</h2>
+  <p>Choose a target metric before tuning. In the lab, <code>F1_Test</code> is the metric to maximize.</p>
+</main></body></html>

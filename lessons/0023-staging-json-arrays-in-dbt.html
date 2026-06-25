@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0023: Staging JSON Arrays in dbt</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Staging JSON Arrays in dbt</h1>
+  <p class="subtitle">Goal: flatten <code>customer</code> and <code>vehicle</code> arrays once in staging models, then reuse them in marts.</p>
+
+  <div class="callout">
+    Staging models are where raw shape becomes reliable columns. For <code>CAR_SALES</code>, that means extracting top-level fields and flattening arrays.
+  </div>
+
+  <h2>The Three Staging Models</h2>
+  <div class="grid">
+    <div class="tile"><strong><code>stg_car_sales_base</code></strong><br>One row per raw JSON document.</div>
+    <div class="tile"><strong><code>stg_car_sales_customers</code></strong><br>One row per sale and customer index.</div>
+    <div class="tile"><strong><code>stg_car_sales_vehicles</code></strong><br>One row per sale and vehicle index.</div>
+  </div>
+
+  <h2>The Pattern</h2>
+  <pre><code>from {{ ref('stg_car_sales_base') }} base,
+  lateral flatten(input => base.src:vehicle) vehicle</code></pre>
+
+  <p>Keep the array index. It becomes part of the fact grain when you intentionally combine customers and vehicles.</p>
+
+  <h2>Your Turn</h2>
+  <ol>
+    <li>Open <code>dbt_car_sales/models/staging/stg_car_sales_customers.sql</code>.</li>
+    <li>Find <code>customer.index</code> and explain why it is kept.</li>
+    <li>Open <code>stg_car_sales_vehicles.sql</code> and find <code>vehicle.index</code>.</li>
+    <li>Run <code>dbt build --select staging</code> in dbt Cloud.</li>
+  </ol>
+
+  <h2>Check Yourself</h2>
+  <div class="quiz" data-answer="2">
+    <p><strong>Why keep array indexes in staging?</strong></p>
+    <button>To hide raw JSON</button>
+    <button>To sort dashboards</button>
+    <button>To preserve grain</button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>References</h2>
+  <p>Primary reading: <a href="https://docs.getdbt.com/docs/build/jinja-macros">dbt Jinja and models</a>. Previous lesson: <a href="0022-starting-a-dbt-cloud-project-for-car-sales.html">Starting a dbt Cloud Project</a>.</p>
+</main>
+<script>
+document.querySelectorAll(".quiz").forEach((quiz)=>{const buttons=[...quiz.querySelectorAll("button")];const feedback=quiz.querySelector(".feedback");const answer=Number(quiz.dataset.answer);buttons.forEach((button,index)=>button.addEventListener("click",()=>{feedback.textContent=index===answer?"Correct. The index identifies which array element became the row.":"Not yet. Think about distinguishing repeated nested elements.";feedback.className=index===answer?"feedback good":"feedback warn";}));});
+</script>
+</body>
+</html>

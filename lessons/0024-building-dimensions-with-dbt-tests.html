@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0024: Building Dimensions with dbt Tests</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Building Dimensions with dbt Tests</h1>
+  <p class="subtitle">Goal: create unique dimension tables and prove their keys are usable.</p>
+
+  <div class="callout">
+    In dbt, a model is just a <code>select</code>. dbt wraps that select and materializes it as a table or view based on project configuration.
+  </div>
+
+  <h2>Dimension Models</h2>
+  <pre><code>models/marts/dim_sales_persons.sql
+models/marts/dim_customers.sql
+models/marts/dim_vehicles.sql</code></pre>
+
+  <p>Each dimension uses a deterministic hash key and one row per key:</p>
+  <pre><code>qualify row_number() over (
+  partition by customer_key
+  order by customer_name, customer_phone, customer_address
+) = 1</code></pre>
+
+  <h2>Tests</h2>
+  <pre><code>columns:
+  - name: CUSTOMER_KEY
+    data_tests:
+      - not_null
+      - unique</code></pre>
+
+  <h2>Your Turn</h2>
+  <ol>
+    <li>Open <code>dbt_car_sales/models/marts/schema.yml</code>.</li>
+    <li>Find the <code>unique</code> tests for the three dimension keys.</li>
+    <li>Run <code>dbt build --select dim_customers dim_vehicles dim_sales_persons</code>.</li>
+  </ol>
+
+  <h2>Check Yourself</h2>
+  <div class="quiz" data-answer="1">
+    <p><strong>What should a unique dimension-key test return when it passes?</strong></p>
+    <button>One row</button>
+    <button>Zero rows</button>
+    <button>All rows</button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>References</h2>
+  <p>Primary reading: <a href="https://docs.getdbt.com/docs/build/data-tests">dbt data tests</a>. Quick reference: <a href="../reference/0022-dbt-cloud-star-schema-flow.html">dbt Cloud Star Schema Flow</a>.</p>
+</main>
+<script>
+document.querySelectorAll(".quiz").forEach((quiz)=>{const buttons=[...quiz.querySelectorAll("button")];const feedback=quiz.querySelector(".feedback");const answer=Number(quiz.dataset.answer);buttons.forEach((button,index)=>button.addEventListener("click",()=>{feedback.textContent=index===answer?"Correct. dbt tests fail by returning rows.":"Not yet. A dbt data test is a query for bad records.";feedback.className=index===answer?"feedback good":"feedback warn";}));});
+</script>
+</body>
+</html>

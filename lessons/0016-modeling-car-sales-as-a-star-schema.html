@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0016: Modeling Car Sales as a Star Schema</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Modeling Car Sales as a Star Schema</h1>
+  <p class="subtitle">Goal: turn the nested <code>CAR_SALES</code> source into dimension tables and fact tables for analysis.</p>
+
+  <div class="callout">
+    A star schema separates descriptive context into dimensions and measurable events into facts. The first design decision is the fact grain: exactly what one fact row means.
+  </div>
+
+  <h2>The Grain</h2>
+  <p>For <code>CAR_SALES</code>, use this transaction grain:</p>
+  <pre><code>One row in FACT_VEHICLE_SALES = one source sale + customer + vehicle combination.</code></pre>
+
+  <p>The <code>extras</code> array has a different grain because one sale can have many extras. Keep it in a separate bridge-style fact table:</p>
+  <pre><code>One row in BRIDGE_VEHICLE_SALE_EXTRAS = one fact sale + extra combination.</code></pre>
+
+  <h2>Star Model</h2>
+  <div class="grid">
+    <div class="tile"><strong><code>DIM_SALES_PERSONS</code></strong><br>Salesperson id and name from <code>SRC:salesperson</code>.</div>
+    <div class="tile"><strong><code>DIM_CUSTOMERS</code></strong><br>Customer name, phone, and address from flattened <code>SRC:customer</code>.</div>
+    <div class="tile"><strong><code>DIM_VEHICLES</code></strong><br>Vehicle make, model, and year from flattened <code>SRC:vehicle</code>.</div>
+    <div class="tile"><strong><code>FACT_VEHICLE_SALES</code></strong><br>Sale date, dealership, dimension keys, sale price, and vehicle count.</div>
+    <div class="tile"><strong><code>BRIDGE_VEHICLE_SALE_EXTRAS</code></strong><br>Sale key plus one extra value per row.</div>
+  </div>
+
+  <h2>Read This Code</h2>
+  <pre><code>create or replace table DIM_SALES_PERSONS as
+select distinct
+  SRC:salesperson.id::string as SALES_PERSON_ID,
+  SRC:salesperson.name::string as SALES_PERSON_NAME
+from SNOWPARK_SAMPLE_DATA.PUBLIC.CAR_SALES;
+
+create or replace table DIM_VEHICLES as
+select
+  md5(
+    upper(coalesce(car.value:make::string, '')) || '|' ||
+    upper(coalesce(car.value:model::string, '')) || '|' ||
+    coalesce(car.value:year::string, '')
+  ) as VEHICLE_KEY,
+  car.value:make::string as MAKE,
+  car.value:model::string as MODEL,
+  car.value:year::number as YEAR
+from SNOWPARK_SAMPLE_DATA.PUBLIC.CAR_SALES cs,
+  lateral flatten(input => cs.SRC:vehicle) car
+where car.value:make is not null
+qualify row_number() over (
+  partition by VEHICLE_KEY
+  order by MAKE, MODEL, YEAR
+) = 1;
+
+create or replace table FACT_VEHICLE_SALES as
+select
+  md5(cs.SRC::string || '|' || customer.index::string || '|' || car.index::string) as SALE_KEY,
+  cs.SRC:date::date as SALE_DATE,
+  cs.SRC:dealership::string as DEALERSHIP,
+  md5(
+    upper(coalesce(customer.value:name::string, '')) || '|' ||
+    coalesce(customer.value:phone::string, '') || '|' ||
+    upper(coalesce(customer.value:address::string, ''))
+  ) as CUSTOMER_KEY,
+  md5(
+    upper(coalesce(car.value:make::string, '')) || '|' ||
+    upper(coalesce(car.value:model::string, '')) || '|' ||
+    coalesce(car.value:year::string, '')
+  ) as VEHICLE_KEY,
+  car.value:price::number as SALE_PRICE,
+  1 as VEHICLE_COUNT
+from SNOWPARK_SAMPLE_DATA.PUBLIC.CAR_SALES cs,
+  lateral flatten(input => cs.SRC:customer) customer,
+  lateral flatten(input => cs.SRC:vehicle) car;</code></pre>
+
+  <p>That pattern creates small descriptive dimensions and a fact table that stores keys plus measures. The sale price belongs in the fact table because it is a transaction measure, not a vehicle description.</p>
+
+  <h2>Check Yourself</h2>
+  <div class="quiz" data-answer="1">
+    <p><strong>What should one <code>FACT_VEHICLE_SALES</code> row mean?</strong></p>
+    <button>One vehicle make</button>
+    <button>One sale-customer-vehicle combination</button>
+    <button>One customer name</button>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="quiz" data-answer="2">
+    <p><strong>Where should sale price live?</strong></p>
+    <button>Customer dimension</button>
+    <button>Vehicle dimension</button>
+    <button>Vehicle sales fact</button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>Your Turn</h2>
+  <p>Run and review <code>sql/LESSON16.sql</code>.</p>
+  <ol>
+    <li>Create <code>DIM_SALES_PERSONS</code>.</li>
+    <li>Create <code>DIM_CUSTOMERS</code>.</li>
+    <li>Create <code>DIM_VEHICLES</code>.</li>
+    <li>Create <code>FACT_VEHICLE_SALES</code>.</li>
+    <li>Create <code>BRIDGE_VEHICLE_SALE_EXTRAS</code> by flattening the extras array.</li>
+    <li>Run the validation queries at the bottom of the script.</li>
+  </ol>
+
+  <p>Ask the agent to review the query results. The review should check grain first, then keys, then measures.</p>
+
+  <h2>References</h2>
+  <p>Primary reading: <a href="https://en.wikipedia.org/wiki/Dimensional_modeling">Dimensional modeling overview</a> and <a href="https://en.wikipedia.org/wiki/Star_schema">Star schema overview</a>. Quick reference: <a href="../reference/0016-star-schema-car-sales.html">Car Sales Star Schema</a>. Previous lesson: <a href="0012-saving-dataframes-as-tables.html">Saving DataFrames as Tables</a>.</p>
+</main>
+<script>
+  document.querySelectorAll(".quiz").forEach((quiz) => {
+    const buttons = Array.from(quiz.querySelectorAll("button"));
+    const feedback = quiz.querySelector(".feedback");
+    const answer = Number(quiz.dataset.answer);
+
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        if (index === answer) {
+          feedback.textContent = "Correct. Grain controls the whole model.";
+          feedback.className = "feedback good";
+        } else {
+          feedback.textContent = "Not yet. Ask whether the column describes context or measures an event.";
+          feedback.className = "feedback warn";
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0020: Hyperparameter Tuning and Experiment Tracking</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Hyperparameter Tuning and Experiment Tracking</h1>
+  <p class="subtitle">Goal: compare many model configurations and record the parameters and metrics that explain the result.</p>
+
+  <div class="callout">
+    The lab uses Snowflake ML tuning to run multiple XGBoost trials, then logs trial parameters and metrics to experiment tracking.
+  </div>
+
+  <h2>The Mental Model</h2>
+  <div class="grid">
+    <div class="tile"><strong>Search space</strong><br>The allowed ranges for <code>max_depth</code>, <code>learning_rate</code>, and <code>n_estimators</code>.</div>
+    <div class="tile"><strong>Trial</strong><br>One model training run with one generated hyperparameter set.</div>
+    <div class="tile"><strong>Metric</strong><br>The score used to choose the best trial, such as <code>F1_Test</code>.</div>
+    <div class="tile"><strong>Experiment</strong><br>The record of parameters and metrics across runs.</div>
+  </div>
+
+  <h2>Read This Code</h2>
+  <pre><code>dataset_map = {
+    "x_train": DataConnector.from_dataframe(train.drop("MORTGAGERESPONSE", "TIMESTAMP", "LOAN_ID")),
+    "y_train": DataConnector.from_dataframe(train.select("MORTGAGERESPONSE")),
+    "x_test": DataConnector.from_dataframe(test.drop("MORTGAGERESPONSE", "TIMESTAMP", "LOAN_ID")),
+    "y_test": DataConnector.from_dataframe(test.select("MORTGAGERESPONSE")),
+}
+
+def train_func():
+    tuner_context = get_tuner_context()
+    config = tuner_context.get_hyper_params()
+    dm = tuner_context.get_dataset_map()
+    model = XGBClassifier(**config, random_state=42)
+    ...
+    tuner_context.report(metrics=metrics_to_log, model=model)
+
+tuner = tune.Tuner(
+    train_func=train_func,
+    search_space={
+        "max_depth": tune.randint(1, 30),
+        "learning_rate": tune.uniform(0.01, 0.5),
+        "n_estimators": tune.randint(50, 150),
+    },
+    tuner_config=tune.TunerConfig(metric="F1_Test", mode="max", num_trials=8),
+)
+
+tuner_results = tuner.run(dataset_map=dataset_map)</code></pre>
+
+  <h2>Check Yourself</h2>
+  <div class="quiz" data-answer="1">
+    <p><strong>What is one tuner trial?</strong></p>
+    <button>One schema</button>
+    <button>One model run</button>
+    <button>One table tag</button>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="quiz" data-answer="2">
+    <p><strong>Which metric chooses the winner?</strong></p>
+    <button><code>LOAN_ID</code></button>
+    <button><code>VERSION_NUM</code></button>
+    <button><code>F1_Test</code></button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>Your Turn</h2>
+  <p>Create <code>src/LESSON20.py</code>. Run a small HPO experiment.</p>
+  <ol>
+    <li>Create a <code>dataset_map</code> from Snowpark train/test DataFrames.</li>
+    <li>Define <code>train_func()</code> using <code>get_tuner_context()</code>.</li>
+    <li>Report train and test metrics from each trial.</li>
+    <li>Run a small tuner with two or three trials first.</li>
+    <li>Log each trial's parameters and metrics with <code>ExperimentTracking</code>.</li>
+  </ol>
+
+  <p>Ask the agent to review the search space before running a larger tuning job.</p>
+
+  <h2>References</h2>
+  <p>Primary source: <a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/modeling">Snowflake ML modeling</a>. Quick reference: <a href="../reference/0020-hpo-experiment-tracking.html">HPO and Experiments</a>.</p>
+</main>
+<script>
+  document.querySelectorAll(".quiz").forEach((quiz) => {
+    const buttons = Array.from(quiz.querySelectorAll("button"));
+    const feedback = quiz.querySelector(".feedback");
+    const answer = Number(quiz.dataset.answer);
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        if (index === answer) {
+          feedback.textContent = "Correct. HPO is comparison under a controlled metric.";
+          feedback.className = "feedback good";
+        } else {
+          feedback.textContent = "Not yet. Look for the object that generates and evaluates model configurations.";
+          feedback.className = "feedback warn";
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

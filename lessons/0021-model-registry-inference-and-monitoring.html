@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0021: Model Registry, Inference, and Monitoring</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Model Registry, Inference, and Monitoring</h1>
+  <p class="subtitle">Goal: log model versions, run governed inference, and monitor model behavior over time.</p>
+
+  <div class="callout">
+    The lab turns trained models into governed Snowflake model versions, then uses those versions for inference, explainability, tags, stored-procedure scoring, and model monitors.
+  </div>
+
+  <h2>The Lifecycle</h2>
+  <div class="grid">
+    <div class="tile"><strong>Log</strong><br><code>Registry.log_model</code> creates a named model version with sample input data.</div>
+    <div class="tile"><strong>Score</strong><br><code>mv.run(..., function_name="predict")</code> applies the model to Snowpark data.</div>
+    <div class="tile"><strong>Promote</strong><br>Default versions and tags identify the production candidate.</div>
+    <div class="tile"><strong>Monitor</strong><br><code>CREATE MODEL MONITOR</code> tracks performance and drift against baseline data.</div>
+  </div>
+
+  <h2>Read This Code</h2>
+  <pre><code>model_registry = Registry(
+    session=session,
+    database_name=DB,
+    schema_name=SCHEMA,
+    options={"enable_monitoring": True},
+)
+
+mv_base = model_registry.log_model(
+    model_name=model_name,
+    model=xgb_base,
+    version_name="XGB_BASE",
+    sample_input_data=train.drop(["TIMESTAMP", "LOAN_ID", "MORTGAGERESPONSE"]).limit(100),
+    target_platforms=["WAREHOUSE", "SNOWPARK_CONTAINER_SERVICES"],
+    options={"enable_explainability": True},
+)
+
+reg_preds = (
+    mv_base.run(test, function_name="predict")
+    .rename(col('"output_feature_0"'), "MORTGAGE_PREDICTION")
+)
+
+model_registry.get_model(model_name).default = "XGB_Optimized"</code></pre>
+
+  <h2>Monitor Shape</h2>
+  <pre><code>CREATE OR REPLACE MODEL MONITOR MORTGAGE_LENDING_OPTIMIZED_MODEL_MONITOR
+WITH
+    MODEL = MORTGAGE_LENDING_MLOPS_0
+    VERSION = XGB_Optimized
+    FUNCTION = predict
+    SOURCE = DEMO_MORTGAGE_LENDING_TEST_0
+    BASELINE = DEMO_MORTGAGE_LENDING_TRAIN_0
+    TIMESTAMP_COLUMN = TIMESTAMP
+    PREDICTION_CLASS_COLUMNS = (XGB_OPTIMIZED_PREDICTION)
+    ACTUAL_CLASS_COLUMNS = (MORTGAGERESPONSE)
+    ID_COLUMNS = (LOAN_ID)
+    WAREHOUSE = E2E_SNOW_MLOPS_WH
+    REFRESH_INTERVAL = '12 hours'
+    AGGREGATION_WINDOW = '1 day';</code></pre>
+
+  <h2>Check Yourself</h2>
+  <div class="quiz" data-answer="0">
+    <p><strong>What does the registry store?</strong></p>
+    <button>Model versions</button>
+    <button>Raw notebooks</button>
+    <button>Git branches</button>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="quiz" data-answer="2">
+    <p><strong>What does a model monitor compare?</strong></p>
+    <button>Roles only</button>
+    <button>Stages only</button>
+    <button>Source to baseline</button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>Your Turn</h2>
+  <p>Create <code>src/LESSON21.py</code> and <code>sql/LESSON21.sql</code>.</p>
+  <ol>
+    <li>Log a baseline model and an optimized model to the registry.</li>
+    <li>Set metrics on each model version.</li>
+    <li>Run inference with <code>mv.run(...)</code>.</li>
+    <li>Promote the optimized version as default.</li>
+    <li>Save train/test scoring tables and create a model monitor.</li>
+  </ol>
+
+  <p>Ask the agent to review model names, version names, and monitor source/baseline tables before creating the monitor.</p>
+
+  <h2>References</h2>
+  <p>Primary sources: <a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview">Snowflake Model Registry</a> and <a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/modeling">Snowflake ML modeling</a>. Quick reference: <a href="../reference/0021-registry-inference-monitoring.html">Registry and Monitoring</a>.</p>
+</main>
+<script>
+  document.querySelectorAll(".quiz").forEach((quiz) => {
+    const buttons = Array.from(quiz.querySelectorAll("button"));
+    const feedback = quiz.querySelector(".feedback");
+    const answer = Number(quiz.dataset.answer);
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        if (index === answer) {
+          feedback.textContent = "Correct. Production ML needs versioning, inference, and observation.";
+          feedback.className = "feedback good";
+        } else {
+          feedback.textContent = "Not yet. Follow the model after training: log, score, promote, monitor.";
+          feedback.className = "feedback warn";
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

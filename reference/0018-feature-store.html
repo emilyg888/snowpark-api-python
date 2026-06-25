@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Feature Store</title><link rel="stylesheet" href="../assets/course.css"></head>
+<body><main>
+  <h1>Feature Store</h1>
+  <p class="subtitle">Quick reference for Snowflake Feature Store objects in the lab.</p>
+  <h2>Objects</h2>
+  <div class="grid">
+    <div class="tile"><strong>FeatureStore</strong><br>Client tied to database, schema, and warehouse.</div>
+    <div class="tile"><strong>Entity</strong><br>Business subject and join keys, such as <code>LOAN_ID</code>.</div>
+    <div class="tile"><strong>FeatureView</strong><br>Registered feature DataFrame with timestamp and refresh cadence.</div>
+  </div>
+  <h2>Core Pattern</h2>
+  <pre><code>entity = Entity(name="LOAN_ENTITY", join_keys=["LOAN_ID"])
+fs.register_entity(entity)
+fv = FeatureView(name="Mortgage_Feature_View", entities=[entity], feature_df=feature_df, timestamp_col="TIMESTAMP")
+fs.register_feature_view(fv, version=VERSION_NUM, overwrite=True)</code></pre>
+  <h2>Rule</h2>
+  <p>Define entity grain before registering a feature view. The feature view should compute features at that grain.</p>
+</main></body></html>

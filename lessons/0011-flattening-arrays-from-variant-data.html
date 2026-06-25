@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0011: Flattening Arrays From Variant Data</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Flattening Arrays From Variant Data</h1>
+  <p class="subtitle">Goal: turn an array inside a semi-structured column into one output row per array element.</p>
+
+  <div class="callout">
+    Direct path access is good when you need one known element, such as <code>vehicle[0]</code>. Use <code>flatten</code> when the array can contain many elements and each element deserves its own row.
+  </div>
+
+  <h2>The Mental Model</h2>
+  <div class="grid">
+    <div class="tile"><strong>Input row</strong><br>One sale record with a nested array, such as <code>vehicle</code> or <code>extras</code>.</div>
+    <div class="tile"><strong>Flatten</strong><br>Explode the array into a lateral table function result with fields like <code>VALUE</code>.</div>
+    <div class="tile"><strong>Output rows</strong><br>One row per array item, while still carrying selected fields from the original sale.</div>
+  </div>
+
+  <h2>Read This Code</h2>
+  <pre><code>from snowflake.snowpark.functions import col, flatten
+from snowflake.snowpark.types import StringType
+
+car_sales = session.table("SNOWPARK_SAMPLE_DATA.PUBLIC.CAR_SALES")
+
+sale_extras = (
+    car_sales
+    .select(
+        col("SRC")["dealership"].cast(StringType()).as_("DEALERSHIP"),
+        col("SRC")["vehicle"][0]["make"].cast(StringType()).as_("MAKE"),
+        flatten(col("SRC")["vehicle"][0]["extras"])
+    )
+    .select(
+        "DEALERSHIP",
+        "MAKE",
+        col("VALUE").cast(StringType()).as_("EXTRA")
+    )
+    .sort("DEALERSHIP", "MAKE", "EXTRA")
+)
+
+sale_extras.show()</code></pre>
+
+  <p>The first <code>select</code> keeps useful source fields and expands the nested <code>extras</code> array. The second <code>select</code> names the flattened value as a clean output column.</p>
+
+  <h2>When to Flatten</h2>
+  <ul>
+    <li>Use path access when the element position is part of the business rule.</li>
+    <li>Use <code>flatten</code> when every array element should become visible.</li>
+    <li>Keep only the original-row fields that explain the flattened value.</li>
+  </ul>
+
+  <h2>Check Yourself</h2>
+  <div class="quiz" data-answer="1">
+    <p><strong>What does <code>flatten</code> do to an array?</strong></p>
+    <button>Hides nested values</button>
+    <button>Creates element rows</button>
+    <button>Changes connection</button>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="quiz" data-answer="2">
+    <p><strong>Which field holds the flattened array element?</strong></p>
+    <button><code>INDEX</code></button>
+    <button><code>PATH</code></button>
+    <button><code>VALUE</code></button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>Your Turn</h2>
+  <p>Create <code>src/LESSON11.py</code>. Build one row per vehicle extra from <code>CAR_SALES</code>.</p>
+  <ol>
+    <li>Create <code>build_vehicle_extras(session)</code>.</li>
+    <li>Read <code>SNOWPARK_SAMPLE_DATA.PUBLIC.CAR_SALES</code>.</li>
+    <li>Carry dealership, make, and model from the first vehicle.</li>
+    <li>Flatten <code>SRC["vehicle"][0]["extras"]</code>.</li>
+    <li>Read the flattened element from <code>VALUE</code> and return a clean <code>EXTRA</code> string column.</li>
+    <li>Call <code>show()</code> only inside <code>main()</code>.</li>
+  </ol>
+
+  <p>Ask the agent to review <code>src/LESSON11.py</code> when you finish. The review should check row grain: one row should mean one extra on one vehicle sale.</p>
+
+  <h2>References</h2>
+  <p>Primary source: <a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/snowpark/api/snowflake.snowpark.functions.flatten">Snowflake Snowpark <code>flatten</code> reference</a>. Quick reference: <a href="../reference/0011-flattening-arrays.html">Flattening Arrays</a>. Previous lesson: <a href="0009-reading-semi-structured-data.html">Reading Semi-Structured Data</a>.</p>
+</main>
+<script>
+  document.querySelectorAll(".quiz").forEach((quiz) => {
+    const buttons = Array.from(quiz.querySelectorAll("button"));
+    const feedback = quiz.querySelector(".feedback");
+    const answer = Number(quiz.dataset.answer);
+
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        if (index === answer) {
+          feedback.textContent = "Correct. Flatten changes array items into rows.";
+          feedback.className = "feedback good";
+        } else {
+          feedback.textContent = "Not yet. Think about whether one input row can become many output rows.";
+          feedback.className = "feedback warn";
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

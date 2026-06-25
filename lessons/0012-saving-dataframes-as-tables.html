@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0012: Saving DataFrames as Tables</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Saving DataFrames as Tables</h1>
+  <p class="subtitle">Goal: materialize a finished Snowpark DataFrame as a Snowflake table with an explicit write mode.</p>
+
+  <div class="callout">
+    A builder returns a lazy DataFrame. A writer call such as <code>save_as_table</code> is an action that creates or changes a Snowflake table.
+  </div>
+
+  <h2>The Mental Model</h2>
+  <div class="grid">
+    <div class="tile"><strong>Build</strong><br>Use the DataFrame API to filter, derive, flatten, aggregate, or sort.</div>
+    <div class="tile"><strong>Name</strong><br>Choose the target table explicitly, such as <code>PUBLIC.VEHICLE_PRICES</code>.</div>
+    <div class="tile"><strong>Mode</strong><br>Choose whether to append, overwrite, ignore, or error if the table exists.</div>
+  </div>
+
+  <h2>Read This Code</h2>
+  <pre><code>from LESSON9 import build_vehicle_prices
+
+TARGET_TABLE = "SNOWPARK_SAMPLE_DATA.PUBLIC.VEHICLE_PRICES"
+
+def save_vehicle_prices(session, mode="overwrite"):
+    vehicle_prices = build_vehicle_prices(session)
+    vehicle_prices.write.save_as_table(TARGET_TABLE, mode=mode)
+
+def main():
+    session = create_session()
+    try:
+        save_vehicle_prices(session, mode="overwrite")
+        session.table(TARGET_TABLE).show()
+    finally:
+        session.close()</code></pre>
+
+  <p>The write step is deliberately separate from the builder. That keeps the transformation testable and makes the destructive boundary visible.</p>
+
+  <h2>Write Modes</h2>
+  <div class="grid">
+    <div class="tile"><strong><code>overwrite</code></strong><br>Replace the target table with this DataFrame. Good for repeatable lesson outputs.</div>
+    <div class="tile"><strong><code>append</code></strong><br>Add rows to the existing table. Use only when duplicates are understood.</div>
+    <div class="tile"><strong><code>errorifexists</code></strong><br>Fail if the table already exists. Good when accidental replacement would be risky.</div>
+    <div class="tile"><strong><code>ignore</code></strong><br>Do nothing if the table already exists. Good for idempotent setup in narrow cases.</div>
+  </div>
+
+  <h2>Check Yourself</h2>
+  <div class="quiz" data-answer="0">
+    <p><strong>Which call changes Snowflake state?</strong></p>
+    <button><code>save_as_table(...)</code></button>
+    <button><code>select(...)</code></button>
+    <button><code>filter(...)</code></button>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="quiz" data-answer="2">
+    <p><strong>Which mode replaces the table?</strong></p>
+    <button><code>append</code></button>
+    <button><code>ignore</code></button>
+    <button><code>overwrite</code></button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>Your Turn</h2>
+  <p>Create <code>src/LESSON12.py</code>. Save the cleaned vehicle price DataFrame from Lesson 9.</p>
+  <ol>
+    <li>Import <code>build_vehicle_prices</code> from <code>LESSON9</code>.</li>
+    <li>Create <code>save_vehicle_prices(session, mode="overwrite")</code>.</li>
+    <li>Write to <code>SNOWPARK_SAMPLE_DATA.PUBLIC.VEHICLE_PRICES</code>.</li>
+    <li>In <code>main()</code>, save the table, then preview the target with <code>session.table(...).show()</code>.</li>
+    <li>Keep the write action outside <code>build_vehicle_prices</code>.</li>
+  </ol>
+
+  <p>Ask the agent to review <code>src/LESSON12.py</code> before running it against any non-lesson schema. The review should check the target table and write mode carefully.</p>
+
+  <h2>References</h2>
+  <p>Primary source: <a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/snowpark/api/snowflake.snowpark.DataFrameWriter.save_as_table">Snowflake DataFrameWriter.save_as_table reference</a>. Quick reference: <a href="../reference/0012-saving-dataframes.html">Saving DataFrames</a>. Previous lesson: <a href="0010-crossing-the-result-boundary.html">Crossing the Result Boundary</a>.</p>
+</main>
+<script>
+  document.querySelectorAll(".quiz").forEach((quiz) => {
+    const buttons = Array.from(quiz.querySelectorAll("button"));
+    const feedback = quiz.querySelector(".feedback");
+    const answer = Number(quiz.dataset.answer);
+
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        if (index === answer) {
+          feedback.textContent = "Correct. Writes are action boundaries with durable effects.";
+          feedback.className = "feedback good";
+        } else {
+          feedback.textContent = "Not yet. Look for the call that creates or changes a table.";
+          feedback.className = "feedback warn";
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

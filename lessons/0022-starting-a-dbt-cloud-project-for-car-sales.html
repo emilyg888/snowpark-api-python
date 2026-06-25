@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0022: Starting a dbt Cloud Project for Car Sales</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Starting a dbt Cloud Project for Car Sales</h1>
+  <p class="subtitle">Goal: move Lesson 16 from one SQL script into a dbt Cloud project with sources, models, and tests.</p>
+
+  <div class="callout">
+    dbt does not replace Snowflake. dbt stores the transformation logic, builds objects in Snowflake, and records lineage through <code>source()</code> and <code>ref()</code>.
+  </div>
+
+  <h2>The Conversion</h2>
+  <pre><code>LESSON16.sql
+  -> dbt_car_sales/models/sources.yml
+  -> dbt_car_sales/models/staging/*.sql
+  -> dbt_car_sales/models/marts/*.sql
+  -> dbt_car_sales/models/marts/schema.yml</code></pre>
+
+  <p>The raw table stays in Snowflake:</p>
+  <pre><code>SNOWPARK_SAMPLE_DATA.PUBLIC.CAR_SALES</code></pre>
+
+  <p>The dbt project declares it as a source:</p>
+  <pre><code>{{ source('car_sales_source', 'CAR_SALES') }}</code></pre>
+
+  <h2>Your Turn</h2>
+  <ol>
+    <li>Open dbt Cloud and create or open a project connected to this repository.</li>
+    <li>Set the Snowflake connection database to <code>SNOWPARK_SAMPLE_DATA</code>.</li>
+    <li>Use a development schema that can create <code>STAGING</code> and <code>MART</code>.</li>
+    <li>Open <code>dbt_car_sales/dbt_project.yml</code> and confirm the staging and mart folders.</li>
+  </ol>
+
+  <h2>Check Yourself</h2>
+  <div class="quiz" data-answer="0">
+    <p><strong>What should dbt reference for the raw car sales table?</strong></p>
+    <button>A declared source</button>
+    <button>A Python UDF</button>
+    <button>A local CSV file</button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>References</h2>
+  <p>Primary reading: <a href="https://docs.getdbt.com/guides/snowflake">dbt Snowflake setup guide</a>. Quick reference: <a href="../reference/0022-dbt-cloud-star-schema-flow.html">dbt Cloud Star Schema Flow</a>.</p>
+</main>
+<script>
+document.querySelectorAll(".quiz").forEach((quiz)=>{const buttons=[...quiz.querySelectorAll("button")];const feedback=quiz.querySelector(".feedback");const answer=Number(quiz.dataset.answer);buttons.forEach((button,index)=>button.addEventListener("click",()=>{feedback.textContent=index===answer?"Correct. Sources mark trusted raw inputs.":"Not yet. Raw tables should be declared as dbt sources.";feedback.className=index===answer?"feedback good":"feedback warn";}));});
+</script>
+</body>
+</html>

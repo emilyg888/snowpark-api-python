@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Car Sales Star Schema</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Car Sales Star Schema</h1>
+  <p class="subtitle">Quick reference for modeling <code>CAR_SALES</code> as dimensions and facts.</p>
+
+  <h2>Design Rules</h2>
+  <ul>
+    <li>Declare the grain before creating tables.</li>
+    <li>Put descriptive attributes in dimensions.</li>
+    <li>Put transaction measures and dimension keys in facts.</li>
+    <li>Use a separate bridge or factless table when an array creates multiple child rows.</li>
+  </ul>
+
+  <h2>Tables</h2>
+  <div class="grid">
+    <div class="tile"><strong><code>DIM_SALES_PERSONS</code></strong><br><code>SALES_PERSON_ID</code>, <code>SALES_PERSON_NAME</code></div>
+    <div class="tile"><strong><code>DIM_CUSTOMERS</code></strong><br><code>CUSTOMER_KEY</code>, name, phone, address</div>
+    <div class="tile"><strong><code>DIM_VEHICLES</code></strong><br><code>VEHICLE_KEY</code>, make, model, year</div>
+    <div class="tile"><strong><code>FACT_VEHICLE_SALES</code></strong><br><code>SALE_KEY</code>, date, dealership, dimension keys, price, count</div>
+    <div class="tile"><strong><code>BRIDGE_VEHICLE_SALE_EXTRAS</code></strong><br><code>SALE_KEY</code>, one extra per row</div>
+  </div>
+
+  <h2>Query Pattern</h2>
+  <pre><code>select
+  v.make,
+  v.model,
+  s.sales_person_name,
+  count(*) as sale_count,
+  sum(f.sale_price) as revenue
+from fact_vehicle_sales f
+join dim_vehicles v on f.vehicle_key = v.vehicle_key
+join dim_sales_persons s on f.sales_person_key = s.sales_person_key
+group by v.make, v.model, s.sales_person_name
+order by revenue desc;</code></pre>
+
+  <h2>Fact Grain</h2>
+  <pre><code>FACT_VEHICLE_SALES = one source sale + customer + vehicle combination
+BRIDGE_VEHICLE_SALE_EXTRAS = one fact sale + extra combination</code></pre>
+
+  <h2>Source</h2>
+  <p><a href="https://en.wikipedia.org/wiki/Star_schema">Star schema overview</a></p>
+</main>
+</body>
+</html>

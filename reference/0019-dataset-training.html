@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Dataset and Training</title><link rel="stylesheet" href="../assets/course.css"></head>
+<body><main>
+  <h1>Dataset and Training</h1>
+  <p class="subtitle">Quick reference for generating a training dataset and fitting the baseline model.</p>
+  <h2>Pipeline</h2>
+  <pre><code>ds = fs.generate_dataset(...)
+ds_sp = ds.read.to_snowpark_dataframe()
+ds_sp_ohe = OneHotEncoder(...).fit(ds_sp).transform(ds_sp)
+train, test = ds_sp_ohe.random_split(weights=[0.70, 0.30], seed=0)
+train_pd = train.fillna(0).to_pandas()</code></pre>
+  <h2>Rule</h2>
+  <p>Keep feature retrieval and preprocessing in Snowflake. Convert to pandas only when the training library requires local data.</p>
+</main></body></html>

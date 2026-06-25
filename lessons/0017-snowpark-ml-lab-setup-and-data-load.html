@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0017: Snowpark ML Lab Setup and Data Load</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Snowpark ML Lab Setup and Data Load</h1>
+  <p class="subtitle">Goal: understand the lab control plane before training any model.</p>
+
+  <div class="callout">
+    The lab starts by binding the notebook session to a role, database, schema, and warehouse, then ensuring the raw mortgage table exists.
+  </div>
+
+  <h2>The Lab Map</h2>
+  <div class="grid">
+    <div class="tile"><strong>Role</strong><br><code>E2E_SNOW_MLOPS_ROLE</code> owns the demo objects.</div>
+    <div class="tile"><strong>Database</strong><br><code>E2E_SNOW_MLOPS_DB</code> stores tables, feature store metadata, models, and monitors.</div>
+    <div class="tile"><strong>Schema</strong><br><code>MLOPS_SCHEMA</code> is the working namespace.</div>
+    <div class="tile"><strong>Warehouse</strong><br><code>E2E_SNOW_MLOPS_WH</code> runs DataFrame queries and ML steps.</div>
+  </div>
+
+  <h2>Read This Code</h2>
+  <pre><code>from snowflake.snowpark.context import get_active_session
+
+VERSION_NUM = "0"
+DB = "E2E_SNOW_MLOPS_DB"
+SCHEMA = "MLOPS_SCHEMA"
+COMPUTE_WAREHOUSE = "E2E_SNOW_MLOPS_WH"
+ROLE = "E2E_SNOW_MLOPS_ROLE"
+
+session = get_active_session()
+session.use_role(ROLE)
+session.use_database(DB)
+session.use_schema(SCHEMA)
+
+try:
+    df = session.table("MORTGAGE_LENDING_DEMO_DATA")
+    df.limit(5).show()
+except Exception:
+    df_pandas = pd.read_csv("MORTGAGE_LENDING_DEMO_DATA.csv.zip")
+    session.write_pandas(
+        df_pandas,
+        "MORTGAGE_LENDING_DEMO_DATA",
+        auto_create_table=True,
+        overwrite=True,
+    )
+    df = session.table("MORTGAGE_LENDING_DEMO_DATA")</code></pre>
+
+  <p><code>get_active_session()</code> reuses the session from the Snowflake notebook. <code>write_pandas</code> is the bridge from local pandas data into a Snowflake table.</p>
+
+  <h2>Check Yourself</h2>
+  <div class="quiz" data-answer="1">
+    <p><strong>What does <code>get_active_session()</code> return?</strong></p>
+    <button>Local pandas frame</button>
+    <button>Notebook Snowpark session</button>
+    <button>GitHub workflow</button>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="quiz" data-answer="2">
+    <p><strong>Which line creates the missing table?</strong></p>
+    <button><code>session.table(...)</code></button>
+    <button><code>pd.read_csv(...)</code></button>
+    <button><code>session.write_pandas(...)</code></button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>Your Turn</h2>
+  <p>Create <code>src/LESSON17.py</code> with a function named <code>ensure_mortgage_table(session)</code>.</p>
+  <ol>
+    <li>Set database, schema, and warehouse explicitly.</li>
+    <li>Try to read <code>MORTGAGE_LENDING_DEMO_DATA</code>.</li>
+    <li>If missing, read the zip file with pandas and write it with <code>write_pandas</code>.</li>
+    <li>Return a Snowpark DataFrame, not a pandas DataFrame.</li>
+  </ol>
+
+  <p>Ask the agent to review the file before running the upload. The review should check fully qualified context and table creation behavior.</p>
+
+  <h2>References</h2>
+  <p>Primary sources: <a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/snowpark/api/snowflake.snowpark.context.get_active_session">Snowflake <code>get_active_session</code></a> and <a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/snowpark/api/snowflake.snowpark.Session.write_pandas">Snowflake <code>Session.write_pandas</code></a>. Quick reference: <a href="../reference/0017-snowpark-ml-lab-setup.html">Snowpark ML Lab Setup</a>.</p>
+</main>
+<script>
+  document.querySelectorAll(".quiz").forEach((quiz) => {
+    const buttons = Array.from(quiz.querySelectorAll("button"));
+    const feedback = quiz.querySelector(".feedback");
+    const answer = Number(quiz.dataset.answer);
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        if (index === answer) {
+          feedback.textContent = "Correct. Set context before relying on unqualified table names.";
+          feedback.className = "feedback good";
+        } else {
+          feedback.textContent = "Not yet. Separate notebook session, local file read, and table write.";
+          feedback.className = "feedback warn";
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0013: Intro to Python Stored Procedures</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Intro to Python Stored Procedures</h1>
+  <p class="subtitle">Goal: recognize when Snowpark code should run as a callable procedure inside Snowflake.</p>
+
+  <div class="callout">
+    A Python stored procedure is a named Snowflake object whose handler runs inside Snowflake. Use it when the work is a pipeline step, a refresh command, or a controlled table-changing operation.
+  </div>
+
+  <h2>The Mental Model</h2>
+  <div class="grid">
+    <div class="tile"><strong>Local script</strong><br>Python runs on your machine and sends DataFrame plans to Snowflake.</div>
+    <div class="tile"><strong>Stored procedure</strong><br>Python handler code runs inside Snowflake with a Snowpark session passed in.</div>
+    <div class="tile"><strong><code>CALL</code></strong><br>SQL invokes the procedure and receives a status value or result.</div>
+  </div>
+
+  <h2>Read This Code</h2>
+  <pre><code>create or replace procedure REFRESH_VEHICLE_PRICES()
+returns string
+language python
+runtime_version = '3.12'
+packages = ('snowflake-snowpark-python')
+handler = 'refresh_vehicle_prices'
+as
+$$
+from snowflake.snowpark.functions import col
+from snowflake.snowpark.types import IntegerType, StringType
+
+def refresh_vehicle_prices(session):
+    car_sales = session.table("SNOWPARK_SAMPLE_DATA.PUBLIC.CAR_SALES")
+
+    vehicle_prices = (
+        car_sales
+        .select(
+            col("SRC")["dealership"].cast(StringType()).as_("DEALERSHIP"),
+            col("SRC")["vehicle"][0]["make"].cast(StringType()).as_("MAKE"),
+            col("SRC")["vehicle"][0]["model"].cast(StringType()).as_("MODEL"),
+            col("SRC")["vehicle"][0]["year"].cast(IntegerType()).as_("YEAR"),
+            col("SRC")["vehicle"][0]["price"].cast(IntegerType()).as_("PRICE")
+        )
+    )
+
+    vehicle_prices.write.save_as_table(
+        "SNOWPARK_SAMPLE_DATA.PUBLIC.VEHICLE_PRICES",
+        mode="overwrite"
+    )
+    return "VEHICLE_PRICES refreshed"
+$$;
+
+call REFRESH_VEHICLE_PRICES();</code></pre>
+
+  <p>The handler receives <code>session</code> from Snowflake. The write is intentional: this procedure refreshes a table and returns a short status string.</p>
+
+  <h2>Use It For</h2>
+  <ul>
+    <li>Refreshing a table from repeatable Snowpark logic.</li>
+    <li>Running a controlled multi-step pipeline inside Snowflake.</li>
+    <li>Creating work that can later be called by SQL, tasks, or operational runbooks.</li>
+  </ul>
+
+  <h2>Check Yourself</h2>
+  <div class="quiz" data-answer="1">
+    <p><strong>Where does the Python handler run?</strong></p>
+    <button>Local Mac shell</button>
+    <button>Inside Snowflake</button>
+    <button>GitHub README</button>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="quiz" data-answer="2">
+    <p><strong>Which command invokes the procedure?</strong></p>
+    <button><code>SELECT</code></button>
+    <button><code>IMPORT</code></button>
+    <button><code>CALL</code></button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>Your Turn</h2>
+  <p>Create <code>sql/LESSON13.sql</code>. Write a stored procedure that refreshes <code>VEHICLE_PRICES</code>.</p>
+  <ol>
+    <li>Create <code>REFRESH_VEHICLE_PRICES()</code>.</li>
+    <li>Use Python runtime <code>3.12</code> and package <code>snowflake-snowpark-python</code>.</li>
+    <li>Read <code>SNOWPARK_SAMPLE_DATA.PUBLIC.CAR_SALES</code>.</li>
+    <li>Save a cleaned table to <code>SNOWPARK_SAMPLE_DATA.PUBLIC.VEHICLE_PRICES</code>.</li>
+    <li>Return a status string.</li>
+    <li>Call it with <code>call REFRESH_VEHICLE_PRICES();</code>.</li>
+  </ol>
+
+  <p>Ask the agent to review <code>sql/LESSON13.sql</code> before running it. The review should check write target, runtime, packages, and permissions.</p>
+
+  <h2>References</h2>
+  <p>Primary source: <a href="https://docs.snowflake.com/en/developer-guide/stored-procedure/python/procedure-python-overview">Snowflake: Writing stored procedures with SQL and Python</a>. Quick reference: <a href="../reference/0013-python-stored-procedures.html">Python Stored Procedures</a>. Previous lesson: <a href="0012-saving-dataframes-as-tables.html">Saving DataFrames as Tables</a>.</p>
+</main>
+<script>
+  document.querySelectorAll(".quiz").forEach((quiz) => {
+    const buttons = Array.from(quiz.querySelectorAll("button"));
+    const feedback = quiz.querySelector(".feedback");
+    const answer = Number(quiz.dataset.answer);
+
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        if (index === answer) {
+          feedback.textContent = "Correct. A stored procedure is a callable Snowflake runtime boundary.";
+          feedback.className = "feedback good";
+        } else {
+          feedback.textContent = "Not yet. Separate local scripts from named Snowflake objects.";
+          feedback.className = "feedback warn";
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

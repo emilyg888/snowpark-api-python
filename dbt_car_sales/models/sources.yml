@@ -1,0 +1,15 @@
+version: 2
+
+sources:
+  - name: car_sales_source
+    database: SNOWPARK_SAMPLE_DATA
+    schema: PUBLIC
+    description: Raw semi-structured car sales records loaded from JSON.
+    tables:
+      - name: CAR_SALES
+        description: One source row per car sale document. Nested arrays include customer and vehicle.
+        columns:
+          - name: SRC
+            description: VARIANT payload containing sale date, dealership, salesperson, customer array, and vehicle array.
+            data_tests:
+              - not_null

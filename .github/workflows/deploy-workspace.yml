@@ -81,3 +81,4 @@ jobs:
           snow stage copy src/LESSON6.py 'snow://workspace/USER$.PUBLIC.DEFAULT$/versions/head/LESSON6/' --overwrite
           snow stage copy src/LESSON7.py 'snow://workspace/USER$.PUBLIC.DEFAULT$/versions/head/LESSON7/' --overwrite
           snow stage copy src/LESSON8.py 'snow://workspace/USER$.PUBLIC.DEFAULT$/versions/head/LESSON8/' --overwrite
+          snow stage copy src/LESSON9.py 'snow://workspace/USER$.PUBLIC.DEFAULT$/versions/head/LESSON9/' --overwrite

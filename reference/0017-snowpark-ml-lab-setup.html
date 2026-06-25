@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Snowpark ML Lab Setup</title><link rel="stylesheet" href="../assets/course.css"></head>
+<body><main>
+  <h1>Snowpark ML Lab Setup</h1>
+  <p class="subtitle">Quick reference for binding a notebook to the lab context and loading raw data.</p>
+  <h2>Context</h2>
+  <pre><code>session = get_active_session()
+session.use_role("E2E_SNOW_MLOPS_ROLE")
+session.use_database("E2E_SNOW_MLOPS_DB")
+session.use_schema("MLOPS_SCHEMA")
+session.use_warehouse("E2E_SNOW_MLOPS_WH")</code></pre>
+  <h2>Load Pattern</h2>
+  <pre><code>df_pandas = pd.read_csv("MORTGAGE_LENDING_DEMO_DATA.csv.zip")
+session.write_pandas(df_pandas, "MORTGAGE_LENDING_DEMO_DATA", auto_create_table=True, overwrite=True)
+df = session.table("MORTGAGE_LENDING_DEMO_DATA")</code></pre>
+  <h2>Rule</h2>
+  <p>Use Snowpark DataFrames after the raw data has landed. Treat pandas as an ingestion bridge here, not the main processing engine.</p>
+</main></body></html>

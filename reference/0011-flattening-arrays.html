@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Flattening Arrays in Snowpark</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Flattening Arrays in Snowpark</h1>
+  <p class="subtitle">Quick reference for turning nested array elements into rows.</p>
+
+  <h2>Use When</h2>
+  <ul>
+    <li>An array can contain multiple meaningful values.</li>
+    <li>Each value should become filterable, countable, or displayable as a row.</li>
+    <li>The output row grain should change from one source object to one nested element.</li>
+  </ul>
+
+  <h2>Core Pattern</h2>
+  <pre><code>from snowflake.snowpark.functions import col, flatten
+from snowflake.snowpark.types import StringType
+
+flattened = (
+    car_sales
+    .select(
+        col("SRC")["dealership"].cast(StringType()).as_("DEALERSHIP"),
+        flatten(col("SRC")["vehicle"][0]["extras"])
+    )
+    .select(
+        "DEALERSHIP",
+        col("VALUE").cast(StringType()).as_("EXTRA")
+    )
+)</code></pre>
+
+  <h2>Remember</h2>
+  <p><code>flatten</code> exposes metadata fields. The nested element itself is in <code>VALUE</code>.</p>
+
+  <h2>Source</h2>
+  <p><a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/snowpark/api/snowflake.snowpark.functions.flatten">Snowflake Snowpark flatten reference</a></p>
+</main>
+</body>
+</html>

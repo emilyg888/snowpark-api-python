@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0019: Datasets, Preprocessing, and Baseline Training</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Datasets, Preprocessing, and Baseline Training</h1>
+  <p class="subtitle">Goal: generate a training dataset from feature views, encode categoricals, split it, and train a baseline model.</p>
+
+  <div class="callout">
+    The lab uses Feature Store to assemble the dataset, Snowpark ML preprocessing for one-hot encoding, and pandas only at the final scikit-learn/XGBoost training boundary.
+  </div>
+
+  <h2>The Pipeline</h2>
+  <div class="grid">
+    <div class="tile"><strong>Dataset</strong><br><code>fs.generate_dataset(...)</code> joins a spine to feature views.</div>
+    <div class="tile"><strong>Preprocess</strong><br><code>OneHotEncoder</code> turns string columns into numeric model inputs.</div>
+    <div class="tile"><strong>Split</strong><br><code>random_split</code> creates train and test Snowpark DataFrames.</div>
+    <div class="tile"><strong>Train</strong><br><code>to_pandas()</code> crosses into local XGBoost training.</div>
+  </div>
+
+  <h2>Read This Code</h2>
+  <pre><code>ds = fs.generate_dataset(
+    name=f"MORTGAGE_DATASET_EXTENDED_FEATURES_{VERSION_NUM}",
+    spine_df=df.select("LOAN_ID", "TIMESTAMP", "LOAN_PURPOSE_NAME", "MORTGAGERESPONSE"),
+    features=[loan_fv],
+    spine_timestamp_col="TIMESTAMP",
+    spine_label_cols=["MORTGAGERESPONSE"],
+)
+
+ds_sp = ds.read.to_snowpark_dataframe()
+
+snowml_ohe = snowml.OneHotEncoder(
+    input_cols=OHE_COLS,
+    output_cols=OHE_COLS,
+    drop_input_cols=True,
+)
+ds_sp_ohe = snowml_ohe.fit(ds_sp).transform(ds_sp)
+
+train, test = ds_sp_ohe.random_split(weights=[0.70, 0.30], seed=0)
+train_pd = train.fillna(0).to_pandas()
+test_pd = test.fillna(0).to_pandas()
+
+xgb_base = XGBClassifier(max_depth=50, n_estimators=3, learning_rate=0.75)
+xgb_base.fit(X_train_pd, y_train_pd)</code></pre>
+
+  <h2>Check Yourself</h2>
+  <div class="quiz" data-answer="0">
+    <p><strong>What does <code>generate_dataset</code> assemble?</strong></p>
+    <button>Training data</button>
+    <button>Compute pool</button>
+    <button>API token</button>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="quiz" data-answer="2">
+    <p><strong>Where does local training begin?</strong></p>
+    <button><code>random_split</code></button>
+    <button><code>fit(ds_sp)</code></button>
+    <button><code>to_pandas()</code></button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>Your Turn</h2>
+  <p>Create <code>src/LESSON19.py</code>. Build a baseline training dataset and model.</p>
+  <ol>
+    <li>Generate a dataset from the mortgage feature view.</li>
+    <li>Read it as a Snowpark DataFrame.</li>
+    <li>One-hot encode string columns.</li>
+    <li>Split into train and test with a fixed seed.</li>
+    <li>Convert only the final train/test sets to pandas.</li>
+    <li>Train a baseline <code>XGBClassifier</code> and compute F1, precision, and recall.</li>
+  </ol>
+
+  <p>Ask the agent to review the DataFrame-to-pandas boundary and the target column handling.</p>
+
+  <h2>References</h2>
+  <p>Primary sources: <a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview">Snowflake Feature Store</a> and <a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/modeling">Snowflake ML modeling</a>. Quick reference: <a href="../reference/0019-dataset-training.html">Dataset and Training</a>.</p>
+</main>
+<script>
+  document.querySelectorAll(".quiz").forEach((quiz) => {
+    const buttons = Array.from(quiz.querySelectorAll("button"));
+    const feedback = quiz.querySelector(".feedback");
+    const answer = Number(quiz.dataset.answer);
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        if (index === answer) {
+          feedback.textContent = "Correct. Keep preprocessing in Snowflake as long as possible.";
+          feedback.className = "feedback good";
+        } else {
+          feedback.textContent = "Not yet. Track where data is still a Snowpark DataFrame.";
+          feedback.className = "feedback warn";
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

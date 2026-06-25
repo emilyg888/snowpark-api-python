@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Registry and Monitoring</title><link rel="stylesheet" href="../assets/course.css"></head>
+<body><main>
+  <h1>Registry and Monitoring</h1>
+  <p class="subtitle">Quick reference for model versioning, inference, and observability.</p>
+  <h2>Lifecycle</h2>
+  <pre><code>registry = Registry(session=session, database_name=DB, schema_name=SCHEMA)
+mv = registry.log_model(..., options={"enable_explainability": True})
+predictions = mv.run(test, function_name="predict")
+registry.get_model(model_name).default = "XGB_Optimized"
+CREATE MODEL MONITOR ... SOURCE=... BASELINE=...</code></pre>
+  <h2>Rule</h2>
+  <p>A trained model is not production-ready until it is versioned, callable, promoted deliberately, and monitored against baseline behavior.</p>
+</main></body></html>

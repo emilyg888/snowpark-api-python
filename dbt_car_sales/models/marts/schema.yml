@@ -1,0 +1,80 @@
+version: 2
+
+models:
+  - name: dim_sales_persons
+    description: Salesperson dimension keyed by dealership and source salesperson id.
+    columns:
+      - name: SALES_PERSON_KEY
+        data_tests:
+          - not_null
+          - unique
+      - name: SALES_PERSON_ID
+        data_tests:
+          - not_null
+
+  - name: dim_customers
+    description: Customer dimension keyed by normalized name, phone, and address.
+    columns:
+      - name: CUSTOMER_KEY
+        data_tests:
+          - not_null
+          - unique
+
+  - name: dim_vehicles
+    description: Vehicle dimension keyed by normalized make, model, and year.
+    columns:
+      - name: VEHICLE_KEY
+        data_tests:
+          - not_null
+          - unique
+
+  - name: fact_vehicle_sales
+    description: One row per source sale, customer element, and vehicle element combination.
+    columns:
+      - name: SALE_KEY
+        data_tests:
+          - not_null
+          - unique
+      - name: SALES_PERSON_KEY
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_sales_persons')
+                field: sales_person_key
+      - name: CUSTOMER_KEY
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customers')
+                field: customer_key
+      - name: VEHICLE_KEY
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_vehicles')
+                field: vehicle_key
+      - name: SALE_PRICE
+        data_tests:
+          - not_null
+
+  - name: bridge_vehicle_sale_extras
+    description: One row per sale, customer, vehicle, and extra combination.
+    data_tests:
+      - unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - sale_key
+              - extra
+    columns:
+      - name: SALE_KEY
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('fact_vehicle_sales')
+                field: sale_key
+      - name: EXTRA
+        data_tests:
+          - not_null
