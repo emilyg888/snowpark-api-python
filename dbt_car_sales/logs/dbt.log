@@ -3948,3 +3948,1386 @@ where parent.to_field is null
 Finished 'build' with 1 warning for target 'dev' [19.9s]
 Processed: 10 models | 39 tests
 Summary: 49 total | 49 success
+==================== 2026-06-26T10:02:13.247090Z | 019f0361-417c-7981-8090-50e62e4c665d ====================
+10:02:13.247302 [info ]: dbt-fusion 2.0.0-preview.190
+10:02:13.247612 [info ]: Started loading project
+10:02:13.249978 [info ]: Loading ~/.dbt/profiles.yml
+10:02:13.342501 [debug]:    Started loading packages
+10:02:13.343973 [debug]:     Loaded [  0.00s] packages
+10:02:13.344650 [info ]: Finished loading project [  0.10s]
+10:02:13.345196 [info ]: Started parsing
+10:02:13.356568 [debug]: Finished parsing models/marts/schema.yml [  0.00s]
+10:02:13.356803 [debug]: Finished parsing models/sources.yml [  0.00s]
+10:02:13.356994 [debug]: Finished parsing models/staging/schema.yml [  0.00s]
+10:02:13.359061 [debug]: Finished parsing models/marts/bridge_vehicle_sale_extras.sql [  0.00s]
+10:02:13.359326 [debug]: Finished parsing models/marts/dim_customers.sql [  0.00s]
+10:02:13.359527 [debug]: Finished parsing models/marts/dim_extras.sql [  0.00s]
+10:02:13.359729 [debug]: Finished parsing models/marts/dim_sales_persons.sql [  0.00s]
+10:02:13.359923 [debug]: Finished parsing models/marts/dim_vehicles.sql [  0.00s]
+10:02:13.360165 [debug]: Finished parsing models/marts/fact_vehicle_sales.sql [  0.00s]
+10:02:13.360385 [debug]: Finished parsing models/staging/stg_car_sales_base.sql [  0.00s]
+10:02:13.360589 [debug]: Finished parsing models/staging/stg_car_sales_customers.sql [  0.00s]
+10:02:13.360878 [debug]: Finished parsing models/staging/stg_car_sales_extras.sql [  0.00s]
+10:02:13.361152 [debug]: Finished parsing models/staging/stg_car_sales_vehicles.sql [  0.00s]
+10:02:13.366868 [debug]: Finished parsing target/generic_tests/source_not_null_car_sales_source_CAR_SALES_SRC.sql [  0.00s]
+10:02:13.367008 [debug]: Finished parsing target/generic_tests/unique_combination_of_columns__2db95a5929e8d0e375759fd7ecd8e244.sql [  0.00s]
+10:02:13.367129 [debug]: Finished parsing target/generic_tests/not_null_bridge_vehicle_sale_extras_EXTRA_KEY.sql [  0.00s]
+10:02:13.367301 [debug]: Finished parsing target/generic_tests/relationships_bridge_vehicle_s_3a770fa52eaa87f2b975550215a5ece1.sql [  0.00s]
+10:02:13.367422 [debug]: Finished parsing target/generic_tests/not_null_bridge_vehicle_sale_extras_SALE_KEY.sql [  0.00s]
+10:02:13.367575 [debug]: Finished parsing target/generic_tests/relationships_bridge_vehicle_s_4de826e75fcc2c6255ef345549f6ae31.sql [  0.00s]
+10:02:13.367707 [debug]: Finished parsing target/generic_tests/not_null_dim_customers_CUSTOMER_KEY.sql [  0.00s]
+10:02:13.367814 [debug]: Finished parsing target/generic_tests/unique_dim_customers_CUSTOMER_KEY.sql [  0.00s]
+10:02:13.367920 [debug]: Finished parsing target/generic_tests/not_null_dim_extras_EXTRA.sql [  0.00s]
+10:02:13.368035 [debug]: Finished parsing target/generic_tests/not_null_dim_extras_EXTRA_KEY.sql [  0.00s]
+10:02:13.368135 [debug]: Finished parsing target/generic_tests/unique_dim_extras_EXTRA_KEY.sql [  0.00s]
+10:02:13.368242 [debug]: Finished parsing target/generic_tests/not_null_dim_sales_persons_SALES_PERSON_ID.sql [  0.00s]
+10:02:13.368342 [debug]: Finished parsing target/generic_tests/not_null_dim_sales_persons_SALES_PERSON_KEY.sql [  0.00s]
+10:02:13.368437 [debug]: Finished parsing target/generic_tests/unique_dim_sales_persons_SALES_PERSON_KEY.sql [  0.00s]
+10:02:13.368537 [debug]: Finished parsing target/generic_tests/not_null_dim_vehicles_VEHICLE_KEY.sql [  0.00s]
+10:02:13.368633 [debug]: Finished parsing target/generic_tests/unique_dim_vehicles_VEHICLE_KEY.sql [  0.00s]
+10:02:13.368745 [debug]: Finished parsing target/generic_tests/not_null_fact_vehicle_sales_CUSTOMER_KEY.sql [  0.00s]
+10:02:13.368853 [debug]: Finished parsing target/generic_tests/relationships_fact_vehicle_sal_b5350d7887efbfca2ca0da81a689b674.sql [  0.00s]
+10:02:13.368996 [debug]: Finished parsing target/generic_tests/relationships_fact_vehicle_sal_0bd99332a98323e1089c9c78a47fbb84.sql [  0.00s]
+10:02:13.369124 [debug]: Finished parsing target/generic_tests/not_null_fact_vehicle_sales_SALE_KEY.sql [  0.00s]
+10:02:13.369227 [debug]: Finished parsing target/generic_tests/unique_fact_vehicle_sales_SALE_KEY.sql [  0.00s]
+10:02:13.369334 [debug]: Finished parsing target/generic_tests/not_null_fact_vehicle_sales_SALE_PRICE.sql [  0.00s]
+10:02:13.369439 [debug]: Finished parsing target/generic_tests/not_null_fact_vehicle_sales_VEHICLE_KEY.sql [  0.00s]
+10:02:13.369546 [debug]: Finished parsing target/generic_tests/relationships_fact_vehicle_sal_7d4861e04c66bc56789d9e51c22c96fe.sql [  0.00s]
+10:02:13.369648 [debug]: Finished parsing target/generic_tests/not_null_stg_car_sales_base_SOURCE_SALE_KEY.sql [  0.00s]
+10:02:13.369744 [debug]: Finished parsing target/generic_tests/unique_stg_car_sales_base_SOURCE_SALE_KEY.sql [  0.00s]
+10:02:13.369848 [debug]: Finished parsing target/generic_tests/not_null_stg_car_sales_base_SRC.sql [  0.00s]
+10:02:13.369959 [debug]: Finished parsing target/generic_tests/not_null_stg_car_sales_customers_CUSTOMER_INDEX.sql [  0.00s]
+10:02:13.370074 [debug]: Finished parsing target/generic_tests/not_null_stg_car_sales_customers_CUSTOMER_KEY.sql [  0.00s]
+10:02:13.370183 [debug]: Finished parsing target/generic_tests/not_null_stg_car_sales_customers_SOURCE_SALE_KEY.sql [  0.00s]
+10:02:13.370285 [debug]: Finished parsing target/generic_tests/not_null_stg_car_sales_extras_EXTRA.sql [  0.00s]
+10:02:13.370392 [debug]: Finished parsing target/generic_tests/not_null_stg_car_sales_extras_EXTRA_INDEX.sql [  0.00s]
+10:02:13.370494 [debug]: Finished parsing target/generic_tests/not_null_stg_car_sales_extras_EXTRA_KEY.sql [  0.00s]
+10:02:13.370595 [debug]: Finished parsing target/generic_tests/not_null_stg_car_sales_extras_SOURCE_SALE_KEY.sql [  0.00s]
+10:02:13.370693 [debug]: Finished parsing target/generic_tests/not_null_stg_car_sales_extras_VEHICLE_INDEX.sql [  0.00s]
+10:02:13.370794 [debug]: Finished parsing target/generic_tests/not_null_stg_car_sales_extras_VEHICLE_KEY.sql [  0.00s]
+10:02:13.370891 [debug]: Finished parsing target/generic_tests/not_null_stg_car_sales_vehicles_SOURCE_SALE_KEY.sql [  0.00s]
+10:02:13.370989 [debug]: Finished parsing target/generic_tests/not_null_stg_car_sales_vehicles_VEHICLE_INDEX.sql [  0.00s]
+10:02:13.371096 [debug]: Finished parsing target/generic_tests/not_null_stg_car_sales_vehicles_VEHICLE_KEY.sql [  0.00s]
+10:02:13.374915 [info ]: Finished parsing [  0.03s]
+10:02:13.375269 [info ]: Started scheduling
+10:02:13.375710 [info ]: Finished scheduling [  0.00s]
+10:02:13.376016 [debug]: Initializing schema store with entry: Frontier(CanonicalFqn { catalog: "SNOWPARK_SAMPLE_DATA", schema: "STAGING", table: "STG_CAR_SALES_VEHICLES" }) and interval: None
+10:02:13.376046 [debug]: Initializing schema store with entry: Frontier(CanonicalFqn { catalog: "SNOWPARK_SAMPLE_DATA", schema: "STAGING", table: "STG_CAR_SALES_BASE" }) and interval: None
+10:02:13.376050 [debug]: Initializing schema store with entry: Frontier(CanonicalFqn { catalog: "SNOWPARK_SAMPLE_DATA", schema: "MART", table: "FACT_VEHICLE_SALES" }) and interval: None
+10:02:13.376054 [debug]: Initializing schema store with entry: Frontier(CanonicalFqn { catalog: "SNOWPARK_SAMPLE_DATA", schema: "STAGING", table: "STG_CAR_SALES_CUSTOMERS" }) and interval: None
+10:02:14.294536 [warn ]: [LicenseError (dbt1068)]: Failed to resolve platform credentials: authentication expired
+10:02:14.295000 [debug]: License check failed: Feature not licensed: 'lineage'
+10:02:14.298123 [info ]: Started building task graph
+10:02:14.298955 [info ]: Finished building task graph [  0.00s]
+10:02:17.373382 [debug]: Query executed on node unknown:
+show terse schemas in database SNOWPARK_SAMPLE_DATA
+    limit 10000
+/* {"app": "dbt", "connection_name": "", "dbt_version": "2.0.0", "profile_name": "car_sales_dbt", "target_name": "dev"} */
+10:02:17.374479 [info ]: Started rendering (13 nodes)
+10:02:17.374628 [info ]: Started model MART.dim_vehicles
+10:02:17.374722 [debug]: Started rendering model MART.dim_vehicles
+10:02:17.374792 [info ]: Started model MART.dim_sales_persons
+10:02:17.374800 [debug]: Started rendering model MART.dim_sales_persons
+10:02:17.374815 [info ]: Started model MART.dim_customers
+10:02:17.374821 [debug]: Started rendering model MART.dim_customers
+10:02:17.376656 [debug]: Compiled SQL for node model.car_sales_dbt.dim_vehicles at target/compiled/car_sales_dbt/models/marts/dim_vehicles.sql
+10:02:17.376656 [debug]: Compiled SQL for node model.car_sales_dbt.dim_sales_persons at target/compiled/car_sales_dbt/models/marts/dim_sales_persons.sql
+10:02:17.376664 [debug]: Compiled SQL for node model.car_sales_dbt.dim_customers at target/compiled/car_sales_dbt/models/marts/dim_customers.sql
+10:02:17.376948 [debug]: Finished rendering [  0.00s] model MART.dim_customers [success]
+10:02:17.377134 [info ]: Started analyzing (13 nodes)
+10:02:17.377187 [debug]: Started analyzing model MART.dim_customers
+10:02:17.377241 [debug]: Finished rendering [  0.00s] model MART.dim_vehicles [success]
+10:02:17.377273 [debug]: Started analyzing model MART.dim_vehicles
+10:02:17.377285 [debug]: Finished rendering [  0.00s] model MART.dim_sales_persons [success]
+10:02:17.377307 [debug]: Started analyzing model MART.dim_sales_persons
+10:02:17.387765 [debug]: Finished analyzing [  0.01s] model MART.dim_vehicles [success]
+10:02:17.387872 [info ]: Started running (13 nodes)
+10:02:17.387916 [info ]: Started running model MART.dim_vehicles
+10:02:17.387936 [debug]: Finished analyzing [  0.01s] model MART.dim_customers [success]
+10:02:17.387978 [info ]: Started running model MART.dim_customers
+10:02:17.394827 [debug]: Finished analyzing [  0.02s] model MART.dim_sales_persons [success]
+10:02:17.394888 [info ]: Started running model MART.dim_sales_persons
+10:02:17.628997 [debug]: Query executed on node model.car_sales_dbt.dim_vehicles:
+SHOW OBJECTS IN SCHEMA "SNOWPARK_SAMPLE_DATA"."MART" LIMIT 10000
+10:02:17.631101 [debug]: Writing runtime sql for node "model.car_sales_dbt.dim_vehicles"
+10:02:19.124708 [debug]: Query executed on node model.car_sales_dbt.dim_sales_persons:
+SHOW OBJECTS IN SCHEMA "SNOWPARK_SAMPLE_DATA"."MART" LIMIT 10000
+10:02:19.127946 [debug]: Writing runtime sql for node "model.car_sales_dbt.dim_sales_persons"
+10:02:19.280852 [debug]: Query executed on node model.car_sales_dbt.dim_customers:
+SHOW OBJECTS IN SCHEMA "SNOWPARK_SAMPLE_DATA"."MART" LIMIT 10000
+10:02:19.283691 [debug]: Writing runtime sql for node "model.car_sales_dbt.dim_customers"
+10:02:22.077451 [debug]: Query executed on node model.car_sales_dbt.dim_vehicles:
+create or replace transient  table SNOWPARK_SAMPLE_DATA.MART.dim_vehicles
+    
+    
+    
+    
+    as (select
+  vehicle_key,
+  make,
+  model,
+  year
+from SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_vehicles
+where vehicle_key is not null
+qualify row_number() over (
+  partition by vehicle_key
+  order by make, model, year
+) = 1
+    )
+
+/* {"app": "dbt", "dbt_version": "2.0.0", "node_id": "model.car_sales_dbt.dim_vehicles", "profile_name": "car_sales_dbt", "target_name": "dev"} */
+10:02:22.080302 [info ]: Finished running [  4.69s] model MART.dim_vehicles [success]
+10:02:22.080366 [info ]:  Succeeded [  4.70s] model MART.dim_vehicles (table)
+10:02:22.080502 [info ]: Started test dbt_test__audit.not_null_dim_vehicles_VEHICLE_KEY
+10:02:22.080531 [debug]: Started rendering test dbt_test__audit.not_null_dim_vehicles_VEHICLE_KEY
+10:02:22.080566 [info ]: Started test dbt_test__audit.unique_dim_vehicles_VEHICLE_KEY
+10:02:22.080583 [debug]: Started rendering test dbt_test__audit.unique_dim_vehicles_VEHICLE_KEY
+10:02:22.080615 [info ]: Started test dbt_test__audit.relationships_fact_vehicle_sales_VEHICLE_KEY__vehicle_key__ref_dim_vehicles_
+10:02:22.080633 [debug]: Started rendering test dbt_test__audit.relationships_fact_vehicle_sales_VEHICLE_KEY__vehicle_key__ref_dim_vehicles_
+10:02:22.088234 [debug]: Compiled SQL for node test.car_sales_dbt.unique_dim_vehicles_VEHICLE_KEY.04a14a9493 at target/compiled/car_sales_dbt/target/generic_tests/unique_dim_vehicles_VEHICLE_KEY.sql
+10:02:22.088237 [debug]: Compiled SQL for node test.car_sales_dbt.relationships_fact_vehicle_sales_VEHICLE_KEY__vehicle_key__ref_dim_vehicles_.3ab6e6df00 at target/compiled/car_sales_dbt/target/generic_tests/relationships_fact_vehicle_sal_7d4861e04c66bc56789d9e51c22c96fe.sql
+10:02:22.088282 [debug]: Compiled SQL for node test.car_sales_dbt.not_null_dim_vehicles_VEHICLE_KEY.dfc0eb8479 at target/compiled/car_sales_dbt/target/generic_tests/not_null_dim_vehicles_VEHICLE_KEY.sql
+10:02:22.088364 [debug]: Finished rendering [  0.01s] test dbt_test__audit.unique_dim_vehicles_VEHICLE_KEY [success]
+10:02:22.088428 [debug]: Started analyzing test dbt_test__audit.unique_dim_vehicles_VEHICLE_KEY
+10:02:22.088456 [debug]: Finished rendering [  0.01s] test dbt_test__audit.relationships_fact_vehicle_sales_VEHICLE_KEY__vehicle_key__ref_dim_vehicles_ [success]
+10:02:22.088491 [debug]: Started analyzing test dbt_test__audit.relationships_fact_vehicle_sales_VEHICLE_KEY__vehicle_key__ref_dim_vehicles_
+10:02:22.088511 [debug]: Finished rendering [  0.01s] test dbt_test__audit.not_null_dim_vehicles_VEHICLE_KEY [success]
+10:02:22.088541 [debug]: Started analyzing test dbt_test__audit.not_null_dim_vehicles_VEHICLE_KEY
+10:02:22.088939 [debug]: Finished analyzing [  0.00s] test dbt_test__audit.not_null_dim_vehicles_VEHICLE_KEY [success]
+10:02:22.088977 [info ]: Started running test dbt_test__audit.not_null_dim_vehicles_VEHICLE_KEY
+10:02:22.091767 [debug]: Writing runtime sql for node "test.car_sales_dbt.not_null_dim_vehicles_VEHICLE_KEY.dfc0eb8479"
+10:02:22.093577 [debug]: Finished analyzing [  0.01s] test dbt_test__audit.unique_dim_vehicles_VEHICLE_KEY [success]
+10:02:22.093630 [info ]: Started running test dbt_test__audit.unique_dim_vehicles_VEHICLE_KEY
+10:02:22.095471 [debug]: Writing runtime sql for node "test.car_sales_dbt.unique_dim_vehicles_VEHICLE_KEY.04a14a9493"
+10:02:22.095899 [debug]: Finished analyzing [  0.01s] test dbt_test__audit.relationships_fact_vehicle_sales_VEHICLE_KEY__vehicle_key__ref_dim_vehicles_ [success]
+10:02:22.095980 [info ]: Started running test dbt_test__audit.relationships_fact_vehicle_sales_VEHICLE_KEY__vehicle_key__ref_dim_vehicles_
+10:02:22.097688 [debug]: Writing runtime sql for node "test.car_sales_dbt.relationships_fact_vehicle_sales_VEHICLE_KEY__vehicle_key__ref_dim_vehicles_.3ab6e6df00"
+10:02:22.267818 [debug]: Query executed on node test.car_sales_dbt.not_null_dim_vehicles_VEHICLE_KEY.dfc0eb8479:
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+  
+    
+    
+
+
+
+select VEHICLE_KEY
+from SNOWPARK_SAMPLE_DATA.MART.dim_vehicles
+where VEHICLE_KEY is null
+
+
+
+  
+  
+      
+    ) dbt_internal_test
+/* {"app": "dbt", "dbt_version": "2.0.0", "node_id": "test.car_sales_dbt.not_null_dim_vehicles_VEHICLE_KEY.dfc0eb8479", "profile_name": "car_sales_dbt", "target_name": "dev"} */
+10:02:22.268997 [info ]: Finished running [  0.18s] test dbt_test__audit.not_null_dim_vehicles_VEHICLE_KEY [pass]
+10:02:22.269101 [info ]:     Passed [  0.19s] test  not_null_dim_vehicles_VEHICLE_KEY
+10:02:22.347319 [debug]: Query executed on node model.car_sales_dbt.dim_sales_persons:
+create or replace transient  table SNOWPARK_SAMPLE_DATA.MART.dim_sales_persons
+    
+    
+    
+    
+    as (select
+  sales_person_key,
+  sales_person_id,
+  sales_person_name,
+  dealership
+from (
+  select
+    case
+      when sales_person_id is null then null
+      else md5(
+        upper(coalesce(dealership, '')) || '|' ||
+        coalesce(sales_person_id, '')
+      )
+    end as sales_person_key,
+    sales_person_id,
+    sales_person_name,
+    dealership
+  from SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_base
+  where sales_person_id is not null
+)
+qualify row_number() over (
+  partition by sales_person_key
+  order by sales_person_id, sales_person_name, dealership
+) = 1
+    )
+
+/* {"app": "dbt", "dbt_version": "2.0.0", "node_id": "model.car_sales_dbt.dim_sales_persons", "profile_name": "car_sales_dbt", "target_name": "dev"} */
+10:02:22.349890 [info ]: Finished running [  4.96s] model MART.dim_sales_persons [success]
+10:02:22.350017 [info ]:  Succeeded [  4.97s] model MART.dim_sales_persons (table)
+10:02:22.350123 [info ]: Started test dbt_test__audit.unique_dim_sales_persons_SALES_PERSON_KEY
+10:02:22.350146 [debug]: Started rendering test dbt_test__audit.unique_dim_sales_persons_SALES_PERSON_KEY
+10:02:22.350177 [info ]: Started test dbt_test__audit.relationships_fact_vehicle_sales_SALES_PERSON_KEY__sales_person_key__ref_dim_sales_persons_
+10:02:22.350190 [debug]: Started rendering test dbt_test__audit.relationships_fact_vehicle_sales_SALES_PERSON_KEY__sales_person_key__ref_dim_sales_persons_
+10:02:22.350213 [info ]: Started test dbt_test__audit.not_null_dim_sales_persons_SALES_PERSON_KEY
+10:02:22.350225 [debug]: Started rendering test dbt_test__audit.not_null_dim_sales_persons_SALES_PERSON_KEY
+10:02:22.350254 [info ]: Started test dbt_test__audit.not_null_dim_sales_persons_SALES_PERSON_ID
+10:02:22.350264 [debug]: Started rendering test dbt_test__audit.not_null_dim_sales_persons_SALES_PERSON_ID
+10:02:22.352633 [debug]: Compiled SQL for node test.car_sales_dbt.not_null_dim_sales_persons_SALES_PERSON_KEY.85f80c32c8 at target/compiled/car_sales_dbt/target/generic_tests/not_null_dim_sales_persons_SALES_PERSON_KEY.sql
+10:02:22.352784 [debug]: Compiled SQL for node test.car_sales_dbt.unique_dim_sales_persons_SALES_PERSON_KEY.73cdbd55d5 at target/compiled/car_sales_dbt/target/generic_tests/unique_dim_sales_persons_SALES_PERSON_KEY.sql
+10:02:22.352788 [debug]: Finished rendering [  0.00s] test dbt_test__audit.not_null_dim_sales_persons_SALES_PERSON_KEY [success]
+10:02:22.352872 [debug]: Started analyzing test dbt_test__audit.not_null_dim_sales_persons_SALES_PERSON_KEY
+10:02:22.352877 [debug]: Compiled SQL for node test.car_sales_dbt.not_null_dim_sales_persons_SALES_PERSON_ID.2bfa32c62d at target/compiled/car_sales_dbt/target/generic_tests/not_null_dim_sales_persons_SALES_PERSON_ID.sql
+10:02:22.352905 [debug]: Finished rendering [  0.00s] test dbt_test__audit.unique_dim_sales_persons_SALES_PERSON_KEY [success]
+10:02:22.352943 [debug]: Started analyzing test dbt_test__audit.unique_dim_sales_persons_SALES_PERSON_KEY
+10:02:22.352976 [debug]: Compiled SQL for node test.car_sales_dbt.relationships_fact_vehicle_sales_SALES_PERSON_KEY__sales_person_key__ref_dim_sales_persons_.bb75a07b09 at target/compiled/car_sales_dbt/target/generic_tests/relationships_fact_vehicle_sal_0bd99332a98323e1089c9c78a47fbb84.sql
+10:02:22.352963 [debug]: Finished rendering [  0.00s] test dbt_test__audit.not_null_dim_sales_persons_SALES_PERSON_ID [success]
+10:02:22.353021 [debug]: Started analyzing test dbt_test__audit.not_null_dim_sales_persons_SALES_PERSON_ID
+10:02:22.353121 [debug]: Finished rendering [  0.00s] test dbt_test__audit.relationships_fact_vehicle_sales_SALES_PERSON_KEY__sales_person_key__ref_dim_sales_persons_ [success]
+10:02:22.353172 [debug]: Started analyzing test dbt_test__audit.relationships_fact_vehicle_sales_SALES_PERSON_KEY__sales_person_key__ref_dim_sales_persons_
+10:02:22.353244 [debug]: Finished analyzing [  0.00s] test dbt_test__audit.not_null_dim_sales_persons_SALES_PERSON_ID [success]
+10:02:22.353287 [info ]: Started running test dbt_test__audit.not_null_dim_sales_persons_SALES_PERSON_ID
+10:02:22.353305 [debug]: Finished analyzing [  0.00s] test dbt_test__audit.not_null_dim_sales_persons_SALES_PERSON_KEY [success]
+10:02:22.353335 [info ]: Started running test dbt_test__audit.not_null_dim_sales_persons_SALES_PERSON_KEY
+10:02:22.353687 [debug]: Finished analyzing [  0.00s] test dbt_test__audit.unique_dim_sales_persons_SALES_PERSON_KEY [success]
+10:02:22.353733 [info ]: Started running test dbt_test__audit.unique_dim_sales_persons_SALES_PERSON_KEY
+10:02:22.354123 [debug]: Finished analyzing [  0.00s] test dbt_test__audit.relationships_fact_vehicle_sales_SALES_PERSON_KEY__sales_person_key__ref_dim_sales_persons_ [success]
+10:02:22.354185 [info ]: Started running test dbt_test__audit.relationships_fact_vehicle_sales_SALES_PERSON_KEY__sales_person_key__ref_dim_sales_persons_
+10:02:22.356403 [debug]: Writing runtime sql for node "test.car_sales_dbt.not_null_dim_sales_persons_SALES_PERSON_KEY.85f80c32c8"
+10:02:22.356457 [debug]: Writing runtime sql for node "test.car_sales_dbt.not_null_dim_sales_persons_SALES_PERSON_ID.2bfa32c62d"
+10:02:22.356520 [debug]: Writing runtime sql for node "test.car_sales_dbt.unique_dim_sales_persons_SALES_PERSON_KEY.73cdbd55d5"
+10:02:22.356736 [debug]: Writing runtime sql for node "test.car_sales_dbt.relationships_fact_vehicle_sales_SALES_PERSON_KEY__sales_person_key__ref_dim_sales_persons_.bb75a07b09"
+10:02:22.511525 [debug]: Query executed on node model.car_sales_dbt.dim_customers:
+create or replace transient  table SNOWPARK_SAMPLE_DATA.MART.dim_customers
+    
+    
+    
+    
+    as (select
+  customer_key,
+  customer_name,
+  customer_phone,
+  customer_address
+from SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_customers
+where customer_key is not null
+qualify row_number() over (
+  partition by customer_key
+  order by customer_name, customer_phone, customer_address
+) = 1
+    )
+
+/* {"app": "dbt", "dbt_version": "2.0.0", "node_id": "model.car_sales_dbt.dim_customers", "profile_name": "car_sales_dbt", "target_name": "dev"} */
+10:02:22.514164 [info ]: Finished running [  5.13s] model MART.dim_customers [success]
+10:02:22.514325 [info ]:  Succeeded [  5.14s] model MART.dim_customers (table)
+10:02:22.514464 [info ]: Started test dbt_test__audit.relationships_fact_vehicle_sales_CUSTOMER_KEY__customer_key__ref_dim_customers_
+10:02:22.514497 [debug]: Started rendering test dbt_test__audit.relationships_fact_vehicle_sales_CUSTOMER_KEY__customer_key__ref_dim_customers_
+10:02:22.514536 [info ]: Started test dbt_test__audit.not_null_dim_customers_CUSTOMER_KEY
+10:02:22.514554 [debug]: Started rendering test dbt_test__audit.not_null_dim_customers_CUSTOMER_KEY
+10:02:22.514588 [info ]: Started test dbt_test__audit.unique_dim_customers_CUSTOMER_KEY
+10:02:22.514602 [debug]: Started rendering test dbt_test__audit.unique_dim_customers_CUSTOMER_KEY
+10:02:22.517051 [debug]: Compiled SQL for node test.car_sales_dbt.unique_dim_customers_CUSTOMER_KEY.070459efe0 at target/compiled/car_sales_dbt/target/generic_tests/unique_dim_customers_CUSTOMER_KEY.sql
+10:02:22.517198 [debug]: Finished rendering [  0.00s] test dbt_test__audit.unique_dim_customers_CUSTOMER_KEY [success]
+10:02:22.517271 [debug]: Started analyzing test dbt_test__audit.unique_dim_customers_CUSTOMER_KEY
+10:02:22.518204 [debug]: Finished analyzing [  0.00s] test dbt_test__audit.unique_dim_customers_CUSTOMER_KEY [success]
+10:02:22.518262 [info ]: Started running test dbt_test__audit.unique_dim_customers_CUSTOMER_KEY
+10:02:22.518724 [debug]: Query executed on node test.car_sales_dbt.unique_dim_sales_persons_SALES_PERSON_KEY.73cdbd55d5:
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+  
+    
+    
+
+select
+    SALES_PERSON_KEY as unique_field,
+    count(*) as n_records
+
+from SNOWPARK_SAMPLE_DATA.MART.dim_sales_persons
+where SALES_PERSON_KEY is not null
+group by SALES_PERSON_KEY
+having count(*) > 1
+
+
+
+  
+  
+      
+    ) dbt_internal_test
+/* {"app": "dbt", "dbt_version": "2.0.0", "node_id": "test.car_sales_dbt.unique_dim_sales_persons_SALES_PERSON_KEY.73cdbd55d5", "profile_name": "car_sales_dbt", "target_name": "dev"} */
+10:02:22.519394 [debug]: Compiled SQL for node test.car_sales_dbt.not_null_dim_customers_CUSTOMER_KEY.397edac728 at target/compiled/car_sales_dbt/target/generic_tests/not_null_dim_customers_CUSTOMER_KEY.sql
+10:02:22.519491 [debug]: Finished rendering [  0.00s] test dbt_test__audit.not_null_dim_customers_CUSTOMER_KEY [success]
+10:02:22.519542 [debug]: Started analyzing test dbt_test__audit.not_null_dim_customers_CUSTOMER_KEY
+10:02:22.519654 [debug]: Compiled SQL for node test.car_sales_dbt.relationships_fact_vehicle_sales_CUSTOMER_KEY__customer_key__ref_dim_customers_.39991c3957 at target/compiled/car_sales_dbt/target/generic_tests/relationships_fact_vehicle_sal_b5350d7887efbfca2ca0da81a689b674.sql
+10:02:22.519731 [debug]: Finished rendering [  0.01s] test dbt_test__audit.relationships_fact_vehicle_sales_CUSTOMER_KEY__customer_key__ref_dim_customers_ [success]
+10:02:22.519759 [info ]: Finished rendering [  5.15s] (13 nodes, 0 skipped, 0 errors)
+10:02:22.519844 [debug]: Started analyzing test dbt_test__audit.relationships_fact_vehicle_sales_CUSTOMER_KEY__customer_key__ref_dim_customers_
+10:02:22.519863 [debug]: Finished analyzing [  0.00s] test dbt_test__audit.not_null_dim_customers_CUSTOMER_KEY [success]
+10:02:22.519899 [info ]: Started running test dbt_test__audit.not_null_dim_customers_CUSTOMER_KEY
+10:02:22.519923 [info ]: Finished running [  0.17s] test dbt_test__audit.unique_dim_sales_persons_SALES_PERSON_KEY [pass]
+10:02:22.519952 [info ]:     Passed [  0.17s] test  unique_dim_sales_persons_SALES_PERSON_KEY
+10:02:22.520639 [debug]: Finished analyzing [  0.00s] test dbt_test__audit.relationships_fact_vehicle_sales_CUSTOMER_KEY__customer_key__ref_dim_customers_ [success]
+10:02:22.520669 [info ]: Finished analyzing [  5.14s] (13 nodes, 0 skipped, 0 errors)
+10:02:22.520769 [info ]: Started running test dbt_test__audit.relationships_fact_vehicle_sales_CUSTOMER_KEY__customer_key__ref_dim_customers_
+10:02:22.520967 [debug]: Writing runtime sql for node "test.car_sales_dbt.unique_dim_customers_CUSTOMER_KEY.070459efe0"
+10:02:22.522369 [debug]: Writing runtime sql for node "test.car_sales_dbt.not_null_dim_customers_CUSTOMER_KEY.397edac728"
+10:02:22.522969 [debug]: Writing runtime sql for node "test.car_sales_dbt.relationships_fact_vehicle_sales_CUSTOMER_KEY__customer_key__ref_dim_customers_.39991c3957"
+10:02:22.957433 [debug]: Query executed on node test.car_sales_dbt.unique_dim_customers_CUSTOMER_KEY.070459efe0:
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+  
+    
+    
+
+select
+    CUSTOMER_KEY as unique_field,
+    count(*) as n_records
+
+from SNOWPARK_SAMPLE_DATA.MART.dim_customers
+where CUSTOMER_KEY is not null
+group by CUSTOMER_KEY
+having count(*) > 1
+
+
+
+  
+  
+      
+    ) dbt_internal_test
+/* {"app": "dbt", "dbt_version": "2.0.0", "node_id": "test.car_sales_dbt.unique_dim_customers_CUSTOMER_KEY.070459efe0", "profile_name": "car_sales_dbt", "target_name": "dev"} */
+10:02:22.959136 [info ]: Finished running [  0.44s] test dbt_test__audit.unique_dim_customers_CUSTOMER_KEY [pass]
+10:02:22.959271 [info ]:     Passed [  0.44s] test  unique_dim_customers_CUSTOMER_KEY
+10:02:22.992661 [debug]: Query executed on node test.car_sales_dbt.not_null_dim_customers_CUSTOMER_KEY.397edac728:
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+  
+    
+    
+
+
+
+select CUSTOMER_KEY
+from SNOWPARK_SAMPLE_DATA.MART.dim_customers
+where CUSTOMER_KEY is null
+
+
+
+  
+  
+      
+    ) dbt_internal_test
+/* {"app": "dbt", "dbt_version": "2.0.0", "node_id": "test.car_sales_dbt.not_null_dim_customers_CUSTOMER_KEY.397edac728", "profile_name": "car_sales_dbt", "target_name": "dev"} */
+10:02:22.994091 [info ]: Finished running [  0.47s] test dbt_test__audit.not_null_dim_customers_CUSTOMER_KEY [pass]
+10:02:22.994154 [info ]:     Passed [  0.48s] test  not_null_dim_customers_CUSTOMER_KEY
+10:02:23.027796 [debug]: Query executed on node test.car_sales_dbt.relationships_fact_vehicle_sales_SALES_PERSON_KEY__sales_person_key__ref_dim_sales_persons_.bb75a07b09:
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+  
+    
+    
+
+with child as (
+    select SALES_PERSON_KEY as from_field
+    from SNOWPARK_SAMPLE_DATA.MART.fact_vehicle_sales
+    where SALES_PERSON_KEY is not null
+),
+
+parent as (
+    select sales_person_key as to_field
+    from SNOWPARK_SAMPLE_DATA.MART.dim_sales_persons
+)
+
+select
+    from_field
+
+from child
+left join parent
+    on child.from_field = parent.to_field
+
+where parent.to_field is null
+
+
+
+  
+  
+      
+    ) dbt_internal_test
+/* {"app": "dbt", "dbt_version": "2.0.0", "node_id": "test.car_sales_dbt.relationships_fact_vehicle_sales_SALES_PERSON_KEY__sales_person_key__ref_dim_sales_persons_.bb75a07b09", "profile_name": "car_sales_dbt", "target_name": "dev"} */
+10:02:23.029527 [info ]: Finished running [  0.68s] test dbt_test__audit.relationships_fact_vehicle_sales_SALES_PERSON_KEY__sales_person_key__ref_dim_sales_persons_ [pass]
+10:02:23.029651 [info ]:     Passed [  0.68s] test  relationships_fact_vehicle_sales_SALES_PERSON_KEY__sales_person_key__ref_dim_sales_persons_
+10:02:23.343568 [debug]: Query executed on node test.car_sales_dbt.relationships_fact_vehicle_sales_CUSTOMER_KEY__customer_key__ref_dim_customers_.39991c3957:
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+  
+    
+    
+
+with child as (
+    select CUSTOMER_KEY as from_field
+    from SNOWPARK_SAMPLE_DATA.MART.fact_vehicle_sales
+    where CUSTOMER_KEY is not null
+),
+
+parent as (
+    select customer_key as to_field
+    from SNOWPARK_SAMPLE_DATA.MART.dim_customers
+)
+
+select
+    from_field
+
+from child
+left join parent
+    on child.from_field = parent.to_field
+
+where parent.to_field is null
+
+
+
+  
+  
+      
+    ) dbt_internal_test
+/* {"app": "dbt", "dbt_version": "2.0.0", "node_id": "test.car_sales_dbt.relationships_fact_vehicle_sales_CUSTOMER_KEY__customer_key__ref_dim_customers_.39991c3957", "profile_name": "car_sales_dbt", "target_name": "dev"} */
+10:02:23.345148 [info ]: Finished running [  0.82s] test dbt_test__audit.relationships_fact_vehicle_sales_CUSTOMER_KEY__customer_key__ref_dim_customers_ [pass]
+10:02:23.345259 [info ]:     Passed [  0.83s] test  relationships_fact_vehicle_sales_CUSTOMER_KEY__customer_key__ref_dim_customers_
+10:02:23.629105 [debug]: Query executed on node test.car_sales_dbt.not_null_dim_sales_persons_SALES_PERSON_ID.2bfa32c62d:
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+  
+    
+    
+
+
+
+select SALES_PERSON_ID
+from SNOWPARK_SAMPLE_DATA.MART.dim_sales_persons
+where SALES_PERSON_ID is null
+
+
+
+  
+  
+      
+    ) dbt_internal_test
+/* {"app": "dbt", "dbt_version": "2.0.0", "node_id": "test.car_sales_dbt.not_null_dim_sales_persons_SALES_PERSON_ID.2bfa32c62d", "profile_name": "car_sales_dbt", "target_name": "dev"} */
+10:02:23.630286 [debug]: Query executed on node test.car_sales_dbt.not_null_dim_sales_persons_SALES_PERSON_KEY.85f80c32c8:
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+  
+    
+    
+
+
+
+select SALES_PERSON_KEY
+from SNOWPARK_SAMPLE_DATA.MART.dim_sales_persons
+where SALES_PERSON_KEY is null
+
+
+
+  
+  
+      
+    ) dbt_internal_test
+/* {"app": "dbt", "dbt_version": "2.0.0", "node_id": "test.car_sales_dbt.not_null_dim_sales_persons_SALES_PERSON_KEY.85f80c32c8", "profile_name": "car_sales_dbt", "target_name": "dev"} */
+10:02:23.630918 [info ]: Finished running [  1.28s] test dbt_test__audit.not_null_dim_sales_persons_SALES_PERSON_ID [pass]
+10:02:23.631049 [info ]:     Passed [  1.28s] test  not_null_dim_sales_persons_SALES_PERSON_ID
+10:02:23.631605 [info ]: Finished running [  1.28s] test dbt_test__audit.not_null_dim_sales_persons_SALES_PERSON_KEY [pass]
+10:02:23.631666 [info ]:     Passed [  1.28s] test  not_null_dim_sales_persons_SALES_PERSON_KEY
+10:02:23.633386 [debug]: Query executed on node test.car_sales_dbt.unique_dim_vehicles_VEHICLE_KEY.04a14a9493:
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+  
+    
+    
+
+select
+    VEHICLE_KEY as unique_field,
+    count(*) as n_records
+
+from SNOWPARK_SAMPLE_DATA.MART.dim_vehicles
+where VEHICLE_KEY is not null
+group by VEHICLE_KEY
+having count(*) > 1
+
+
+
+  
+  
+      
+    ) dbt_internal_test
+/* {"app": "dbt", "dbt_version": "2.0.0", "node_id": "test.car_sales_dbt.unique_dim_vehicles_VEHICLE_KEY.04a14a9493", "profile_name": "car_sales_dbt", "target_name": "dev"} */
+10:02:23.634367 [info ]: Finished running [  1.54s] test dbt_test__audit.unique_dim_vehicles_VEHICLE_KEY [pass]
+10:02:23.634413 [info ]:     Passed [  1.55s] test  unique_dim_vehicles_VEHICLE_KEY
+10:02:23.679150 [debug]: Query executed on node test.car_sales_dbt.relationships_fact_vehicle_sales_VEHICLE_KEY__vehicle_key__ref_dim_vehicles_.3ab6e6df00:
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+  
+    
+    
+
+with child as (
+    select VEHICLE_KEY as from_field
+    from SNOWPARK_SAMPLE_DATA.MART.fact_vehicle_sales
+    where VEHICLE_KEY is not null
+),
+
+parent as (
+    select vehicle_key as to_field
+    from SNOWPARK_SAMPLE_DATA.MART.dim_vehicles
+)
+
+select
+    from_field
+
+from child
+left join parent
+    on child.from_field = parent.to_field
+
+where parent.to_field is null
+
+
+
+  
+  
+      
+    ) dbt_internal_test
+/* {"app": "dbt", "dbt_version": "2.0.0", "node_id": "test.car_sales_dbt.relationships_fact_vehicle_sales_VEHICLE_KEY__vehicle_key__ref_dim_vehicles_.3ab6e6df00", "profile_name": "car_sales_dbt", "target_name": "dev"} */
+10:02:23.680482 [info ]: Finished running [  1.58s] test dbt_test__audit.relationships_fact_vehicle_sales_VEHICLE_KEY__vehicle_key__ref_dim_vehicles_ [pass]
+10:02:23.680549 [info ]: Finished running [  6.29s] (13 nodes, 0 skipped, 0 errors)
+10:02:23.680602 [info ]:     Passed [  1.60s] test  relationships_fact_vehicle_sales_VEHICLE_KEY__vehicle_key__ref_dim_vehicles_
+10:02:23.716339 [info ]: New version available 2.0.0-preview.193 (run `dbt system update`)
+10:02:23.737830 [info ]: 
+==================== Execution Summary =====================
+Finished 'build' with 1 warning for target 'dev' [10.5s]
+Processed: 3 models | 10 tests
+Summary: 13 total | 13 success
+==================== 2026-06-26T10:06:29.297563Z | 019f0365-29b0-7541-87bd-eac1abd5fce6 ====================
+10:06:29.297643 [info ]: dbt-fusion 2.0.0-preview.190
+10:06:29.297788 [info ]: Started loading project
+10:06:29.298514 [info ]: Loading ~/.dbt/profiles.yml
+10:06:29.394670 [debug]:    Started loading packages
+10:06:29.395264 [debug]:     Loaded [  0.00s] packages
+10:06:29.395561 [info ]: Finished loading project [  0.10s]
+10:06:29.395704 [info ]: Started parsing
+10:06:29.404975 [debug]: Finished parsing models/marts/schema.yml [  0.00s]
+10:06:29.405051 [debug]: Finished parsing models/sources.yml [  0.00s]
+10:06:29.405146 [debug]: Finished parsing models/staging/schema.yml [  0.00s]
+10:06:29.406050 [debug]: Finished parsing models/marts/bridge_vehicle_sale_extras.sql [  0.00s]
+10:06:29.406185 [debug]: Finished parsing models/marts/dim_customers.sql [  0.00s]
+10:06:29.406299 [debug]: Finished parsing models/marts/dim_extras.sql [  0.00s]
+10:06:29.406422 [debug]: Finished parsing models/marts/dim_sales_persons.sql [  0.00s]
+10:06:29.406528 [debug]: Finished parsing models/marts/dim_vehicles.sql [  0.00s]
+10:06:29.406681 [debug]: Finished parsing models/marts/fact_vehicle_sales.sql [  0.00s]
+10:06:29.406797 [debug]: Finished parsing models/staging/stg_car_sales_base.sql [  0.00s]
+10:06:29.406917 [debug]: Finished parsing models/staging/stg_car_sales_customers.sql [  0.00s]
+10:06:29.407038 [debug]: Finished parsing models/staging/stg_car_sales_extras.sql [  0.00s]
+10:06:29.407149 [debug]: Finished parsing models/staging/stg_car_sales_vehicles.sql [  0.00s]
+10:06:29.412153 [debug]: Finished parsing target/generic_tests/source_not_null_car_sales_source_CAR_SALES_SRC.sql [  0.00s]
+10:06:29.412283 [debug]: Finished parsing target/generic_tests/unique_combination_of_columns__2db95a5929e8d0e375759fd7ecd8e244.sql [  0.00s]
+10:06:29.412416 [debug]: Finished parsing target/generic_tests/not_null_bridge_vehicle_sale_extras_EXTRA_KEY.sql [  0.00s]
+10:06:29.412549 [debug]: Finished parsing target/generic_tests/relationships_bridge_vehicle_s_3a770fa52eaa87f2b975550215a5ece1.sql [  0.00s]
+10:06:29.412723 [debug]: Finished parsing target/generic_tests/not_null_bridge_vehicle_sale_extras_SALE_KEY.sql [  0.00s]
+10:06:29.412887 [debug]: Finished parsing target/generic_tests/relationships_bridge_vehicle_s_4de826e75fcc2c6255ef345549f6ae31.sql [  0.00s]
+10:06:29.413043 [debug]: Finished parsing target/generic_tests/not_null_dim_customers_CUSTOMER_KEY.sql [  0.00s]
+10:06:29.413149 [debug]: Finished parsing target/generic_tests/unique_dim_customers_CUSTOMER_KEY.sql [  0.00s]
+10:06:29.413333 [debug]: Finished parsing target/generic_tests/not_null_dim_extras_EXTRA.sql [  0.00s]
+10:06:29.413481 [debug]: Finished parsing target/generic_tests/not_null_dim_extras_EXTRA_KEY.sql [  0.00s]
+10:06:29.413606 [debug]: Finished parsing target/generic_tests/unique_dim_extras_EXTRA_KEY.sql [  0.00s]
+10:06:29.413727 [debug]: Finished parsing target/generic_tests/not_null_dim_sales_persons_SALES_PERSON_ID.sql [  0.00s]
+10:06:29.413837 [debug]: Finished parsing target/generic_tests/not_null_dim_sales_persons_SALES_PERSON_KEY.sql [  0.00s]
+10:06:29.413940 [debug]: Finished parsing target/generic_tests/unique_dim_sales_persons_SALES_PERSON_KEY.sql [  0.00s]
+10:06:29.414055 [debug]: Finished parsing target/generic_tests/not_null_dim_vehicles_VEHICLE_KEY.sql [  0.00s]
+10:06:29.414152 [debug]: Finished parsing target/generic_tests/unique_dim_vehicles_VEHICLE_KEY.sql [  0.00s]
+10:06:29.414273 [debug]: Finished parsing target/generic_tests/not_null_fact_vehicle_sales_CUSTOMER_KEY.sql [  0.00s]
+10:06:29.414403 [debug]: Finished parsing target/generic_tests/relationships_fact_vehicle_sal_b5350d7887efbfca2ca0da81a689b674.sql [  0.00s]
+10:06:29.414506 [debug]: Finished parsing target/generic_tests/relationships_fact_vehicle_sal_0bd99332a98323e1089c9c78a47fbb84.sql [  0.00s]
+10:06:29.414629 [debug]: Finished parsing target/generic_tests/not_null_fact_vehicle_sales_SALE_KEY.sql [  0.00s]
+10:06:29.414750 [debug]: Finished parsing target/generic_tests/unique_fact_vehicle_sales_SALE_KEY.sql [  0.00s]
+10:06:29.414876 [debug]: Finished parsing target/generic_tests/not_null_fact_vehicle_sales_SALE_PRICE.sql [  0.00s]
+10:06:29.414989 [debug]: Finished parsing target/generic_tests/not_null_fact_vehicle_sales_VEHICLE_KEY.sql [  0.00s]
+10:06:29.415094 [debug]: Finished parsing target/generic_tests/relationships_fact_vehicle_sal_7d4861e04c66bc56789d9e51c22c96fe.sql [  0.00s]
+10:06:29.415212 [debug]: Finished parsing target/generic_tests/not_null_stg_car_sales_base_SOURCE_SALE_KEY.sql [  0.00s]
+10:06:29.415311 [debug]: Finished parsing target/generic_tests/unique_stg_car_sales_base_SOURCE_SALE_KEY.sql [  0.00s]
+10:06:29.415414 [debug]: Finished parsing target/generic_tests/not_null_stg_car_sales_base_SRC.sql [  0.00s]
+10:06:29.415533 [debug]: Finished parsing target/generic_tests/not_null_stg_car_sales_customers_CUSTOMER_INDEX.sql [  0.00s]
+10:06:29.415646 [debug]: Finished parsing target/generic_tests/not_null_stg_car_sales_customers_CUSTOMER_KEY.sql [  0.00s]
+10:06:29.415755 [debug]: Finished parsing target/generic_tests/not_null_stg_car_sales_customers_SOURCE_SALE_KEY.sql [  0.00s]
+10:06:29.415862 [debug]: Finished parsing target/generic_tests/not_null_stg_car_sales_extras_EXTRA.sql [  0.00s]
+10:06:29.415962 [debug]: Finished parsing target/generic_tests/not_null_stg_car_sales_extras_EXTRA_INDEX.sql [  0.00s]
+10:06:29.416070 [debug]: Finished parsing target/generic_tests/not_null_stg_car_sales_extras_EXTRA_KEY.sql [  0.00s]
+10:06:29.416185 [debug]: Finished parsing target/generic_tests/not_null_stg_car_sales_extras_SOURCE_SALE_KEY.sql [  0.00s]
+10:06:29.416283 [debug]: Finished parsing target/generic_tests/not_null_stg_car_sales_extras_VEHICLE_INDEX.sql [  0.00s]
+10:06:29.416415 [debug]: Finished parsing target/generic_tests/not_null_stg_car_sales_extras_VEHICLE_KEY.sql [  0.00s]
+10:06:29.416550 [debug]: Finished parsing target/generic_tests/not_null_stg_car_sales_vehicles_SOURCE_SALE_KEY.sql [  0.00s]
+10:06:29.416674 [debug]: Finished parsing target/generic_tests/not_null_stg_car_sales_vehicles_VEHICLE_INDEX.sql [  0.00s]
+10:06:29.416798 [debug]: Finished parsing target/generic_tests/not_null_stg_car_sales_vehicles_VEHICLE_KEY.sql [  0.00s]
+10:06:29.420336 [info ]: Finished parsing [  0.02s]
+10:06:29.420484 [info ]: Started scheduling
+10:06:29.420718 [info ]: Finished scheduling [  0.00s]
+10:06:29.420867 [debug]: Initializing schema store with entry: Frontier(CanonicalFqn { catalog: "SNOWPARK_SAMPLE_DATA", schema: "STAGING", table: "STG_CAR_SALES_CUSTOMERS" }) and interval: None
+10:06:29.420877 [debug]: Initializing schema store with entry: Frontier(CanonicalFqn { catalog: "SNOWPARK_SAMPLE_DATA", schema: "MART", table: "BRIDGE_VEHICLE_SALE_EXTRAS" }) and interval: None
+10:06:29.420882 [debug]: Initializing schema store with entry: Frontier(CanonicalFqn { catalog: "SNOWPARK_SAMPLE_DATA", schema: "STAGING", table: "STG_CAR_SALES_BASE" }) and interval: None
+10:06:29.420885 [debug]: Initializing schema store with entry: Frontier(CanonicalFqn { catalog: "SNOWPARK_SAMPLE_DATA", schema: "STAGING", table: "STG_CAR_SALES_EXTRAS" }) and interval: None
+10:06:29.420889 [debug]: Initializing schema store with entry: Frontier(CanonicalFqn { catalog: "SNOWPARK_SAMPLE_DATA", schema: "STAGING", table: "STG_CAR_SALES_VEHICLES" }) and interval: None
+10:06:29.420893 [debug]: Initializing schema store with entry: Frontier(CanonicalFqn { catalog: "SNOWPARK_SAMPLE_DATA", schema: "MART", table: "FACT_VEHICLE_SALES" }) and interval: None
+10:06:30.289896 [warn ]: [LicenseError (dbt1068)]: Failed to resolve platform credentials: authentication expired
+10:06:30.290085 [debug]: License check failed: Feature not licensed: 'lineage'
+10:06:30.292168 [info ]: Started building task graph
+10:06:30.292606 [info ]: Finished building task graph [  0.00s]
+10:06:31.057836 [debug]: Query executed on node unknown:
+show terse schemas in database SNOWPARK_SAMPLE_DATA
+    limit 10000
+/* {"app": "dbt", "connection_name": "", "dbt_version": "2.0.0", "profile_name": "car_sales_dbt", "target_name": "dev"} */
+10:06:31.058266 [info ]: Started rendering (18 nodes)
+10:06:31.058361 [info ]: Started model MART.dim_vehicles
+10:06:31.058387 [debug]: Started rendering model MART.dim_vehicles
+10:06:31.058426 [info ]: Started model MART.dim_sales_persons
+10:06:31.058437 [debug]: Started rendering model MART.dim_sales_persons
+10:06:31.058454 [info ]: Started model MART.dim_extras
+10:06:31.058494 [debug]: Started rendering model MART.dim_extras
+10:06:31.058588 [info ]: Started model MART.dim_customers
+10:06:31.058616 [debug]: Started rendering model MART.dim_customers
+10:06:31.060026 [debug]: Compiled SQL for node model.car_sales_dbt.dim_sales_persons at target/compiled/car_sales_dbt/models/marts/dim_sales_persons.sql
+10:06:31.060026 [debug]: Compiled SQL for node model.car_sales_dbt.dim_extras at target/compiled/car_sales_dbt/models/marts/dim_extras.sql
+10:06:31.060035 [debug]: Compiled SQL for node model.car_sales_dbt.dim_vehicles at target/compiled/car_sales_dbt/models/marts/dim_vehicles.sql
+10:06:31.060048 [debug]: Compiled SQL for node model.car_sales_dbt.dim_customers at target/compiled/car_sales_dbt/models/marts/dim_customers.sql
+10:06:31.060166 [debug]: Finished rendering [  0.00s] model MART.dim_vehicles [success]
+10:06:31.060250 [info ]: Started analyzing (18 nodes)
+10:06:31.060286 [debug]: Started analyzing model MART.dim_vehicles
+10:06:31.060310 [debug]: Finished rendering [  0.00s] model MART.dim_sales_persons [success]
+10:06:31.060343 [debug]: Started analyzing model MART.dim_sales_persons
+10:06:31.060354 [debug]: Finished rendering [  0.00s] model MART.dim_customers [success]
+10:06:31.060379 [debug]: Started analyzing model MART.dim_customers
+10:06:31.060391 [debug]: Finished rendering [  0.00s] model MART.dim_extras [success]
+10:06:31.060413 [debug]: Started analyzing model MART.dim_extras
+10:06:31.068450 [debug]: Finished analyzing [  0.01s] model MART.dim_vehicles [success]
+10:06:31.068516 [info ]: Started running (18 nodes)
+10:06:31.068551 [info ]: Started running model MART.dim_vehicles
+10:06:31.068569 [debug]: Finished analyzing [  0.01s] model MART.dim_customers [success]
+10:06:31.068599 [info ]: Started running model MART.dim_customers
+10:06:31.068611 [debug]: Finished analyzing [  0.01s] model MART.dim_extras [success]
+10:06:31.068635 [info ]: Started running model MART.dim_extras
+10:06:31.076681 [debug]: Finished analyzing [  0.02s] model MART.dim_sales_persons [success]
+10:06:31.076791 [info ]: Started running model MART.dim_sales_persons
+10:06:31.290712 [debug]: Query executed on node model.car_sales_dbt.dim_customers:
+SHOW OBJECTS IN SCHEMA "SNOWPARK_SAMPLE_DATA"."MART" LIMIT 10000
+10:06:31.293015 [debug]: Writing runtime sql for node "model.car_sales_dbt.dim_customers"
+10:06:31.511957 [debug]: Query executed on node model.car_sales_dbt.dim_sales_persons:
+SHOW OBJECTS IN SCHEMA "SNOWPARK_SAMPLE_DATA"."MART" LIMIT 10000
+10:06:31.514143 [debug]: Writing runtime sql for node "model.car_sales_dbt.dim_sales_persons"
+10:06:31.622246 [debug]: Query executed on node model.car_sales_dbt.dim_extras:
+SHOW OBJECTS IN SCHEMA "SNOWPARK_SAMPLE_DATA"."MART" LIMIT 10000
+10:06:31.624015 [debug]: Writing runtime sql for node "model.car_sales_dbt.dim_extras"
+10:06:31.669057 [debug]: Query executed on node model.car_sales_dbt.dim_vehicles:
+SHOW OBJECTS IN SCHEMA "SNOWPARK_SAMPLE_DATA"."MART" LIMIT 10000
+10:06:31.671064 [debug]: Writing runtime sql for node "model.car_sales_dbt.dim_vehicles"
+10:06:31.917037 [debug]: Query executed on node model.car_sales_dbt.dim_customers:
+create or replace transient  table SNOWPARK_SAMPLE_DATA.MART.dim_customers
+    
+    
+    
+    
+    as (select
+  customer_key,
+  customer_name,
+  customer_phone,
+  customer_address
+from SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_customers
+where customer_key is not null
+qualify row_number() over (
+  partition by customer_key
+  order by customer_name, customer_phone, customer_address
+) = 1
+    )
+
+/* {"app": "dbt", "dbt_version": "2.0.0", "node_id": "model.car_sales_dbt.dim_customers", "profile_name": "car_sales_dbt", "target_name": "dev"} */
+10:06:31.919094 [info ]: Finished running [  0.85s] model MART.dim_customers [success]
+10:06:31.919152 [info ]:  Succeeded [  0.86s] model MART.dim_customers (table)
+10:06:31.919264 [info ]: Started test dbt_test__audit.not_null_dim_customers_CUSTOMER_KEY
+10:06:31.919290 [debug]: Started rendering test dbt_test__audit.not_null_dim_customers_CUSTOMER_KEY
+10:06:31.919320 [info ]: Started test dbt_test__audit.unique_dim_customers_CUSTOMER_KEY
+10:06:31.919332 [debug]: Started rendering test dbt_test__audit.unique_dim_customers_CUSTOMER_KEY
+10:06:31.919356 [info ]: Started test dbt_test__audit.relationships_fact_vehicle_sales_CUSTOMER_KEY__customer_key__ref_dim_customers_
+10:06:31.919367 [debug]: Started rendering test dbt_test__audit.relationships_fact_vehicle_sales_CUSTOMER_KEY__customer_key__ref_dim_customers_
+10:06:31.921195 [debug]: Compiled SQL for node test.car_sales_dbt.relationships_fact_vehicle_sales_CUSTOMER_KEY__customer_key__ref_dim_customers_.39991c3957 at target/compiled/car_sales_dbt/target/generic_tests/relationships_fact_vehicle_sal_b5350d7887efbfca2ca0da81a689b674.sql
+10:06:31.921213 [debug]: Compiled SQL for node test.car_sales_dbt.unique_dim_customers_CUSTOMER_KEY.070459efe0 at target/compiled/car_sales_dbt/target/generic_tests/unique_dim_customers_CUSTOMER_KEY.sql
+10:06:31.921231 [debug]: Compiled SQL for node test.car_sales_dbt.not_null_dim_customers_CUSTOMER_KEY.397edac728 at target/compiled/car_sales_dbt/target/generic_tests/not_null_dim_customers_CUSTOMER_KEY.sql
+10:06:31.921300 [debug]: Finished rendering [  0.00s] test dbt_test__audit.relationships_fact_vehicle_sales_CUSTOMER_KEY__customer_key__ref_dim_customers_ [success]
+10:06:31.921357 [debug]: Started analyzing test dbt_test__audit.relationships_fact_vehicle_sales_CUSTOMER_KEY__customer_key__ref_dim_customers_
+10:06:31.921380 [debug]: Finished rendering [  0.00s] test dbt_test__audit.unique_dim_customers_CUSTOMER_KEY [success]
+10:06:31.921406 [debug]: Started analyzing test dbt_test__audit.unique_dim_customers_CUSTOMER_KEY
+10:06:31.921422 [debug]: Finished rendering [  0.00s] test dbt_test__audit.not_null_dim_customers_CUSTOMER_KEY [success]
+10:06:31.921444 [debug]: Started analyzing test dbt_test__audit.not_null_dim_customers_CUSTOMER_KEY
+10:06:31.921743 [debug]: Finished analyzing [  0.00s] test dbt_test__audit.not_null_dim_customers_CUSTOMER_KEY [success]
+10:06:31.921772 [info ]: Started running test dbt_test__audit.not_null_dim_customers_CUSTOMER_KEY
+10:06:31.923651 [debug]: Writing runtime sql for node "test.car_sales_dbt.not_null_dim_customers_CUSTOMER_KEY.397edac728"
+10:06:31.924397 [debug]: Finished analyzing [  0.00s] test dbt_test__audit.unique_dim_customers_CUSTOMER_KEY [success]
+10:06:31.924438 [info ]: Started running test dbt_test__audit.unique_dim_customers_CUSTOMER_KEY
+10:06:31.925848 [debug]: Writing runtime sql for node "test.car_sales_dbt.unique_dim_customers_CUSTOMER_KEY.070459efe0"
+10:06:31.926055 [debug]: Finished analyzing [  0.00s] test dbt_test__audit.relationships_fact_vehicle_sales_CUSTOMER_KEY__customer_key__ref_dim_customers_ [success]
+10:06:31.926102 [info ]: Started running test dbt_test__audit.relationships_fact_vehicle_sales_CUSTOMER_KEY__customer_key__ref_dim_customers_
+10:06:31.927497 [debug]: Writing runtime sql for node "test.car_sales_dbt.relationships_fact_vehicle_sales_CUSTOMER_KEY__customer_key__ref_dim_customers_.39991c3957"
+10:06:32.074422 [debug]: Query executed on node model.car_sales_dbt.dim_sales_persons:
+create or replace transient  table SNOWPARK_SAMPLE_DATA.MART.dim_sales_persons
+    
+    
+    
+    
+    as (select
+  sales_person_key,
+  sales_person_id,
+  sales_person_name,
+  dealership
+from (
+  select
+    case
+      when sales_person_id is null then null
+      else md5(
+        upper(coalesce(dealership, '')) || '|' ||
+        coalesce(sales_person_id, '')
+      )
+    end as sales_person_key,
+    sales_person_id,
+    sales_person_name,
+    dealership
+  from SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_base
+  where sales_person_id is not null
+)
+qualify row_number() over (
+  partition by sales_person_key
+  order by sales_person_id, sales_person_name, dealership
+) = 1
+    )
+
+/* {"app": "dbt", "dbt_version": "2.0.0", "node_id": "model.car_sales_dbt.dim_sales_persons", "profile_name": "car_sales_dbt", "target_name": "dev"} */
+10:06:32.076239 [info ]: Finished running [  1.00s] model MART.dim_sales_persons [success]
+10:06:32.076285 [info ]:  Succeeded [  1.02s] model MART.dim_sales_persons (table)
+10:06:32.076379 [info ]: Started test dbt_test__audit.unique_dim_sales_persons_SALES_PERSON_KEY
+10:06:32.076395 [debug]: Started rendering test dbt_test__audit.unique_dim_sales_persons_SALES_PERSON_KEY
+10:06:32.076417 [info ]: Started test dbt_test__audit.not_null_dim_sales_persons_SALES_PERSON_KEY
+10:06:32.076426 [debug]: Started rendering test dbt_test__audit.not_null_dim_sales_persons_SALES_PERSON_KEY
+10:06:32.076444 [info ]: Started test dbt_test__audit.not_null_dim_sales_persons_SALES_PERSON_ID
+10:06:32.076452 [debug]: Started rendering test dbt_test__audit.not_null_dim_sales_persons_SALES_PERSON_ID
+10:06:32.076470 [info ]: Started test dbt_test__audit.relationships_fact_vehicle_sales_SALES_PERSON_KEY__sales_person_key__ref_dim_sales_persons_
+10:06:32.076481 [debug]: Started rendering test dbt_test__audit.relationships_fact_vehicle_sales_SALES_PERSON_KEY__sales_person_key__ref_dim_sales_persons_
+10:06:32.078070 [debug]: Compiled SQL for node test.car_sales_dbt.relationships_fact_vehicle_sales_SALES_PERSON_KEY__sales_person_key__ref_dim_sales_persons_.bb75a07b09 at target/compiled/car_sales_dbt/target/generic_tests/relationships_fact_vehicle_sal_0bd99332a98323e1089c9c78a47fbb84.sql
+10:06:32.078070 [debug]: Compiled SQL for node test.car_sales_dbt.unique_dim_sales_persons_SALES_PERSON_KEY.73cdbd55d5 at target/compiled/car_sales_dbt/target/generic_tests/unique_dim_sales_persons_SALES_PERSON_KEY.sql
+10:06:32.078094 [debug]: Compiled SQL for node test.car_sales_dbt.not_null_dim_sales_persons_SALES_PERSON_ID.2bfa32c62d at target/compiled/car_sales_dbt/target/generic_tests/not_null_dim_sales_persons_SALES_PERSON_ID.sql
+10:06:32.078102 [debug]: Compiled SQL for node test.car_sales_dbt.not_null_dim_sales_persons_SALES_PERSON_KEY.85f80c32c8 at target/compiled/car_sales_dbt/target/generic_tests/not_null_dim_sales_persons_SALES_PERSON_KEY.sql
+10:06:32.078180 [debug]: Finished rendering [  0.00s] test dbt_test__audit.relationships_fact_vehicle_sales_SALES_PERSON_KEY__sales_person_key__ref_dim_sales_persons_ [success]
+10:06:32.078238 [debug]: Started analyzing test dbt_test__audit.relationships_fact_vehicle_sales_SALES_PERSON_KEY__sales_person_key__ref_dim_sales_persons_
+10:06:32.078262 [debug]: Finished rendering [  0.00s] test dbt_test__audit.not_null_dim_sales_persons_SALES_PERSON_ID [success]
+10:06:32.078288 [debug]: Started analyzing test dbt_test__audit.not_null_dim_sales_persons_SALES_PERSON_ID
+10:06:32.078305 [debug]: Finished rendering [  0.00s] test dbt_test__audit.unique_dim_sales_persons_SALES_PERSON_KEY [success]
+10:06:32.078328 [debug]: Started analyzing test dbt_test__audit.unique_dim_sales_persons_SALES_PERSON_KEY
+10:06:32.078343 [debug]: Finished rendering [  0.00s] test dbt_test__audit.not_null_dim_sales_persons_SALES_PERSON_KEY [success]
+10:06:32.078362 [debug]: Started analyzing test dbt_test__audit.not_null_dim_sales_persons_SALES_PERSON_KEY
+10:06:32.078485 [debug]: Finished analyzing [  0.00s] test dbt_test__audit.not_null_dim_sales_persons_SALES_PERSON_KEY [success]
+10:06:32.078511 [info ]: Started running test dbt_test__audit.not_null_dim_sales_persons_SALES_PERSON_KEY
+10:06:32.078524 [debug]: Finished analyzing [  0.00s] test dbt_test__audit.not_null_dim_sales_persons_SALES_PERSON_ID [success]
+10:06:32.078545 [info ]: Started running test dbt_test__audit.not_null_dim_sales_persons_SALES_PERSON_ID
+10:06:32.078783 [debug]: Finished analyzing [  0.00s] test dbt_test__audit.unique_dim_sales_persons_SALES_PERSON_KEY [success]
+10:06:32.078815 [info ]: Started running test dbt_test__audit.unique_dim_sales_persons_SALES_PERSON_KEY
+10:06:32.078913 [debug]: Finished analyzing [  0.00s] test dbt_test__audit.relationships_fact_vehicle_sales_SALES_PERSON_KEY__sales_person_key__ref_dim_sales_persons_ [success]
+10:06:32.078942 [info ]: Started running test dbt_test__audit.relationships_fact_vehicle_sales_SALES_PERSON_KEY__sales_person_key__ref_dim_sales_persons_
+10:06:32.080458 [debug]: Writing runtime sql for node "test.car_sales_dbt.not_null_dim_sales_persons_SALES_PERSON_ID.2bfa32c62d"
+10:06:32.080523 [debug]: Writing runtime sql for node "test.car_sales_dbt.not_null_dim_sales_persons_SALES_PERSON_KEY.85f80c32c8"
+10:06:32.080586 [debug]: Writing runtime sql for node "test.car_sales_dbt.unique_dim_sales_persons_SALES_PERSON_KEY.73cdbd55d5"
+10:06:32.080697 [debug]: Writing runtime sql for node "test.car_sales_dbt.relationships_fact_vehicle_sales_SALES_PERSON_KEY__sales_person_key__ref_dim_sales_persons_.bb75a07b09"
+10:06:32.154561 [debug]: Query executed on node test.car_sales_dbt.not_null_dim_customers_CUSTOMER_KEY.397edac728:
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+  
+    
+    
+
+
+
+select CUSTOMER_KEY
+from SNOWPARK_SAMPLE_DATA.MART.dim_customers
+where CUSTOMER_KEY is null
+
+
+
+  
+  
+      
+    ) dbt_internal_test
+/* {"app": "dbt", "dbt_version": "2.0.0", "node_id": "test.car_sales_dbt.not_null_dim_customers_CUSTOMER_KEY.397edac728", "profile_name": "car_sales_dbt", "target_name": "dev"} */
+10:06:32.155387 [info ]: Finished running [  0.23s] test dbt_test__audit.not_null_dim_customers_CUSTOMER_KEY [pass]
+10:06:32.155427 [info ]:     Passed [  0.23s] test  not_null_dim_customers_CUSTOMER_KEY
+10:06:32.219208 [debug]: Query executed on node model.car_sales_dbt.dim_vehicles:
+create or replace transient  table SNOWPARK_SAMPLE_DATA.MART.dim_vehicles
+    
+    
+    
+    
+    as (select
+  vehicle_key,
+  make,
+  model,
+  year
+from SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_vehicles
+where vehicle_key is not null
+qualify row_number() over (
+  partition by vehicle_key
+  order by make, model, year
+) = 1
+    )
+
+/* {"app": "dbt", "dbt_version": "2.0.0", "node_id": "model.car_sales_dbt.dim_vehicles", "profile_name": "car_sales_dbt", "target_name": "dev"} */
+10:06:32.221103 [info ]: Finished running [  1.15s] model MART.dim_vehicles [success]
+10:06:32.221196 [info ]:  Succeeded [  1.16s] model MART.dim_vehicles (table)
+10:06:32.221276 [info ]: Started test dbt_test__audit.unique_dim_vehicles_VEHICLE_KEY
+10:06:32.221295 [debug]: Started rendering test dbt_test__audit.unique_dim_vehicles_VEHICLE_KEY
+10:06:32.221320 [info ]: Started test dbt_test__audit.not_null_dim_vehicles_VEHICLE_KEY
+10:06:32.221330 [debug]: Started rendering test dbt_test__audit.not_null_dim_vehicles_VEHICLE_KEY
+10:06:32.221347 [info ]: Started test dbt_test__audit.relationships_fact_vehicle_sales_VEHICLE_KEY__vehicle_key__ref_dim_vehicles_
+10:06:32.221357 [debug]: Started rendering test dbt_test__audit.relationships_fact_vehicle_sales_VEHICLE_KEY__vehicle_key__ref_dim_vehicles_
+10:06:32.223232 [debug]: Compiled SQL for node test.car_sales_dbt.not_null_dim_vehicles_VEHICLE_KEY.dfc0eb8479 at target/compiled/car_sales_dbt/target/generic_tests/not_null_dim_vehicles_VEHICLE_KEY.sql
+10:06:32.223266 [debug]: Compiled SQL for node test.car_sales_dbt.unique_dim_vehicles_VEHICLE_KEY.04a14a9493 at target/compiled/car_sales_dbt/target/generic_tests/unique_dim_vehicles_VEHICLE_KEY.sql
+10:06:32.223271 [debug]: Compiled SQL for node test.car_sales_dbt.relationships_fact_vehicle_sales_VEHICLE_KEY__vehicle_key__ref_dim_vehicles_.3ab6e6df00 at target/compiled/car_sales_dbt/target/generic_tests/relationships_fact_vehicle_sal_7d4861e04c66bc56789d9e51c22c96fe.sql
+10:06:32.223355 [debug]: Finished rendering [  0.00s] test dbt_test__audit.unique_dim_vehicles_VEHICLE_KEY [success]
+10:06:32.223421 [debug]: Started analyzing test dbt_test__audit.unique_dim_vehicles_VEHICLE_KEY
+10:06:32.223445 [debug]: Finished rendering [  0.00s] test dbt_test__audit.not_null_dim_vehicles_VEHICLE_KEY [success]
+10:06:32.223472 [debug]: Started analyzing test dbt_test__audit.not_null_dim_vehicles_VEHICLE_KEY
+10:06:32.223487 [debug]: Finished rendering [  0.00s] test dbt_test__audit.relationships_fact_vehicle_sales_VEHICLE_KEY__vehicle_key__ref_dim_vehicles_ [success]
+10:06:32.223507 [debug]: Started analyzing test dbt_test__audit.relationships_fact_vehicle_sales_VEHICLE_KEY__vehicle_key__ref_dim_vehicles_
+10:06:32.223804 [debug]: Finished analyzing [  0.00s] test dbt_test__audit.not_null_dim_vehicles_VEHICLE_KEY [success]
+10:06:32.223846 [info ]: Started running test dbt_test__audit.not_null_dim_vehicles_VEHICLE_KEY
+10:06:32.224142 [debug]: Finished analyzing [  0.00s] test dbt_test__audit.unique_dim_vehicles_VEHICLE_KEY [success]
+10:06:32.224177 [info ]: Started running test dbt_test__audit.unique_dim_vehicles_VEHICLE_KEY
+10:06:32.224267 [debug]: Finished analyzing [  0.00s] test dbt_test__audit.relationships_fact_vehicle_sales_VEHICLE_KEY__vehicle_key__ref_dim_vehicles_ [success]
+10:06:32.224291 [info ]: Started running test dbt_test__audit.relationships_fact_vehicle_sales_VEHICLE_KEY__vehicle_key__ref_dim_vehicles_
+10:06:32.226465 [debug]: Writing runtime sql for node "test.car_sales_dbt.not_null_dim_vehicles_VEHICLE_KEY.dfc0eb8479"
+10:06:32.226504 [debug]: Writing runtime sql for node "test.car_sales_dbt.relationships_fact_vehicle_sales_VEHICLE_KEY__vehicle_key__ref_dim_vehicles_.3ab6e6df00"
+10:06:32.226626 [debug]: Writing runtime sql for node "test.car_sales_dbt.unique_dim_vehicles_VEHICLE_KEY.04a14a9493"
+10:06:32.342439 [debug]: Query executed on node test.car_sales_dbt.not_null_dim_sales_persons_SALES_PERSON_KEY.85f80c32c8:
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+  
+    
+    
+
+
+
+select SALES_PERSON_KEY
+from SNOWPARK_SAMPLE_DATA.MART.dim_sales_persons
+where SALES_PERSON_KEY is null
+
+
+
+  
+  
+      
+    ) dbt_internal_test
+/* {"app": "dbt", "dbt_version": "2.0.0", "node_id": "test.car_sales_dbt.not_null_dim_sales_persons_SALES_PERSON_KEY.85f80c32c8", "profile_name": "car_sales_dbt", "target_name": "dev"} */
+10:06:32.342986 [debug]: Query executed on node test.car_sales_dbt.relationships_fact_vehicle_sales_CUSTOMER_KEY__customer_key__ref_dim_customers_.39991c3957:
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+  
+    
+    
+
+with child as (
+    select CUSTOMER_KEY as from_field
+    from SNOWPARK_SAMPLE_DATA.MART.fact_vehicle_sales
+    where CUSTOMER_KEY is not null
+),
+
+parent as (
+    select customer_key as to_field
+    from SNOWPARK_SAMPLE_DATA.MART.dim_customers
+)
+
+select
+    from_field
+
+from child
+left join parent
+    on child.from_field = parent.to_field
+
+where parent.to_field is null
+
+
+
+  
+  
+      
+    ) dbt_internal_test
+/* {"app": "dbt", "dbt_version": "2.0.0", "node_id": "test.car_sales_dbt.relationships_fact_vehicle_sales_CUSTOMER_KEY__customer_key__ref_dim_customers_.39991c3957", "profile_name": "car_sales_dbt", "target_name": "dev"} */
+10:06:32.342988 [debug]: Query executed on node test.car_sales_dbt.unique_dim_customers_CUSTOMER_KEY.070459efe0:
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+  
+    
+    
+
+select
+    CUSTOMER_KEY as unique_field,
+    count(*) as n_records
+
+from SNOWPARK_SAMPLE_DATA.MART.dim_customers
+where CUSTOMER_KEY is not null
+group by CUSTOMER_KEY
+having count(*) > 1
+
+
+
+  
+  
+      
+    ) dbt_internal_test
+/* {"app": "dbt", "dbt_version": "2.0.0", "node_id": "test.car_sales_dbt.unique_dim_customers_CUSTOMER_KEY.070459efe0", "profile_name": "car_sales_dbt", "target_name": "dev"} */
+10:06:32.343445 [info ]: Finished running [  0.26s] test dbt_test__audit.not_null_dim_sales_persons_SALES_PERSON_KEY [pass]
+10:06:32.343489 [info ]:     Passed [  0.27s] test  not_null_dim_sales_persons_SALES_PERSON_KEY
+10:06:32.343640 [info ]: Finished running [  0.42s] test dbt_test__audit.unique_dim_customers_CUSTOMER_KEY [pass]
+10:06:32.343663 [info ]:     Passed [  0.42s] test  unique_dim_customers_CUSTOMER_KEY
+10:06:32.343716 [info ]: Finished running [  0.42s] test dbt_test__audit.relationships_fact_vehicle_sales_CUSTOMER_KEY__customer_key__ref_dim_customers_ [pass]
+10:06:32.343733 [info ]:     Passed [  0.42s] test  relationships_fact_vehicle_sales_CUSTOMER_KEY__customer_key__ref_dim_customers_
+10:06:32.445907 [debug]: Query executed on node test.car_sales_dbt.not_null_dim_vehicles_VEHICLE_KEY.dfc0eb8479:
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+  
+    
+    
+
+
+
+select VEHICLE_KEY
+from SNOWPARK_SAMPLE_DATA.MART.dim_vehicles
+where VEHICLE_KEY is null
+
+
+
+  
+  
+      
+    ) dbt_internal_test
+/* {"app": "dbt", "dbt_version": "2.0.0", "node_id": "test.car_sales_dbt.not_null_dim_vehicles_VEHICLE_KEY.dfc0eb8479", "profile_name": "car_sales_dbt", "target_name": "dev"} */
+10:06:32.446915 [info ]: Finished running [  0.22s] test dbt_test__audit.not_null_dim_vehicles_VEHICLE_KEY [pass]
+10:06:32.446999 [info ]:     Passed [  0.23s] test  not_null_dim_vehicles_VEHICLE_KEY
+10:06:32.533840 [debug]: Query executed on node test.car_sales_dbt.relationships_fact_vehicle_sales_VEHICLE_KEY__vehicle_key__ref_dim_vehicles_.3ab6e6df00:
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+  
+    
+    
+
+with child as (
+    select VEHICLE_KEY as from_field
+    from SNOWPARK_SAMPLE_DATA.MART.fact_vehicle_sales
+    where VEHICLE_KEY is not null
+),
+
+parent as (
+    select vehicle_key as to_field
+    from SNOWPARK_SAMPLE_DATA.MART.dim_vehicles
+)
+
+select
+    from_field
+
+from child
+left join parent
+    on child.from_field = parent.to_field
+
+where parent.to_field is null
+
+
+
+  
+  
+      
+    ) dbt_internal_test
+/* {"app": "dbt", "dbt_version": "2.0.0", "node_id": "test.car_sales_dbt.relationships_fact_vehicle_sales_VEHICLE_KEY__vehicle_key__ref_dim_vehicles_.3ab6e6df00", "profile_name": "car_sales_dbt", "target_name": "dev"} */
+10:06:32.535080 [info ]: Finished running [  0.31s] test dbt_test__audit.relationships_fact_vehicle_sales_VEHICLE_KEY__vehicle_key__ref_dim_vehicles_ [pass]
+10:06:32.535195 [info ]:     Passed [  0.31s] test  relationships_fact_vehicle_sales_VEHICLE_KEY__vehicle_key__ref_dim_vehicles_
+10:06:32.547452 [debug]: Query executed on node model.car_sales_dbt.dim_extras:
+create or replace transient  table SNOWPARK_SAMPLE_DATA.MART.dim_extras
+    
+    
+    
+    
+    as (select
+  extra_key,
+  extra
+from SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_extras
+where extra_key is not null
+qualify row_number() over (
+  partition by extra_key
+  order by extra
+) = 1
+    )
+
+/* {"app": "dbt", "dbt_version": "2.0.0", "node_id": "model.car_sales_dbt.dim_extras", "profile_name": "car_sales_dbt", "target_name": "dev"} */
+10:06:32.549061 [info ]: Finished running [  1.48s] model MART.dim_extras [success]
+10:06:32.549133 [info ]:  Succeeded [  1.49s] model MART.dim_extras (table)
+10:06:32.549205 [info ]: Started test dbt_test__audit.not_null_dim_extras_EXTRA_KEY
+10:06:32.549223 [debug]: Started rendering test dbt_test__audit.not_null_dim_extras_EXTRA_KEY
+10:06:32.549246 [info ]: Started test dbt_test__audit.not_null_dim_extras_EXTRA
+10:06:32.549255 [debug]: Started rendering test dbt_test__audit.not_null_dim_extras_EXTRA
+10:06:32.549272 [info ]: Started test dbt_test__audit.relationships_bridge_vehicle_sale_extras_EXTRA_KEY__extra_key__ref_dim_extras_
+10:06:32.549280 [debug]: Started rendering test dbt_test__audit.relationships_bridge_vehicle_sale_extras_EXTRA_KEY__extra_key__ref_dim_extras_
+10:06:32.549297 [info ]: Started test dbt_test__audit.unique_dim_extras_EXTRA_KEY
+10:06:32.549305 [debug]: Started rendering test dbt_test__audit.unique_dim_extras_EXTRA_KEY
+10:06:32.553465 [debug]: Compiled SQL for node test.car_sales_dbt.relationships_bridge_vehicle_sale_extras_EXTRA_KEY__extra_key__ref_dim_extras_.74b0686203 at target/compiled/car_sales_dbt/target/generic_tests/relationships_bridge_vehicle_s_3a770fa52eaa87f2b975550215a5ece1.sql
+10:06:32.553555 [debug]: Compiled SQL for node test.car_sales_dbt.not_null_dim_extras_EXTRA_KEY.f8de94e0a0 at target/compiled/car_sales_dbt/target/generic_tests/not_null_dim_extras_EXTRA_KEY.sql
+10:06:32.553575 [debug]: Compiled SQL for node test.car_sales_dbt.unique_dim_extras_EXTRA_KEY.49ac0f8c85 at target/compiled/car_sales_dbt/target/generic_tests/unique_dim_extras_EXTRA_KEY.sql
+10:06:32.553576 [debug]: Compiled SQL for node test.car_sales_dbt.not_null_dim_extras_EXTRA.43db166cd4 at target/compiled/car_sales_dbt/target/generic_tests/not_null_dim_extras_EXTRA.sql
+10:06:32.553614 [debug]: Finished rendering [  0.00s] test dbt_test__audit.relationships_bridge_vehicle_sale_extras_EXTRA_KEY__extra_key__ref_dim_extras_ [success]
+10:06:32.553667 [debug]: Started analyzing test dbt_test__audit.relationships_bridge_vehicle_sale_extras_EXTRA_KEY__extra_key__ref_dim_extras_
+10:06:32.553686 [debug]: Finished rendering [  0.00s] test dbt_test__audit.not_null_dim_extras_EXTRA_KEY [success]
+10:06:32.553706 [debug]: Started analyzing test dbt_test__audit.not_null_dim_extras_EXTRA_KEY
+10:06:32.553718 [debug]: Finished rendering [  0.00s] test dbt_test__audit.not_null_dim_extras_EXTRA [success]
+10:06:32.553737 [debug]: Started analyzing test dbt_test__audit.not_null_dim_extras_EXTRA
+10:06:32.553749 [debug]: Finished rendering [  0.00s] test dbt_test__audit.unique_dim_extras_EXTRA_KEY [success]
+10:06:32.553764 [info ]: Finished rendering [  1.50s] (18 nodes, 0 skipped, 0 errors)
+10:06:32.553816 [debug]: Started analyzing test dbt_test__audit.unique_dim_extras_EXTRA_KEY
+10:06:32.553904 [debug]: Finished analyzing [  0.00s] test dbt_test__audit.not_null_dim_extras_EXTRA_KEY [success]
+10:06:32.553934 [info ]: Started running test dbt_test__audit.not_null_dim_extras_EXTRA_KEY
+10:06:32.553947 [debug]: Finished analyzing [  0.00s] test dbt_test__audit.not_null_dim_extras_EXTRA [success]
+10:06:32.553968 [info ]: Started running test dbt_test__audit.not_null_dim_extras_EXTRA
+10:06:32.554216 [debug]: Finished analyzing [  0.00s] test dbt_test__audit.unique_dim_extras_EXTRA_KEY [success]
+10:06:32.554238 [info ]: Started running test dbt_test__audit.unique_dim_extras_EXTRA_KEY
+10:06:32.554279 [debug]: Finished analyzing [  0.00s] test dbt_test__audit.relationships_bridge_vehicle_sale_extras_EXTRA_KEY__extra_key__ref_dim_extras_ [success]
+10:06:32.554296 [info ]: Finished analyzing [  1.49s] (18 nodes, 0 skipped, 0 errors)
+10:06:32.554338 [info ]: Started running test dbt_test__audit.relationships_bridge_vehicle_sale_extras_EXTRA_KEY__extra_key__ref_dim_extras_
+10:06:32.555651 [debug]: Writing runtime sql for node "test.car_sales_dbt.not_null_dim_extras_EXTRA.43db166cd4"
+10:06:32.555703 [debug]: Writing runtime sql for node "test.car_sales_dbt.not_null_dim_extras_EXTRA_KEY.f8de94e0a0"
+10:06:32.555723 [debug]: Writing runtime sql for node "test.car_sales_dbt.unique_dim_extras_EXTRA_KEY.49ac0f8c85"
+10:06:32.555751 [debug]: Writing runtime sql for node "test.car_sales_dbt.relationships_bridge_vehicle_sale_extras_EXTRA_KEY__extra_key__ref_dim_extras_.74b0686203"
+10:06:32.682236 [debug]: Query executed on node test.car_sales_dbt.not_null_dim_extras_EXTRA.43db166cd4:
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+  
+    
+    
+
+
+
+select EXTRA
+from SNOWPARK_SAMPLE_DATA.MART.dim_extras
+where EXTRA is null
+
+
+
+  
+  
+      
+    ) dbt_internal_test
+/* {"app": "dbt", "dbt_version": "2.0.0", "node_id": "test.car_sales_dbt.not_null_dim_extras_EXTRA.43db166cd4", "profile_name": "car_sales_dbt", "target_name": "dev"} */
+10:06:32.683023 [debug]: Query executed on node test.car_sales_dbt.not_null_dim_extras_EXTRA_KEY.f8de94e0a0:
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+  
+    
+    
+
+
+
+select EXTRA_KEY
+from SNOWPARK_SAMPLE_DATA.MART.dim_extras
+where EXTRA_KEY is null
+
+
+
+  
+  
+      
+    ) dbt_internal_test
+/* {"app": "dbt", "dbt_version": "2.0.0", "node_id": "test.car_sales_dbt.not_null_dim_extras_EXTRA_KEY.f8de94e0a0", "profile_name": "car_sales_dbt", "target_name": "dev"} */
+10:06:32.683425 [info ]: Finished running [  0.13s] test dbt_test__audit.not_null_dim_extras_EXTRA [pass]
+10:06:32.683470 [info ]:     Passed [  0.13s] test  not_null_dim_extras_EXTRA
+10:06:32.683700 [info ]: Finished running [  0.13s] test dbt_test__audit.not_null_dim_extras_EXTRA_KEY [pass]
+10:06:32.683727 [info ]:     Passed [  0.13s] test  not_null_dim_extras_EXTRA_KEY
+10:06:32.735279 [debug]: Query executed on node test.car_sales_dbt.relationships_bridge_vehicle_sale_extras_EXTRA_KEY__extra_key__ref_dim_extras_.74b0686203:
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+  
+    
+    
+
+with child as (
+    select EXTRA_KEY as from_field
+    from SNOWPARK_SAMPLE_DATA.MART.bridge_vehicle_sale_extras
+    where EXTRA_KEY is not null
+),
+
+parent as (
+    select extra_key as to_field
+    from SNOWPARK_SAMPLE_DATA.MART.dim_extras
+)
+
+select
+    from_field
+
+from child
+left join parent
+    on child.from_field = parent.to_field
+
+where parent.to_field is null
+
+
+
+  
+  
+      
+    ) dbt_internal_test
+/* {"app": "dbt", "dbt_version": "2.0.0", "node_id": "test.car_sales_dbt.relationships_bridge_vehicle_sale_extras_EXTRA_KEY__extra_key__ref_dim_extras_.74b0686203", "profile_name": "car_sales_dbt", "target_name": "dev"} */
+10:06:32.736718 [info ]: Finished running [  0.18s] test dbt_test__audit.relationships_bridge_vehicle_sale_extras_EXTRA_KEY__extra_key__ref_dim_extras_ [pass]
+10:06:32.736780 [info ]:     Passed [  0.19s] test  relationships_bridge_vehicle_sale_extras_EXTRA_KEY__extra_key__ref_dim_extras_
+10:06:34.432677 [debug]: Query executed on node test.car_sales_dbt.unique_dim_extras_EXTRA_KEY.49ac0f8c85:
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+  
+    
+    
+
+select
+    EXTRA_KEY as unique_field,
+    count(*) as n_records
+
+from SNOWPARK_SAMPLE_DATA.MART.dim_extras
+where EXTRA_KEY is not null
+group by EXTRA_KEY
+having count(*) > 1
+
+
+
+  
+  
+      
+    ) dbt_internal_test
+/* {"app": "dbt", "dbt_version": "2.0.0", "node_id": "test.car_sales_dbt.unique_dim_extras_EXTRA_KEY.49ac0f8c85", "profile_name": "car_sales_dbt", "target_name": "dev"} */
+10:06:34.434084 [info ]: Finished running [  1.88s] test dbt_test__audit.unique_dim_extras_EXTRA_KEY [pass]
+10:06:34.434143 [info ]:     Passed [  1.88s] test  unique_dim_extras_EXTRA_KEY
+10:06:34.477529 [debug]: Query executed on node test.car_sales_dbt.unique_dim_vehicles_VEHICLE_KEY.04a14a9493:
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+  
+    
+    
+
+select
+    VEHICLE_KEY as unique_field,
+    count(*) as n_records
+
+from SNOWPARK_SAMPLE_DATA.MART.dim_vehicles
+where VEHICLE_KEY is not null
+group by VEHICLE_KEY
+having count(*) > 1
+
+
+
+  
+  
+      
+    ) dbt_internal_test
+/* {"app": "dbt", "dbt_version": "2.0.0", "node_id": "test.car_sales_dbt.unique_dim_vehicles_VEHICLE_KEY.04a14a9493", "profile_name": "car_sales_dbt", "target_name": "dev"} */
+10:06:34.478666 [info ]: Finished running [  2.25s] test dbt_test__audit.unique_dim_vehicles_VEHICLE_KEY [pass]
+10:06:34.478750 [info ]:     Passed [  2.26s] test  unique_dim_vehicles_VEHICLE_KEY
+10:06:34.485656 [debug]: Query executed on node test.car_sales_dbt.relationships_fact_vehicle_sales_SALES_PERSON_KEY__sales_person_key__ref_dim_sales_persons_.bb75a07b09:
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+  
+    
+    
+
+with child as (
+    select SALES_PERSON_KEY as from_field
+    from SNOWPARK_SAMPLE_DATA.MART.fact_vehicle_sales
+    where SALES_PERSON_KEY is not null
+),
+
+parent as (
+    select sales_person_key as to_field
+    from SNOWPARK_SAMPLE_DATA.MART.dim_sales_persons
+)
+
+select
+    from_field
+
+from child
+left join parent
+    on child.from_field = parent.to_field
+
+where parent.to_field is null
+
+
+
+  
+  
+      
+    ) dbt_internal_test
+/* {"app": "dbt", "dbt_version": "2.0.0", "node_id": "test.car_sales_dbt.relationships_fact_vehicle_sales_SALES_PERSON_KEY__sales_person_key__ref_dim_sales_persons_.bb75a07b09", "profile_name": "car_sales_dbt", "target_name": "dev"} */
+10:06:34.486589 [info ]: Finished running [  2.41s] test dbt_test__audit.relationships_fact_vehicle_sales_SALES_PERSON_KEY__sales_person_key__ref_dim_sales_persons_ [pass]
+10:06:34.486628 [info ]:     Passed [  2.41s] test  relationships_fact_vehicle_sales_SALES_PERSON_KEY__sales_person_key__ref_dim_sales_persons_
+10:06:34.820615 [debug]: Query executed on node test.car_sales_dbt.not_null_dim_sales_persons_SALES_PERSON_ID.2bfa32c62d:
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+  
+    
+    
+
+
+
+select SALES_PERSON_ID
+from SNOWPARK_SAMPLE_DATA.MART.dim_sales_persons
+where SALES_PERSON_ID is null
+
+
+
+  
+  
+      
+    ) dbt_internal_test
+/* {"app": "dbt", "dbt_version": "2.0.0", "node_id": "test.car_sales_dbt.not_null_dim_sales_persons_SALES_PERSON_ID.2bfa32c62d", "profile_name": "car_sales_dbt", "target_name": "dev"} */
+10:06:34.821682 [info ]: Finished running [  2.74s] test dbt_test__audit.not_null_dim_sales_persons_SALES_PERSON_ID [pass]
+10:06:34.821771 [info ]:     Passed [  2.74s] test  not_null_dim_sales_persons_SALES_PERSON_ID
+10:06:36.802258 [debug]: Query executed on node test.car_sales_dbt.unique_dim_sales_persons_SALES_PERSON_KEY.73cdbd55d5:
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+  
+    
+    
+
+select
+    SALES_PERSON_KEY as unique_field,
+    count(*) as n_records
+
+from SNOWPARK_SAMPLE_DATA.MART.dim_sales_persons
+where SALES_PERSON_KEY is not null
+group by SALES_PERSON_KEY
+having count(*) > 1
+
+
+
+  
+  
+      
+    ) dbt_internal_test
+/* {"app": "dbt", "dbt_version": "2.0.0", "node_id": "test.car_sales_dbt.unique_dim_sales_persons_SALES_PERSON_KEY.73cdbd55d5", "profile_name": "car_sales_dbt", "target_name": "dev"} */
+10:06:36.803584 [info ]: Finished running [  4.72s] test dbt_test__audit.unique_dim_sales_persons_SALES_PERSON_KEY [pass]
+10:06:36.803666 [info ]: Finished running [  5.74s] (18 nodes, 0 skipped, 0 errors)
+10:06:36.803702 [info ]:     Passed [  4.72s] test  unique_dim_sales_persons_SALES_PERSON_KEY
+10:06:36.830689 [info ]: New version available 2.0.0-preview.193 (run `dbt system update`)
+10:06:36.853818 [info ]: 
+==================== Execution Summary =====================
+Finished 'build' with 1 warning for target 'dev' [7.6s]
+Processed: 4 models | 14 tests
+Summary: 18 total | 18 success

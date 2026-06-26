@@ -17,8 +17,8 @@ select
   vehicle.vehicle_key,
   vehicle.sale_price,
   1 as vehicle_count
-from {{ ref('stg_car_sales_base') }} base
-join {{ ref('stg_car_sales_customers') }} customer
+from {{ ref('stg_car_sales_base') }} as base
+inner join {{ ref('stg_car_sales_customers') }} as customer
   on base.source_sale_key = customer.source_sale_key
-join {{ ref('stg_car_sales_vehicles') }} vehicle
+inner join {{ ref('stg_car_sales_vehicles') }} as vehicle
   on base.source_sale_key = vehicle.source_sale_key

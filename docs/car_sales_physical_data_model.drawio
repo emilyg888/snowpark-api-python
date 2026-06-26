@@ -1,0 +1,81 @@
+<mxfile host="app.diagrams.net" modified="2026-06-26T00:00:00.000Z" agent="Codex" version="24.7.17" type="device">
+  <diagram id="car-sales-physical-model" name="Car Sales Physical Model">
+    <mxGraphModel dx="1434" dy="854" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="Car Sales Physical Data Model" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontStyle=1;fontSize=24;fontColor=#172126;" vertex="1" parent="1">
+          <mxGeometry x="520" y="30" width="560" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="MART schema: one fact row per source sale + customer + vehicle combination" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=13;fontColor=#5b6770;" vertex="1" parent="1">
+          <mxGeometry x="470" y="70" width="660" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="fact" value="&lt;b&gt;FACT_VEHICLE_SALES&lt;/b&gt;&lt;br&gt;&lt;hr&gt;&lt;b&gt;PK&lt;/b&gt; SALE_KEY&lt;br&gt;SALE_DATE&lt;br&gt;DEALERSHIP&lt;br&gt;&lt;b&gt;FK&lt;/b&gt; SALES_PERSON_KEY&lt;br&gt;&lt;b&gt;FK&lt;/b&gt; CUSTOMER_KEY&lt;br&gt;&lt;b&gt;FK&lt;/b&gt; VEHICLE_KEY&lt;br&gt;SALE_PRICE&lt;br&gt;VEHICLE_COUNT" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#e6f4f1;strokeColor=#0f766e;fontColor=#172126;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="610" y="360" width="280" height="230" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dim_sales_persons" value="&lt;b&gt;DIM_SALES_PERSONS&lt;/b&gt;&lt;br&gt;&lt;hr&gt;&lt;b&gt;PK&lt;/b&gt; SALES_PERSON_KEY&lt;br&gt;SALES_PERSON_ID&lt;br&gt;SALES_PERSON_NAME&lt;br&gt;DEALERSHIP" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#ffffff;strokeColor=#5b6770;fontColor=#172126;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="140" y="180" width="270" height="150" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dim_customers" value="&lt;b&gt;DIM_CUSTOMERS&lt;/b&gt;&lt;br&gt;&lt;hr&gt;&lt;b&gt;PK&lt;/b&gt; CUSTOMER_KEY&lt;br&gt;CUSTOMER_NAME&lt;br&gt;CUSTOMER_PHONE&lt;br&gt;CUSTOMER_ADDRESS" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#ffffff;strokeColor=#5b6770;fontColor=#172126;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="140" y="430" width="270" height="150" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dim_vehicles" value="&lt;b&gt;DIM_VEHICLES&lt;/b&gt;&lt;br&gt;&lt;hr&gt;&lt;b&gt;PK&lt;/b&gt; VEHICLE_KEY&lt;br&gt;MAKE&lt;br&gt;MODEL&lt;br&gt;YEAR" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#ffffff;strokeColor=#5b6770;fontColor=#172126;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="1110" y="180" width="270" height="150" as="geometry" />
+        </mxCell>
+
+        <mxCell id="bridge" value="&lt;b&gt;BRIDGE_VEHICLE_SALE_EXTRAS&lt;/b&gt;&lt;br&gt;&lt;hr&gt;&lt;b&gt;PK/FK&lt;/b&gt; SALE_KEY&lt;br&gt;&lt;b&gt;PK/FK&lt;/b&gt; EXTRA_KEY&lt;br&gt;&lt;br&gt;&lt;i&gt;Grain: one sale + extra&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#fff7ed;strokeColor=#c2410c;fontColor=#172126;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="610" y="690" width="280" height="150" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dim_extras" value="&lt;b&gt;DIM_EXTRAS&lt;/b&gt;&lt;br&gt;&lt;hr&gt;&lt;b&gt;PK&lt;/b&gt; EXTRA_KEY&lt;br&gt;EXTRA" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#ffffff;strokeColor=#5b6770;fontColor=#172126;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="1110" y="690" width="270" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="raw" value="&lt;b&gt;PUBLIC.CAR_SALES&lt;/b&gt;&lt;br&gt;&lt;hr&gt;SRC VARIANT&lt;br&gt;&lt;br&gt;&lt;i&gt;Raw JSON source&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#f6f8fa;strokeColor=#94a3b8;fontColor=#172126;fontSize=13;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="610" y="140" width="280" height="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="staging_note" value="&lt;b&gt;STAGING views&lt;/b&gt;&lt;br&gt;stg_car_sales_base&lt;br&gt;stg_car_sales_customers&lt;br&gt;stg_car_sales_vehicles&lt;br&gt;stg_car_sales_extras" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#eef6ff;strokeColor=#2563eb;fontColor=#172126;fontSize=13;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="980" y="420" width="260" height="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="line_raw_staging" value="source()" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#94a3b8;fontColor=#5b6770;" edge="1" parent="1" source="raw" target="staging_note">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="fk_sales_person" value="SALES_PERSON_KEY" style="endArrow=ERone;startArrow=ERmany;html=1;rounded=0;strokeWidth=2;strokeColor=#0f766e;fontColor=#172126;" edge="1" parent="1" source="fact" target="dim_sales_persons">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="fk_customer" value="CUSTOMER_KEY" style="endArrow=ERone;startArrow=ERmany;html=1;rounded=0;strokeWidth=2;strokeColor=#0f766e;fontColor=#172126;" edge="1" parent="1" source="fact" target="dim_customers">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="fk_vehicle" value="VEHICLE_KEY" style="endArrow=ERone;startArrow=ERmany;html=1;rounded=0;strokeWidth=2;strokeColor=#0f766e;fontColor=#172126;" edge="1" parent="1" source="fact" target="dim_vehicles">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="fk_bridge_fact" value="SALE_KEY" style="endArrow=ERone;startArrow=ERmany;html=1;rounded=0;strokeWidth=2;strokeColor=#c2410c;fontColor=#172126;" edge="1" parent="1" source="bridge" target="fact">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="fk_bridge_extra" value="EXTRA_KEY" style="endArrow=ERone;startArrow=ERmany;html=1;rounded=0;strokeWidth=2;strokeColor=#c2410c;fontColor=#172126;" edge="1" parent="1" source="bridge" target="dim_extras">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="line_staging_fact" value="ref()" style="endArrow=block;html=1;rounded=0;strokeWidth=1;dashed=1;strokeColor=#2563eb;fontColor=#2563eb;" edge="1" parent="1" source="staging_note" target="fact">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="legend" value="&lt;b&gt;Legend&lt;/b&gt;&lt;br&gt;PK = primary key concept&lt;br&gt;FK = relationship tested in dbt&lt;br&gt;Dashed boxes = source/staging context&lt;br&gt;Orange bridge = many-to-many sale-to-extra relationship" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#ffffff;strokeColor=#d8dee4;fontColor=#172126;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="80" y="720" width="330" height="130" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

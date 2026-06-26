@@ -1,6 +1,6 @@
 select
-  md5(src::string) as source_sale_key,
   src,
+  md5(src::string) as source_sale_key,
   src:date::date as sale_date,
   src:dealership::string as dealership,
   src:salesperson.id::string as sales_person_id,

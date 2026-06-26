@@ -12,6 +12,6 @@ select
       upper(coalesce(customer.value:address::string, ''))
     )
   end as customer_key
-from {{ ref('stg_car_sales_base') }} base,
-  lateral flatten(input => base.src:customer) customer
+from {{ ref('stg_car_sales_base') }} as base,
+  lateral flatten(input => base.src:customer) as customer
 where customer.value is not null
