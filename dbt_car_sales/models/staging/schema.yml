@@ -37,3 +37,25 @@ models:
       - name: VEHICLE_KEY
         data_tests:
           - not_null
+
+  - name: stg_car_sales_extras
+    description: One row per source sale, vehicle array element, and vehicle extra array element.
+    columns:
+      - name: SOURCE_SALE_KEY
+        data_tests:
+          - not_null
+      - name: VEHICLE_INDEX
+        data_tests:
+          - not_null
+      - name: EXTRA_INDEX
+        data_tests:
+          - not_null
+      - name: EXTRA
+        data_tests:
+          - not_null
+      - name: EXTRA_KEY
+        data_tests:
+          - not_null
+      - name: VEHICLE_KEY
+        data_tests:
+          - not_null

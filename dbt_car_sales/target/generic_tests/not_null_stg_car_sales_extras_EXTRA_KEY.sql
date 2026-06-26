@@ -1,0 +1,1 @@
+{{ test_not_null(column_name="EXTRA_KEY", model=get_where_subquery(ref('stg_car_sales_extras'))) }}

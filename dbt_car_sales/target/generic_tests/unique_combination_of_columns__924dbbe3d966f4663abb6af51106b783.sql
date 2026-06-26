@@ -1,0 +1,1 @@
+{{ test_unique_combination_of_columns(combination_of_columns=["sale_key","extra"], model=get_where_subquery(ref('bridge_vehicle_sale_extras'))) }}

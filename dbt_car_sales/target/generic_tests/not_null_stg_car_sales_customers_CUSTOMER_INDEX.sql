@@ -1,0 +1,1 @@
+{{ test_not_null(column_name="CUSTOMER_INDEX", model=get_where_subquery(ref('stg_car_sales_customers'))) }}

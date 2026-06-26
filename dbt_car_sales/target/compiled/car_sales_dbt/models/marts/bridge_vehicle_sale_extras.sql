@@ -5,12 +5,12 @@ select distinct
     vehicle.vehicle_index::string
   ) as sale_key,
   extra.extra_key
-from {{ ref('stg_car_sales_base') }} base
-join {{ ref('stg_car_sales_customers') }} customer
+from SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_base base
+join SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_customers customer
   on base.source_sale_key = customer.source_sale_key
-join {{ ref('stg_car_sales_vehicles') }} vehicle
+join SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_vehicles vehicle
   on base.source_sale_key = vehicle.source_sale_key
-join {{ ref('stg_car_sales_extras') }} extra
+join SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_extras extra
   on vehicle.source_sale_key = extra.source_sale_key
  and vehicle.vehicle_index = extra.vehicle_index
 where extra.extra_key is not null

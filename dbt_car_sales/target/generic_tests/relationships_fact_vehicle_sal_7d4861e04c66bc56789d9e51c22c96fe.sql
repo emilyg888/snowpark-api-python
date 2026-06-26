@@ -1,0 +1,1 @@
+{{ test_relationships(column_name="VEHICLE_KEY", field="vehicle_key", model=get_where_subquery(ref('fact_vehicle_sales')), to=ref('dim_vehicles')) }}

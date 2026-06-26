@@ -1,0 +1,1 @@
+{{ test_unique(column_name="SOURCE_SALE_KEY", model=get_where_subquery(ref('stg_car_sales_base'))) }}

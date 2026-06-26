@@ -1,0 +1,1 @@
+{{ test_not_null(column_name="VEHICLE_KEY", model=get_where_subquery(ref('fact_vehicle_sales'))) }}

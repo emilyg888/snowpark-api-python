@@ -1,4 +1,11 @@
-select
+
+  create or replace   view SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_vehicles
+  
+  
+  
+  
+  as (
+    select
   base.source_sale_key,
   vehicle.index::number as vehicle_index,
   vehicle.value:make::string as make,
@@ -13,6 +20,8 @@ select
       coalesce(vehicle.value:year::string, '')
     )
   end as vehicle_key
-from {{ ref('stg_car_sales_base') }} base,
+from SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_base base,
   lateral flatten(input => base.src:vehicle) vehicle
 where vehicle.value is not null
+  );
+

@@ -1,0 +1,8 @@
+select
+  md5(src::string) as source_sale_key,
+  src,
+  src:date::date as sale_date,
+  src:dealership::string as dealership,
+  src:salesperson.id::string as sales_person_id,
+  src:salesperson.name::string as sales_person_name
+from SNOWPARK_SAMPLE_DATA.PUBLIC.CAR_SALES
