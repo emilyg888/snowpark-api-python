@@ -11,7 +11,7 @@ macro-paths: ["macros"]
 models:
   car_sales_dbt:
     staging:
-      +materialized: view
+      +materialized: table
       +schema: STAGING
     marts:
       +materialized: table
