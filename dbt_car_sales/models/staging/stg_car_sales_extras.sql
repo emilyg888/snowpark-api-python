@@ -6,7 +6,7 @@ select
   vehicle.index::number as vehicle_index,
   extra.index::number as extra_index,
   extra.value::string as extra,
-  md5(upper(coalesce(extras.value::string, ''))) as extra_key,
+  md5(upper(coalesce(extra.value::string, ''))) as extra_key,
   case
     when vehicle.value:make is null then null
     else md5(
