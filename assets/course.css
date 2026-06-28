@@ -89,6 +89,26 @@ pre {
   line-height: 1.45;
 }
 
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 18px 0;
+  font-size: 0.95rem;
+}
+
+th,
+td {
+  border: 1px solid var(--line);
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  background: var(--wash);
+  font-weight: 700;
+}
+
 a {
   color: #075e59;
 }

@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0027: Choosing Orchestration for Snowpark, dbt, and ML</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Choosing Orchestration for Snowpark, dbt, and ML</h1>
+  <p class="subtitle">Goal: choose a realistic orchestration solution for everything built from Lessons 1-26.</p>
+
+  <div class="callout">
+    Orchestration is not one tool decision. It is a boundary decision: what runs code checks, what builds data models, what schedules Snowflake-native work, and what coordinates systems outside Snowflake.
+  </div>
+
+  <h2>The Workload</h2>
+  <div class="grid">
+    <div class="tile"><strong>Lessons 1-12</strong><br>Snowpark Python scripts, local tests, smoke checks, DataFrame patterns.</div>
+    <div class="tile"><strong>Lessons 13-16</strong><br>Stored procedure, UDF, external function, SQL star-schema model.</div>
+    <div class="tile"><strong>Lessons 17-21</strong><br>Snowpark ML lab work: features, training, registry, monitoring.</div>
+    <div class="tile"><strong>Lessons 22-26</strong><br>dbt Cloud source, staging, marts, tests, deployment job.</div>
+  </div>
+
+  <h2>The Practical Architecture</h2>
+  <pre><code>GitHub Actions
+  -> checks repo quality, unit tests, smoke tests, deploy scripts
+
+dbt Cloud
+  -> builds STAGING and MART objects
+  -> runs dbt tests
+  -> stores job run history and artifacts
+
+Snowflake tasks
+  -> schedules Snowflake-native SQL and stored procedures
+  -> runs close to the data
+
+Airflow / Dagster / Prefect
+  -> coordinates data lake files, APIs, Snowflake, dbt, ML, notifications</code></pre>
+
+  <h2>Option Comparison</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Option</th>
+        <th>Pros</th>
+        <th>Cons</th>
+        <th>Use Here</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>dbt Cloud jobs</td>
+        <td>Best fit for dbt DAGs, tests, docs, run history.</td>
+        <td>Not a general Python/API orchestrator.</td>
+        <td>Primary for Lessons 22-26.</td>
+      </tr>
+      <tr>
+        <td>Snowflake tasks</td>
+        <td>Native scheduling, task graphs, serverless option, close to data.</td>
+        <td>Less natural for repo-driven Python packaging and cloud APIs.</td>
+        <td>Good for stored procedures and SQL refreshes.</td>
+      </tr>
+      <tr>
+        <td>GitHub Actions</td>
+        <td>Strong CI/CD, secrets, tests, deployment automation.</td>
+        <td>Weak as a data pipeline scheduler and harder to monitor as a data platform.</td>
+        <td>Use for code checks and deployment.</td>
+      </tr>
+      <tr>
+        <td>Airflow</td>
+        <td>Mature enterprise DAG scheduler with many providers.</td>
+        <td>Requires infrastructure and careful DAG maintenance.</td>
+        <td>Use when many external systems must be coordinated.</td>
+      </tr>
+      <tr>
+        <td>Dagster</td>
+        <td>Asset lineage, dbt integration, good for data products and ML dependencies.</td>
+        <td>Requires learning asset-oriented design.</td>
+        <td>Use when marts, ML models, and data quality are one asset graph.</td>
+      </tr>
+      <tr>
+        <td>Prefect</td>
+        <td>Python-first and ergonomic for scripts, APIs, and Snowflake calls.</td>
+        <td>Less warehouse-native than Snowflake tasks and less dbt-native than dbt Cloud.</td>
+        <td>Use for lightweight Python orchestration.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Recommended Solution</h2>
+  <p>For this course project, use a hybrid solution:</p>
+  <ol>
+    <li><strong>GitHub Actions</strong> runs unit tests and smoke checks for Snowpark scripts.</li>
+    <li><strong>dbt Cloud</strong> runs <code>dbt build --select source:car_sales_source+</code> for the car-sales mart.</li>
+    <li><strong>Snowflake tasks</strong> schedule mature Snowflake-native objects such as stored procedures.</li>
+    <li><strong>Dagster or Airflow</strong> becomes the enterprise orchestrator only when the pipeline spans lake files, API calls, ML training, dbt jobs, and alerts.</li>
+  </ol>
+
+  <h2>Check Yourself</h2>
+  <div class="quiz" data-answer="1">
+    <p><strong>Which tool should own the production build of the dbt car-sales mart?</strong></p>
+    <button>GitHub Actions</button>
+    <button>dbt Cloud jobs</button>
+    <button>Snowflake worksheet</button>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="quiz" data-answer="2">
+    <p><strong>When should you introduce Airflow, Dagster, or Prefect?</strong></p>
+    <button>For one SQL select</button>
+    <button>For one dbt model</button>
+    <button>For cross-system workflows</button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>Your Turn</h2>
+  <ol>
+    <li>Write down which lessons belong to CI, dbt Cloud, Snowflake tasks, or external orchestration.</li>
+    <li>Keep dbt Cloud as the owner of the mart deployment job.</li>
+    <li>Use GitHub Actions for repo checks, not as the primary daily data scheduler.</li>
+    <li>Only add Airflow, Dagster, or Prefect when you need one control plane across Snowflake, data lake files, APIs, and ML.</li>
+  </ol>
+
+  <h2>References</h2>
+  <p>Primary reading: <a href="https://docs.getdbt.com/docs/deploy/deploy-jobs">dbt deploy jobs</a> and <a href="https://docs.snowflake.com/en/user-guide/tasks-intro">Snowflake tasks</a>. Quick reference: <a href="../reference/0027-orchestration-decision-matrix.html">Orchestration Decision Matrix</a>. Related lesson: <a href="0026-deploying-the-dbt-cloud-flow.html">Deploying the dbt Cloud Flow</a>.</p>
+</main>
+<script>
+document.querySelectorAll(".quiz").forEach((quiz)=>{const buttons=[...quiz.querySelectorAll("button")];const feedback=quiz.querySelector(".feedback");const answer=Number(quiz.dataset.answer);buttons.forEach((button,index)=>button.addEventListener("click",()=>{feedback.textContent=index===answer?"Correct. Match the orchestrator to the operational boundary.":"Not yet. Ask what kind of work is being coordinated.";feedback.className=index===answer?"feedback good":"feedback warn";}));});
+</script>
+</body>
+</html>

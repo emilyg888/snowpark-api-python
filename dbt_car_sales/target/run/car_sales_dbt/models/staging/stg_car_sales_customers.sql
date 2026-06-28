@@ -19,8 +19,8 @@
       upper(coalesce(customer.value:address::string, ''))
     )
   end as customer_key
-from SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_base base,
-  lateral flatten(input => base.src:customer) customer
+from SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_base as base,
+  lateral flatten(input => base.src:customer) as customer
 where customer.value is not null
   );
 

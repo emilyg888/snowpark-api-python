@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0037: Documenting the Car Sales E2E Runbook</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Documenting the Car Sales E2E Runbook</h1>
+  <p class="subtitle">Goal: turn the completed E2E workflow into an operator-ready runbook.</p>
+
+  <div class="callout">
+    A production workflow needs a runbook. The runbook should explain normal operation, recovery, validation, ownership, and known limitations.
+  </div>
+
+  <h2>Runbook Sections</h2>
+  <table>
+    <thead>
+      <tr><th>Section</th><th>Contents</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Architecture</td><td>ADLS, ADF, Snowflake RAW/STAGING/MART, dbt Cloud.</td></tr>
+      <tr><td>Normal run</td><td>File arrival, load, dbt job, archive.</td></tr>
+      <tr><td>Validation</td><td>Row count, dbt tests, audit table checks.</td></tr>
+      <tr><td>Failure handling</td><td>What to do for load failure, dbt failure, duplicate file, bad JSON.</td></tr>
+      <tr><td>Ownership</td><td>Which tool owns each part of the workflow.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Minimum Runbook Commands</h2>
+  <pre><code>-- Check files visible to Snowflake
+list @SNOWPARK_SAMPLE_DATA.RAW.CAR_SALES_STAGE;
+
+-- Check latest raw load
+select *
+from SNOWPARK_SAMPLE_DATA.RAW.CAR_SALES_LOAD_AUDIT
+order by started_at desc;
+
+-- Check current batch rows
+select load_batch_id, count(*)
+from SNOWPARK_SAMPLE_DATA.RAW.CAR_SALES
+group by load_batch_id
+order by load_batch_id desc;</code></pre>
+
+  <h2>Known Limitation To Document</h2>
+  <p>The current <code>SOURCE_SALE_KEY</code> is a hash of the JSON payload. It detects exact duplicate records. True CDC requires a stable upstream business key, such as <code>sale_id</code>, plus a separate <code>record_hash</code>.</p>
+
+  <h2>Final E2E Statement</h2>
+  <pre><code>ADLS landing file
+  -> ADF pipeline
+  -> Snowflake RAW persistent staging
+  -> dbt persistent staging
+  -> dbt incremental MART
+  -> audit evidence
+  -> archive or rejected</code></pre>
+
+  <h2>Your Turn</h2>
+  <ol>
+    <li>Create or update the project runbook.</li>
+    <li>Add the final architecture diagram.</li>
+    <li>Add the ADF recovery steps.</li>
+    <li>Add dbt Cloud job evidence.</li>
+    <li>Add the CDC limitation and future enhancement.</li>
+  </ol>
+
+  <div class="quiz" data-answer="1">
+    <p><strong>What is the most important limitation to document?</strong></p>
+    <button>CSS colors</button>
+    <button>No sale_id yet</button>
+    <button>Too many lessons</button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>References</h2>
+  <p>Related: <a href="0036-ingestion-audit-and-run-control.html">Ingestion audit</a> and <a href="0029-demo-dag-and-adf-ingestion-orchestration.html">ADF orchestration</a>.</p>
+</main>
+<script>
+  document.querySelectorAll(".quiz").forEach((quiz) => {
+    const buttons = Array.from(quiz.querySelectorAll("button"));
+    const feedback = quiz.querySelector(".feedback");
+    const answer = Number(quiz.dataset.answer);
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        feedback.textContent = index === answer ? "Correct. Without a stable sale_id, CDC remains limited to exact row versions." : "Not yet. Think about what limits true changed-row detection.";
+        feedback.className = index === answer ? "feedback good" : "feedback warn";
+      });
+    });
+  });
+</script>
+</body>
+</html>

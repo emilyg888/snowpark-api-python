@@ -19,11 +19,10 @@
       coalesce(vehicle.value:year::string, '')
     )
   end as vehicle_key
-from SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_base base,
-  lateral flatten(input => base.src:vehicle) vehicle,
-  lateral flatten(input => vehicle.value:extras) extras
+from SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_base as base,
+  lateral flatten(input => base.src:vehicle) as vehicle,
+  lateral flatten(input => vehicle.value:extras) as extras
 where vehicle.value is not null
   and extras.value is not null
-
   );
 

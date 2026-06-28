@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0034: Building the ADF Car Sales Ingestion Pipeline</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Building the ADF Car Sales Ingestion Pipeline</h1>
+  <p class="subtitle">Goal: build the ADF control flow that loads ADLS files into Snowflake raw staging and then triggers dbt Cloud.</p>
+
+  <div class="callout">
+    ADF owns file orchestration. Snowflake owns <code>COPY INTO</code>. dbt Cloud owns transformation and tests.
+  </div>
+
+  <h2>Pipeline Shape</h2>
+  <pre><code>Get Metadata: landing files
+  -> If files exist
+  -> Snowflake Script: COPY INTO RAW.CAR_SALES
+  -> Snowflake Script: validate current LOAD_BATCH_ID
+  -> Web Activity: trigger dbt Cloud job
+  -> Until: poll dbt Cloud run status
+  -> Copy/Delete or Move: archive or rejected</code></pre>
+
+  <h2>ADF Parameters</h2>
+  <table>
+    <thead>
+      <tr><th>Parameter</th><th>Example</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>container</code></td><td><code>snowpark-data</code></td></tr>
+      <tr><td><code>landing_path</code></td><td><code>car-sales/landing/</code></td></tr>
+      <tr><td><code>archive_path</code></td><td><code>car-sales/archive/</code></td></tr>
+      <tr><td><code>rejected_path</code></td><td><code>car-sales/rejected/</code></td></tr>
+      <tr><td><code>load_batch_id</code></td><td>ADF pipeline run id.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Snowflake Script Activity</h2>
+  <pre><code>copy into SNOWPARK_SAMPLE_DATA.RAW.CAR_SALES (
+  SRC,
+  SOURCE_FILE,
+  SOURCE_SALE_KEY,
+  LOAD_BATCH_ID
+)
+from (
+  select
+    $1,
+    metadata$filename,
+    md5($1::string),
+    '&lt;ADF_PIPELINE_RUN_ID&gt;'
+  from @SNOWPARK_SAMPLE_DATA.RAW.CAR_SALES_STAGE
+)
+file_format = SNOWPARK_SAMPLE_DATA.RAW.CAR_SALES_JSON_FORMAT
+on_error = 'abort_statement';</code></pre>
+
+  <h2>Archive Rule</h2>
+  <p>Only move files from <code>landing/</code> to <code>archive/</code> after both Snowflake load and dbt Cloud job succeed. Move to <code>rejected/</code> only for confirmed bad input; transient failures should usually leave files in landing for retry.</p>
+
+  <h2>Your Turn</h2>
+  <ol>
+    <li>Create linked services for ADLS and Snowflake.</li>
+    <li>Create datasets for landing, archive, and rejected folders.</li>
+    <li>Add Snowflake script activity for <code>COPY INTO</code>.</li>
+    <li>Add Web activity for dbt Cloud job trigger.</li>
+    <li>Add success and failure branches for file movement.</li>
+  </ol>
+
+  <div class="quiz" data-answer="1">
+    <p><strong>Which tool should move files to archive?</strong></p>
+    <button>dbt model</button>
+    <button>ADF pipeline</button>
+    <button>Snowflake UDF</button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>References</h2>
+  <p>Primary source: <a href="https://learn.microsoft.com/en-us/azure/data-factory/connector-snowflake">ADF Snowflake connector</a>. Related: <a href="../reference/0029-adf-adls-snowflake-ingestion.html">ADF + ADLS + Snowflake ingestion</a>.</p>
+</main>
+<script>
+  document.querySelectorAll(".quiz").forEach((quiz) => {
+    const buttons = Array.from(quiz.querySelectorAll("button"));
+    const feedback = quiz.querySelector(".feedback");
+    const answer = Number(quiz.dataset.answer);
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        feedback.textContent = index === answer ? "Correct. ADF owns cross-system file movement." : "Not yet. Ask which system sees ADLS folders and pipeline status.";
+        feedback.className = index === answer ? "feedback good" : "feedback warn";
+      });
+    });
+  });
+</script>
+</body>
+</html>

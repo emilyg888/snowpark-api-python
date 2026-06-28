@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reference 0028: Snowflake Task Graphs</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Snowflake Task Graphs</h1>
+  <p class="subtitle">A compact reference for scheduling Snowflake-native work from Lessons 13-16.</p>
+
+  <h2>Core Pattern</h2>
+  <pre><code>create task ROOT_TASK
+  warehouse = COMPUTE_WH
+  schedule = 'USING CRON 0 7 * * * Australia/Sydney'
+as
+  call SOME_PROCEDURE();
+
+create task CHILD_TASK
+  warehouse = COMPUTE_WH
+  after ROOT_TASK
+as
+  call NEXT_PROCEDURE();</code></pre>
+
+  <h2>Rules</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Rule</th>
+        <th>Use It For</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Only the root task needs a schedule.</td>
+        <td>Child tasks inherit timing through <code>after</code> dependencies.</td>
+      </tr>
+      <tr>
+        <td>Tasks run SQL or call stored procedures.</td>
+        <td>Promote local scripts into Snowflake objects before scheduling them.</td>
+      </tr>
+      <tr>
+        <td>Resume children before the root.</td>
+        <td>A suspended child will not run even if its predecessor succeeds.</td>
+      </tr>
+      <tr>
+        <td>Keep external calls optional until proven.</td>
+        <td>External functions add network, IAM, endpoint, and monitoring concerns.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Lessons 13-16 Mapping</h2>
+  <pre><code>Lesson 13 procedure -> call PUBLIC.REFRESH_VEHICLE_PRICES()
+Lesson 14 UDF       -> use PUBLIC.NORMALIZE_EXTRA(EXTRA) in a task query
+Lesson 15 external  -> call only after API integration and endpoint are deployed
+Lesson 16 SQL mart  -> wrap as MART.REFRESH_CAR_SALES_STAR_SCHEMA()</code></pre>
+
+  <h2>Operational Checks</h2>
+  <ul>
+    <li>Confirm the task owner role can use the warehouse and referenced objects.</li>
+    <li>Confirm the root schedule timezone and cadence match the data refresh need.</li>
+    <li>Query task history after the first manual or scheduled run.</li>
+    <li>Suspend the root before editing the graph.</li>
+  </ul>
+</main>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0032: Deduplication Rules for Car Sales Ingestion</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Deduplication Rules for Car Sales Ingestion</h1>
+  <p class="subtitle">Goal: decide how duplicate files and duplicate JSON rows should behave before the mart build runs.</p>
+
+  <div class="callout">
+    Raw can contain repeated load attempts. Curated staging and marts should not blindly multiply business rows when the same JSON record arrives again.
+  </div>
+
+  <h2>Two Duplicate Types</h2>
+  <table>
+    <thead>
+      <tr><th>Duplicate type</th><th>Identifier</th><th>Action</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Same file loaded again</td><td><code>SOURCE_FILE</code></td><td>Block or mark duplicate batch in audit.</td></tr>
+      <tr><td>Same JSON row appears again</td><td><code>SOURCE_SALE_KEY</code></td><td>Keep one curated row for exact duplicate payloads.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Curated Staging Pattern</h2>
+  <p>If raw keeps all attempts, staging can select the latest successful version per source row:</p>
+  <pre><code>with ranked as (
+  select
+    *,
+    row_number() over (
+      partition by source_sale_key
+      order by load_ts desc, load_batch_id desc
+    ) as row_rank
+  from {{ source('car_sales_source', 'CAR_SALES') }}
+)
+select *
+from ranked
+where row_rank = 1</code></pre>
+
+  <h2>Audit Gate Pattern</h2>
+  <p>Before loading, ADF or Snowflake can check whether the file has already succeeded:</p>
+  <pre><code>select count(*) as successful_file_loads
+from SNOWPARK_SAMPLE_DATA.RAW.CAR_SALES_LOAD_AUDIT
+where source_file = '&lt;file_name&gt;'
+  and status = 'SUCCESS';</code></pre>
+
+  <h2>Important Limitation</h2>
+  <p><code>md5(SRC::string)</code> detects exact duplicate JSON rows. It does not detect a changed sale unless the source provides a stable business key such as <code>sale_id</code>.</p>
+
+  <h2>Your Turn</h2>
+  <ol>
+    <li>Allow raw to retain all loaded records for audit.</li>
+    <li>Use staging to choose the latest row per <code>SOURCE_SALE_KEY</code>.</li>
+    <li>Add an audit table check for already-successful files.</li>
+    <li>Document that true CDC requires a stable business key later.</li>
+  </ol>
+
+  <div class="quiz" data-answer="0">
+    <p><strong>What does <code>SOURCE_SALE_KEY</code> detect today?</strong></p>
+    <button>Exact JSON duplicates</button>
+    <button>Customer address moves</button>
+    <button>Missing Azure files</button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>References</h2>
+  <p>Related lesson: <a href="0031-cdc-incremental-marts-for-car-sales.html">CDC and incremental marts</a>.</p>
+</main>
+<script>
+  document.querySelectorAll(".quiz").forEach((quiz) => {
+    const buttons = Array.from(quiz.querySelectorAll("button"));
+    const feedback = quiz.querySelector(".feedback");
+    const answer = Number(quiz.dataset.answer);
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        feedback.textContent = index === answer ? "Correct. It is a row-version hash, not a business identity." : "Not yet. Ask what changes when the raw JSON string changes.";
+        feedback.className = index === answer ? "feedback good" : "feedback warn";
+      });
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0033: Updating dbt Tests for Ingestion Metadata</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Updating dbt Tests for Ingestion Metadata</h1>
+  <p class="subtitle">Goal: add tests that prove every mart row can be traced back to an ADLS file and ADF run.</p>
+
+  <div class="callout">
+    Once ingestion metadata becomes part of the contract, it must be tested. Otherwise the mart may be correct numerically but impossible to audit.
+  </div>
+
+  <h2>What To Test</h2>
+  <table>
+    <thead>
+      <tr><th>Layer</th><th>Tests</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Source</td><td><code>SRC</code>, <code>SOURCE_FILE</code>, <code>LOAD_BATCH_ID</code>, <code>LOAD_TS</code> not null.</td></tr>
+      <tr><td>Staging</td><td>Keys, array indexes, and metadata not null.</td></tr>
+      <tr><td>Marts</td><td>Unique primary keys and relationships to dimensions.</td></tr>
+      <tr><td>Audit</td><td>One successful audit row per loaded file and batch.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Staging Schema Example</h2>
+  <pre><code>- name: stg_car_sales_base
+  columns:
+    - name: SOURCE_SALE_KEY
+      data_tests:
+        - not_null
+    - name: SOURCE_FILE
+      data_tests:
+        - not_null
+    - name: LOAD_BATCH_ID
+      data_tests:
+        - not_null
+    - name: LOAD_TS
+      data_tests:
+        - not_null</code></pre>
+
+  <h2>Be Careful With Uniqueness</h2>
+  <p>Do not enforce <code>unique SOURCE_SALE_KEY</code> directly on raw if raw stores all load attempts. Enforce uniqueness only in curated staging or mart models where duplicates have been resolved.</p>
+
+  <h2>Command</h2>
+  <pre><code>dbt build --select source:car_sales_source+</code></pre>
+
+  <h2>Your Turn</h2>
+  <ol>
+    <li>Add source metadata tests.</li>
+    <li>Add staging metadata tests.</li>
+    <li>Keep existing mart uniqueness and relationship tests.</li>
+    <li>Run the full source-plus build.</li>
+    <li>Save the successful output as evidence for the lesson.</li>
+  </ol>
+
+  <div class="quiz" data-answer="2">
+    <p><strong>Where should <code>SOURCE_SALE_KEY</code> uniqueness be tested?</strong></p>
+    <button>Raw attempts</button>
+    <button>ADLS folder</button>
+    <button>Curated staging</button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>References</h2>
+  <p>Primary source: <a href="https://docs.getdbt.com/docs/build/data-tests">dbt data tests</a>. Related: <a href="0032-deduplication-rules-for-car-sales-ingestion.html">Deduplication rules</a>.</p>
+</main>
+<script>
+  document.querySelectorAll(".quiz").forEach((quiz) => {
+    const buttons = Array.from(quiz.querySelectorAll("button"));
+    const feedback = quiz.querySelector(".feedback");
+    const answer = Number(quiz.dataset.answer);
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        feedback.textContent = index === answer ? "Correct. Raw may keep duplicate attempts; curated staging should resolve them." : "Not yet. Raw is audit history, not necessarily a deduped contract.";
+        feedback.className = index === answer ? "feedback good" : "feedback warn";
+      });
+    });
+  });
+</script>
+</body>
+</html>

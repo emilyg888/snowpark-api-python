@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0035: Rerunning dbt Cloud After Source Redirection</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Rerunning dbt Cloud After Source Redirection</h1>
+  <p class="subtitle">Goal: prove the dbt Cloud job still works after the source moves from <code>PUBLIC.CAR_SALES</code> to <code>RAW.CAR_SALES</code>.</p>
+
+  <div class="callout">
+    Source redirection is a production cutover. Treat it like a release: change, build, verify, and keep evidence.
+  </div>
+
+  <h2>Source Change</h2>
+  <pre><code>sources:
+  - name: car_sales_source
+    database: SNOWPARK_SAMPLE_DATA
+    schema: RAW
+    tables:
+      - name: CAR_SALES</code></pre>
+
+  <h2>Local Validation</h2>
+  <pre><code>dbt build --select source:car_sales_source+</code></pre>
+
+  <p>Use <code>--full-refresh</code> once if mart materializations change to incremental:</p>
+  <pre><code>dbt build --full-refresh --select source:car_sales_source+</code></pre>
+
+  <h2>dbt Cloud Validation</h2>
+  <ol>
+    <li>Push the source and model changes to GitHub.</li>
+    <li>Open the dbt Cloud deployment job.</li>
+    <li>Run the job manually.</li>
+    <li>Confirm source, staging, mart, and tests all pass.</li>
+    <li>Record the run id for ADF integration.</li>
+  </ol>
+
+  <h2>ADF Handoff</h2>
+  <p>After dbt Cloud succeeds manually, ADF can trigger the job through a Web activity. The ADF pipeline should store the dbt run id in the load audit table.</p>
+
+  <h2>Your Turn</h2>
+  <ol>
+    <li>Change the dbt source to <code>RAW</code>.</li>
+    <li>Run a local build.</li>
+    <li>Push to GitHub.</li>
+    <li>Run dbt Cloud manually.</li>
+    <li>Save the run id and final status.</li>
+  </ol>
+
+  <div class="quiz" data-answer="0">
+    <p><strong>What command validates the whole dbt graph from the source?</strong></p>
+    <button>dbt build source+</button>
+    <button>copy into raw</button>
+    <button>execute task root</button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>References</h2>
+  <p>Primary source: <a href="https://docs.getdbt.com/docs/deploy/deploy-jobs">dbt Cloud jobs</a>. API reference: <a href="https://docs.getdbt.com/docs/dbt-apis/admin-api">dbt Administrative API</a>.</p>
+</main>
+<script>
+  document.querySelectorAll(".quiz").forEach((quiz) => {
+    const buttons = Array.from(quiz.querySelectorAll("button"));
+    const feedback = quiz.querySelector(".feedback");
+    const answer = Number(quiz.dataset.answer);
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        feedback.textContent = index === answer ? "Correct. In the actual shell use: dbt build --select source:car_sales_source+." : "Not yet. The dbt graph should start from the source.";
+        feedback.className = index === answer ? "feedback good" : "feedback warn";
+      });
+    });
+  });
+</script>
+</body>
+</html>

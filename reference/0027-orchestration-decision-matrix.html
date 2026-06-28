@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reference 0027: Orchestration Decision Matrix</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Orchestration Decision Matrix</h1>
+  <p class="subtitle">A compact reference for choosing how to run the Snowpark, SQL, dbt, and Snowpark ML work from Lessons 1-26.</p>
+
+  <h2>Recommended Stack</h2>
+  <pre><code>GitHub Actions = code checks, CI, repo hygiene
+dbt Cloud = production transformation/test jobs for dbt marts
+Snowflake tasks = Snowflake-native SQL/procedure schedules
+Airflow/Dagster/Prefect = enterprise cross-system orchestration</code></pre>
+
+  <h2>Decision Table</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Option</th>
+        <th>Best For</th>
+        <th>Tradeoff</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>dbt Cloud jobs</td>
+        <td>Building and testing dbt models in Snowflake.</td>
+        <td>Excellent for SQL transformation DAGs; weaker for non-dbt Python/API workflows.</td>
+      </tr>
+      <tr>
+        <td>Snowflake tasks</td>
+        <td>Scheduling SQL, stored procedures, and in-Snowflake pipelines.</td>
+        <td>Close to data; less convenient for Git-based multi-tool orchestration.</td>
+      </tr>
+      <tr>
+        <td>GitHub Actions</td>
+        <td>CI, linting, unit tests, smoke tests, deployment scripts.</td>
+        <td>Good for code lifecycle; not ideal as the main data scheduler.</td>
+      </tr>
+      <tr>
+        <td>Airflow</td>
+        <td>Enterprise batch DAGs across many systems.</td>
+        <td>Flexible and mature; needs platform operation and DAG discipline.</td>
+      </tr>
+      <tr>
+        <td>Dagster</td>
+        <td>Asset-oriented orchestration with dbt and ML lineage.</td>
+        <td>Strong data asset model; new platform concepts to learn.</td>
+      </tr>
+      <tr>
+        <td>Prefect</td>
+        <td>Python-first workflows and lightweight orchestration.</td>
+        <td>Ergonomic for Python; governance depends on deployment setup.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Course Mapping</h2>
+  <pre><code>Lessons 1-12: GitHub Actions for local/unit tests; Snowflake tasks only after scripts are productionized.
+Lessons 13-15: Snowflake SQL/procedure/UDF/external-function objects; deploy by GitHub Actions or Snowflake CLI.
+Lesson 16: dbt or Snowflake SQL; dbt is preferred once the star schema becomes a maintained mart.
+Lessons 17-21: Snowpark ML workflows; use external orchestrator if training, registry, and monitoring must coordinate.
+Lessons 22-26: dbt Cloud deployment job is the primary orchestrator.</code></pre>
+
+  <h2>Rule Of Thumb</h2>
+  <p>If the work is mostly dbt models and tests, use dbt Cloud. If the work is a Snowflake-native SQL or stored-procedure schedule, use Snowflake tasks. If the work crosses files, APIs, ML, dbt, and cloud services, use Airflow, Dagster, or Prefect.</p>
+</main>
+</body>
+</html>

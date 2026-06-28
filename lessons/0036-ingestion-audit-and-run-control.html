@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0036: Ingestion Audit and Run Control</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Ingestion Audit and Run Control</h1>
+  <p class="subtitle">Goal: create an audit contract that connects ADLS files, Snowflake load batches, and dbt Cloud runs.</p>
+
+  <div class="callout">
+    An E2E pipeline is incomplete until you can answer: what file loaded, when, how many rows, which dbt run consumed it, and did the run succeed?
+  </div>
+
+  <h2>Audit Table</h2>
+  <pre><code>create table if not exists SNOWPARK_SAMPLE_DATA.RAW.CAR_SALES_LOAD_AUDIT (
+  LOAD_BATCH_ID string,
+  SOURCE_FILE string,
+  ADF_PIPELINE_RUN_ID string,
+  DBT_CLOUD_RUN_ID string,
+  STARTED_AT timestamp_ntz,
+  FINISHED_AT timestamp_ntz,
+  ROWS_LOADED number,
+  STATUS string,
+  ERROR_MESSAGE string
+);</code></pre>
+
+  <h2>Status Values</h2>
+  <table>
+    <thead>
+      <tr><th>Status</th><th>Meaning</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>STARTED</code></td><td>ADF began processing the file.</td></tr>
+      <tr><td><code>LOADED</code></td><td>Snowflake <code>COPY INTO</code> succeeded.</td></tr>
+      <tr><td><code>DBT_SUCCESS</code></td><td>dbt Cloud completed successfully.</td></tr>
+      <tr><td><code>FAILED</code></td><td>Load, validation, or dbt failed.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Validation Query</h2>
+  <pre><code>select
+  load_batch_id,
+  count(*) as rows_loaded,
+  count(distinct source_sale_key) as distinct_source_rows
+from SNOWPARK_SAMPLE_DATA.RAW.CAR_SALES
+where load_batch_id = '&lt;ADF_PIPELINE_RUN_ID&gt;'
+group by load_batch_id;</code></pre>
+
+  <h2>Run Control Rule</h2>
+  <p>ADF should not archive a file until the audit table shows dbt success for the file's load batch. If Snowflake load succeeds but dbt fails, leave the file traceable and mark the audit row as failed.</p>
+
+  <h2>Your Turn</h2>
+  <ol>
+    <li>Create the audit table.</li>
+    <li>Insert <code>STARTED</code> before <code>COPY INTO</code>.</li>
+    <li>Update to <code>LOADED</code> after row-count validation.</li>
+    <li>Update to <code>DBT_SUCCESS</code> after dbt Cloud completes.</li>
+    <li>Write errors into <code>ERROR_MESSAGE</code>.</li>
+  </ol>
+
+  <div class="quiz" data-answer="2">
+    <p><strong>When should ADF archive the file?</strong></p>
+    <button>Before COPY</button>
+    <button>After raw load only</button>
+    <button>After dbt success</button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>References</h2>
+  <p>Related: <a href="0034-building-the-adf-car-sales-ingestion-pipeline.html">ADF ingestion pipeline</a>.</p>
+</main>
+<script>
+  document.querySelectorAll(".quiz").forEach((quiz) => {
+    const buttons = Array.from(quiz.querySelectorAll("button"));
+    const feedback = quiz.querySelector(".feedback");
+    const answer = Number(quiz.dataset.answer);
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        feedback.textContent = index === answer ? "Correct. Archive only after the full E2E run succeeds." : "Not yet. The file should stay recoverable until downstream success.";
+        feedback.className = index === answer ? "feedback good" : "feedback warn";
+      });
+    });
+  });
+</script>
+</body>
+</html>

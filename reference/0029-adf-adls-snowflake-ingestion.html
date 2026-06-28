@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reference 0029: ADF + ADLS + Snowflake Ingestion</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>ADF + ADLS + Snowflake Ingestion</h1>
+  <p class="subtitle">A quick reference for the productionized car sales file ingestion design.</p>
+
+  <h2>Architecture</h2>
+  <pre><code>ADLS Gen2
+  car-sales/landing/
+  car-sales/archive/
+  car-sales/rejected/
+
+ADF Pipeline
+  Get Metadata
+  Snowflake COPY INTO
+  Validate raw batch
+  Trigger dbt Cloud job
+  Poll dbt Cloud job
+  Move file to archive or rejected
+
+Snowflake
+  RAW.CAR_SALES
+  STAGING views
+  MART tables</code></pre>
+
+  <h2>Persistent Raw Table</h2>
+  <pre><code>create schema if not exists SNOWPARK_SAMPLE_DATA.RAW;
+
+create or replace table SNOWPARK_SAMPLE_DATA.RAW.CAR_SALES (
+  SRC variant,
+  SOURCE_FILE string,
+  SOURCE_SALE_KEY string,
+  LOAD_BATCH_ID string,
+  LOAD_TS timestamp_ntz default current_timestamp()
+);</code></pre>
+
+  <h2>File Format</h2>
+  <pre><code>create or replace file format SNOWPARK_SAMPLE_DATA.RAW.CAR_SALES_JSON_FORMAT
+  type = json
+  strip_outer_array = true;</code></pre>
+
+  <h2>COPY INTO Pattern</h2>
+  <pre><code>copy into SNOWPARK_SAMPLE_DATA.RAW.CAR_SALES (
+  SRC,
+  SOURCE_FILE,
+  SOURCE_SALE_KEY,
+  LOAD_BATCH_ID
+)
+from (
+  select
+    $1,
+    metadata$filename,
+    md5($1::string),
+    '&lt;ADF_PIPELINE_RUN_ID&gt;'
+  from @SNOWPARK_SAMPLE_DATA.RAW.CAR_SALES_STAGE
+)
+file_format = SNOWPARK_SAMPLE_DATA.RAW.CAR_SALES_JSON_FORMAT
+on_error = 'abort_statement';</code></pre>
+
+  <h2>CDC Rule</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Identifier</th>
+        <th>Meaning</th>
+        <th>Use</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>SOURCE_FILE</code></td>
+        <td>Which ADLS file produced the row.</td>
+        <td>Audit, replay, archive decisions.</td>
+      </tr>
+      <tr>
+        <td><code>LOAD_BATCH_ID</code></td>
+        <td>Which ADF run loaded the row.</td>
+        <td>Batch validation and troubleshooting.</td>
+      </tr>
+      <tr>
+        <td><code>SOURCE_SALE_KEY</code></td>
+        <td>Hash of the raw JSON row.</td>
+        <td>Exact duplicate detection.</td>
+      </tr>
+      <tr>
+        <td><code>RECORD_HASH</code></td>
+        <td>Hash of normalized business fields.</td>
+        <td>True CDC when a stable business key exists.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>ADF Pipeline Steps</h2>
+  <ol>
+    <li>Get files from <code>car-sales/landing/</code>.</li>
+    <li>Run Snowflake <code>COPY INTO RAW.CAR_SALES</code>.</li>
+    <li>Validate the current <code>LOAD_BATCH_ID</code>.</li>
+    <li>Trigger the dbt Cloud job that runs <code>dbt build --select source:car_sales_source+</code>.</li>
+    <li>Poll the dbt Cloud run until success or failure.</li>
+    <li>Move the processed file to <code>archive/</code> or <code>rejected/</code>.</li>
+  </ol>
+
+  <h2>Ownership</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>System</th>
+        <th>Owns</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>ADF</td>
+        <td>File detection, control flow, retries, archive/reject movement, job triggering.</td>
+      </tr>
+      <tr>
+        <td>Snowflake</td>
+        <td>External stage, persistent raw table, <code>COPY INTO</code>, optional task graph.</td>
+      </tr>
+      <tr>
+        <td>dbt Cloud</td>
+        <td>STAGING and MART transformations, tests, lineage, deployment job history.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>References</h2>
+  <p><a href="https://learn.microsoft.com/en-us/azure/data-factory/connector-snowflake">Azure Data Factory Snowflake connector</a>. <a href="https://docs.snowflake.com/en/user-guide/data-load-azure-copy">Snowflake loading from Azure</a>. <a href="https://docs.snowflake.com/en/user-guide/tasks-intro">Snowflake tasks</a>.</p>
+</main>
+</body>
+</html>

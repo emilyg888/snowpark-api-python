@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0029: Demo DAG and ADF Ingestion Orchestration</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>Demo DAG and ADF Ingestion Orchestration</h1>
+  <p class="subtitle">Goal: separate a teaching DAG for Lessons 1-12 from the production ADLS-to-dbt ingestion flow.</p>
+
+  <div class="callout">
+    Lessons 1-12 can be placed behind a Snowflake task graph as a demo, but the production pipeline should start from file arrival in ADLS and end with a tested dbt Cloud mart build.
+  </div>
+
+  <h2>Two Different Pipelines</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Pipeline</th>
+        <th>Purpose</th>
+        <th>Owner</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Lessons 1-12 demo DAG</td>
+        <td>Show how deployed Snowpark learning assets can be sequenced.</td>
+        <td>Snowflake tasks, optionally triggered by ADF.</td>
+      </tr>
+      <tr>
+        <td>ADLS ingestion pipeline</td>
+        <td>Load new JSON files, persist raw records, trigger dbt Cloud, and archive files.</td>
+        <td>ADF as the outer orchestrator; Snowflake and dbt Cloud own execution.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Demo DAG For Lessons 1-12</h2>
+  <pre><code>TASK_L01_L04_DATAFRAME_CORE
+  -> TASK_L05_L07_DEPLOY_AND_DEBUG
+  -> TASK_L08_L12_ADVANCED_DATAFRAME_FLOW
+  -> TASK_L01_L12_DEMO_DAG_DONE</code></pre>
+
+  <p>This DAG records checkpoints. It does not try to run every local Python file because those lessons are learning exercises, not a single business pipeline. The script lives in <code>sql/LESSON29.sql</code>.</p>
+
+  <h2>ADF Demo Layer</h2>
+  <p>For a demo, ADF can call the Snowflake root task:</p>
+  <pre><code>execute task ORCHESTRATION.TASK_L01_L04_DATAFRAME_CORE;</code></pre>
+
+  <p>Then ADF can poll Snowflake task history or read the audit table:</p>
+  <pre><code>select *
+from SNOWPARK_SAMPLE_DATA.ORCHESTRATION.LESSON_RUN_AUDIT
+order by CREATED_AT desc;</code></pre>
+
+  <h2>Production ADLS Ingestion</h2>
+  <pre><code>ADLS car-sales/landing/
+  -> ADF detects file
+  -> Snowflake COPY INTO RAW.CAR_SALES
+  -> dbt Cloud job builds STAGING and MART
+  -> ADF moves file to archive or rejected</code></pre>
+
+  <p>Use persistent raw staging for the production path. The raw table should store the JSON payload plus file and batch metadata, because CDC, replay, and audit all depend on that metadata.</p>
+
+  <h2>Decision Rule</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Question</th>
+        <th>Answer</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Should ADF call every Lesson 1-12 script?</td>
+        <td>No. Use one root task only for the orchestration demo.</td>
+      </tr>
+      <tr>
+        <td>Should Snowpipe be the first production design?</td>
+        <td>No. Start with ADF calling Snowflake <code>COPY INTO</code> for deterministic control.</td>
+      </tr>
+      <tr>
+        <td>Where does CDC belong?</td>
+        <td>Persist raw records first; then apply row hash, source key, and incremental mart logic.</td>
+      </tr>
+      <tr>
+        <td>Where does the production mart build live?</td>
+        <td>In dbt Cloud, not in the Lesson 16 prototype SQL.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Your Turn</h2>
+  <ol>
+    <li>Run <code>sql/LESSON29.sql</code> in Snowflake.</li>
+    <li>Manually execute the root task with <code>execute task ORCHESTRATION.TASK_L01_L04_DATAFRAME_CORE;</code>.</li>
+    <li>Check <code>ORCHESTRATION.LESSON_RUN_AUDIT</code>.</li>
+    <li>Create an ADF demo pipeline with one Snowflake activity that executes the root task.</li>
+    <li>Create a separate ADF production ingestion pipeline for ADLS files.</li>
+  </ol>
+
+  <div class="quiz" data-answer="1">
+    <p><strong>What should ADF own in the production ingestion flow?</strong></p>
+    <button>Dimension SQL logic</button>
+    <button>File orchestration</button>
+    <button>dbt model lineage</button>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="quiz" data-answer="2">
+    <p><strong>What should the Lessons 1-12 DAG be treated as?</strong></p>
+    <button>A finance mart</button>
+    <button>A raw loader</button>
+    <button>A teaching demo</button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>References</h2>
+  <p>Primary source: <a href="https://docs.snowflake.com/en/user-guide/tasks-intro">Snowflake: Introduction to tasks</a>. ADF connector: <a href="https://learn.microsoft.com/en-us/azure/data-factory/connector-snowflake">Azure Data Factory Snowflake connector</a>. Azure loading pattern: <a href="https://docs.snowflake.com/en/user-guide/data-load-azure-copy">Snowflake: Load from Azure</a>. Quick reference: <a href="../reference/0029-adf-adls-snowflake-ingestion.html">ADF + ADLS + Snowflake Ingestion</a>.</p>
+</main>
+<script>
+  document.querySelectorAll(".quiz").forEach((quiz) => {
+    const buttons = Array.from(quiz.querySelectorAll("button"));
+    const feedback = quiz.querySelector(".feedback");
+    const answer = Number(quiz.dataset.answer);
+
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        if (index === answer) {
+          feedback.textContent = "Correct. Keep orchestration ownership separate from transformation ownership.";
+          feedback.className = "feedback good";
+        } else {
+          feedback.textContent = "Not yet. Ask which system should own coordination rather than SQL logic.";
+          feedback.className = "feedback warn";
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

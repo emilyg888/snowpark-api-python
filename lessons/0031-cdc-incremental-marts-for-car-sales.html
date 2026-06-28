@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0031: CDC and Incremental Marts for Car Sales</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>CDC and Incremental Marts for Car Sales</h1>
+  <p class="subtitle">Goal: add row-level change handling to the mart tables without filtering ordinary staging views to changed rows only.</p>
+
+  <div class="callout">
+    CDC belongs in mart build logic. Staging should expose clean, reusable source-shaped data; facts and dimensions decide what is new, changed, or already present.
+  </div>
+
+  <h2>dbt Incremental Rule</h2>
+  <p>dbt incremental models build a table the first time, then process only rows selected by your incremental filter on later runs. dbt requires you to define the filter and, for merge behavior, the unique key.</p>
+
+  <h2>Fact Model Pattern</h2>
+  <pre><code>{{
+  config(
+    materialized='incremental',
+    unique_key='sale_key',
+    incremental_strategy='merge',
+    on_schema_change='sync_all_columns'
+  )
+}}
+
+select
+  sale_key,
+  source_sale_key,
+  load_batch_id,
+  load_ts,
+  sale_date,
+  dealership,
+  sales_person_key,
+  customer_key,
+  vehicle_key,
+  sale_price,
+  1 as vehicle_count
+from prepared_fact_rows
+
+{% if is_incremental() %}
+where load_ts >= (
+  select coalesce(max(load_ts), '1900-01-01'::timestamp_ntz)
+  from {{ this }}
+)
+{% endif %}</code></pre>
+
+  <h2>Dimension Model Pattern</h2>
+  <p>For this course, use Type 1 dimensions first: changed attributes replace older values for the same key.</p>
+  <pre><code>{{
+  config(
+    materialized='incremental',
+    unique_key='customer_key',
+    incremental_strategy='merge',
+    on_schema_change='sync_all_columns'
+  )
+}}</code></pre>
+
+  <h2>Key Decision</h2>
+  <table>
+    <thead>
+      <tr><th>Table</th><th>Incremental key</th><th>Reason</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>fact_vehicle_sales</code></td><td><code>sale_key</code></td><td>One row per source sale, customer, and vehicle.</td></tr>
+      <tr><td><code>bridge_vehicle_sale_extras</code></td><td><code>sale_key + extra_key</code></td><td>One row per sale grain and extra.</td></tr>
+      <tr><td><code>dim_customers</code></td><td><code>customer_key</code></td><td>One current row per customer identity.</td></tr>
+      <tr><td><code>dim_vehicles</code></td><td><code>vehicle_key</code></td><td>One current row per vehicle identity.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Your Turn</h2>
+  <ol>
+    <li>Add metadata columns to the mart selects.</li>
+    <li>Add <code>materialized='incremental'</code> and <code>unique_key</code>.</li>
+    <li>Use <code>is_incremental()</code> to filter recently loaded batches.</li>
+    <li>Run a full refresh once after changing logic.</li>
+    <li>Run a normal build again to confirm incremental behavior.</li>
+  </ol>
+
+  <div class="quiz" data-answer="2">
+    <p><strong>Where should CDC logic live?</strong></p>
+    <button>Only in ADLS folders</button>
+    <button>Only in raw JSON</button>
+    <button>In incremental marts</button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>References</h2>
+  <p>Primary source: <a href="https://docs.getdbt.com/docs/build/incremental-models">dbt incremental models</a>. Previous: <a href="0030-persistent-staging-for-car-sales.html">Persistent staging</a>.</p>
+</main>
+<script>
+  document.querySelectorAll(".quiz").forEach((quiz) => {
+    const buttons = Array.from(quiz.querySelectorAll("button"));
+    const feedback = quiz.querySelector(".feedback");
+    const answer = Number(quiz.dataset.answer);
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        feedback.textContent = index === answer ? "Correct. The marts decide insert, update, or ignore." : "Not yet. Staging stays reusable; marts own business persistence.";
+        feedback.className = index === answer ? "feedback good" : "feedback warn";
+      });
+    });
+  });
+</script>
+</body>
+</html>
