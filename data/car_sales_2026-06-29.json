@@ -1,0 +1,164 @@
+[
+  {
+    "date": "2017-05-01",
+    "dealership": "Valley View Auto Sales",
+    "salesperson": {
+      "id": "55",
+      "name": "Frank Beasley"
+    },
+    "customer": [
+      {
+        "name": "Grace Lee",
+        "phone": "555-0173",
+        "address": "15 Willow Street"
+      }
+    ],
+    "vehicle": [
+      {
+        "make": "Honda",
+        "model": "Accord",
+        "year": 2018,
+        "price": 26100,
+        "extras": [
+          "heated seats",
+          "cargo net"
+        ]
+      }
+    ]
+  },
+  {
+    "date": "2017-05-04",
+    "dealership": "Valley View Auto Sales",
+    "salesperson": {
+      "id": "88",
+      "name": "Nora Evans"
+    },
+    "customer": [
+      {
+        "name": "Ava Collins",
+        "phone": "555-0128",
+        "address": "77 Magnolia Way"
+      }
+    ],
+    "vehicle": [
+      {
+        "make": "Honda",
+        "model": "CR-V",
+        "year": 2020,
+        "price": 33400,
+        "extras": [
+          "all weather mats",
+          "backup camera"
+        ]
+      }
+    ]
+  },
+  {
+    "date": "2017-05-04",
+    "dealership": "Northside Cars",
+    "salesperson": {
+      "id": "410",
+      "name": "Victor Chen"
+    },
+    "customer": [
+      {
+        "name": "Isabella Moore",
+        "phone": "555-0142",
+        "address": "19 Cypress Place"
+      }
+    ],
+    "vehicle": [
+      {
+        "make": "Toyota",
+        "model": "Corolla",
+        "year": 2020,
+        "price": 22350,
+        "extras": [
+          "floor mats",
+          "navigation"
+        ]
+      }
+    ]
+  },
+  {
+    "date": "2017-05-05",
+    "dealership": "Northside Cars",
+    "salesperson": {
+      "id": "411",
+      "name": "Maya Robinson"
+    },
+    "customer": [
+      {
+        "name": "Lucas Brown",
+        "phone": "555-0181",
+        "address": "8 Park Terrace"
+      }
+    ],
+    "vehicle": [
+      {
+        "make": "Mazda",
+        "model": "CX-5",
+        "year": 2019,
+        "price": 29400,
+        "extras": [
+          "premium audio",
+          "roof rack"
+        ]
+      }
+    ]
+  },
+  {
+    "date": "2017-05-05",
+    "dealership": "Metro Auto Plaza",
+    "salesperson": {
+      "id": "303",
+      "name": "Kelly Morgan"
+    },
+    "customer": [
+      {
+        "name": "Chloe Adams",
+        "phone": "555-0168",
+        "address": "602 Hillcrest Road"
+      }
+    ],
+    "vehicle": [
+      {
+        "make": "Tesla",
+        "model": "Model S",
+        "year": 2020,
+        "price": 68400,
+        "extras": [
+          "autopilot",
+          "premium audio"
+        ]
+      }
+    ]
+  },
+  {
+    "date": "2017-05-06",
+    "dealership": "Summit Motors",
+    "salesperson": {
+      "id": "185",
+      "name": "Owen Scott"
+    },
+    "customer": [
+      {
+        "name": "Mason Turner",
+        "phone": "555-0114",
+        "address": "144 Elm Grove"
+      }
+    ],
+    "vehicle": [
+      {
+        "make": "Ford",
+        "model": "Ranger",
+        "year": 2020,
+        "price": 35850,
+        "extras": [
+          "tow package",
+          "bed liner"
+        ]
+      }
+    ]
+  }
+]

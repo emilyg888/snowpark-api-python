@@ -1,6 +1,6 @@
 [
   {
-    "date": "2017-04-28",
+    "date": "2017-05-01",
     "dealership": "Valley View Auto Sales",
     "salesperson": {
       "id": "55",
@@ -8,26 +8,26 @@
     },
     "customer": [
       {
-        "name": "Amy Folsom",
-        "phone": "555-0147",
-        "address": "123 Maple Street"
+        "name": "Grace Lee",
+        "phone": "555-0173",
+        "address": "15 Willow Street"
       }
     ],
     "vehicle": [
       {
         "make": "Honda",
-        "model": "Civic",
-        "year": 2017,
-        "price": 20275,
+        "model": "Accord",
+        "year": 2018,
+        "price": 26100,
         "extras": [
-          "floor mats",
+          "heated seats",
           "cargo net"
         ]
       }
     ]
   },
   {
-    "date": "2017-04-28",
+    "date": "2017-05-01",
     "dealership": "Valley View Auto Sales",
     "salesperson": {
       "id": "274",
@@ -35,80 +35,80 @@
     },
     "customer": [
       {
-        "name": "Raj Singh",
-        "phone": "555-0191",
-        "address": "88 Pine Avenue"
+        "name": "Marcus Bell",
+        "phone": "555-0136",
+        "address": "204 River Road"
       }
     ],
     "vehicle": [
       {
         "make": "Toyota",
-        "model": "Camry",
-        "year": 2016,
-        "price": 23500,
+        "model": "RAV4",
+        "year": 2019,
+        "price": 30750,
         "extras": [
-          "heated seats",
+          "all weather mats",
+          "roof rack"
+        ]
+      }
+    ]
+  },
+  {
+    "date": "2017-05-02",
+    "dealership": "Summit Motors",
+    "salesperson": {
+      "id": "180",
+      "name": "Luis Moreno"
+    },
+    "customer": [
+      {
+        "name": "Sofia Patel",
+        "phone": "555-0154",
+        "address": "61 Lake Avenue"
+      }
+    ],
+    "vehicle": [
+      {
+        "make": "Subaru",
+        "model": "Forester",
+        "year": 2019,
+        "price": 31500,
+        "extras": [
+          "backup camera",
           "navigation"
         ]
       }
     ]
   },
   {
-    "date": "2017-04-29",
+    "date": "2017-05-02",
     "dealership": "Summit Motors",
     "salesperson": {
-      "id": "180",
-      "name": "Luis Moreno"
+      "id": "184",
+      "name": "Hannah Wright"
     },
     "customer": [
       {
-        "name": "Mia Chen",
-        "phone": "555-0122",
-        "address": "42 Cedar Road"
-      }
-    ],
-    "vehicle": [
-      {
-        "make": "Subaru",
-        "model": "Outback",
-        "year": 2018,
-        "price": 28990,
-        "extras": [
-          "roof rack",
-          "all weather mats"
-        ]
-      }
-    ]
-  },
-  {
-    "date": "2017-04-29",
-    "dealership": "Summit Motors",
-    "salesperson": {
-      "id": "180",
-      "name": "Luis Moreno"
-    },
-    "customer": [
-      {
-        "name": "Noah Brooks",
-        "phone": "555-0188",
-        "address": "17 Birch Lane"
+        "name": "Ethan Ward",
+        "phone": "555-0183",
+        "address": "390 Aspen Court"
       }
     ],
     "vehicle": [
       {
         "make": "Ford",
-        "model": "F-150",
-        "year": 2017,
-        "price": 36750,
+        "model": "Escape",
+        "year": 2018,
+        "price": 24950,
         "extras": [
           "tow package",
-          "bed liner"
+          "floor mats"
         ]
       }
     ]
   },
   {
-    "date": "2017-04-30",
+    "date": "2017-05-03",
     "dealership": "Metro Auto Plaza",
     "salesperson": {
       "id": "301",
@@ -116,17 +116,17 @@
     },
     "customer": [
       {
-        "name": "Elena Garcia",
-        "phone": "555-0165",
-        "address": "700 Oak Circle"
+        "name": "Lily Thompson",
+        "phone": "555-0108",
+        "address": "28 Garden Lane"
       }
     ],
     "vehicle": [
       {
         "make": "Tesla",
-        "model": "Model 3",
-        "year": 2019,
-        "price": 41900,
+        "model": "Model Y",
+        "year": 2020,
+        "price": 52900,
         "extras": [
           "premium audio",
           "autopilot"
@@ -135,7 +135,7 @@
     ]
   },
   {
-    "date": "2017-04-30",
+    "date": "2017-05-03",
     "dealership": "Metro Auto Plaza",
     "salesperson": {
       "id": "302",
@@ -143,20 +143,20 @@
     },
     "customer": [
       {
-        "name": "Olivia Martin",
-        "phone": "555-0119",
-        "address": "9 Spruce Court"
+        "name": "Daniel Kim",
+        "phone": "555-0197",
+        "address": "510 Harbor Drive"
       }
     ],
     "vehicle": [
       {
         "make": "Nissan",
-        "model": "Leaf",
-        "year": 2018,
-        "price": 21400,
+        "model": "Rogue",
+        "year": 2019,
+        "price": 27880,
         "extras": [
           "quick charge",
-          "backup camera"
+          "bed liner"
         ]
       }
     ]
