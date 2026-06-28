@@ -1,28 +1,30 @@
-
+-- back compat for old kwarg name
   
+  begin;
+    
+        
+            
+            
+            
+            
+        
     
 
+    
 
+    merge into SNOWPARK_SAMPLE_DATA.MART.dim_customers as DBT_INTERNAL_DEST
+        using SNOWPARK_SAMPLE_DATA.MART.dim_customers__dbt_tmp as DBT_INTERNAL_SOURCE
+        on ((DBT_INTERNAL_SOURCE.customer_key = DBT_INTERNAL_DEST.customer_key))
 
-create or replace transient  table SNOWPARK_SAMPLE_DATA.MART.dim_customers
     
+    when matched then update set
+        "CUSTOMER_KEY" = DBT_INTERNAL_SOURCE."CUSTOMER_KEY","CUSTOMER_NAME" = DBT_INTERNAL_SOURCE."CUSTOMER_NAME","CUSTOMER_PHONE" = DBT_INTERNAL_SOURCE."CUSTOMER_PHONE","CUSTOMER_ADDRESS" = DBT_INTERNAL_SOURCE."CUSTOMER_ADDRESS","SOURCE_SALE_KEY" = DBT_INTERNAL_SOURCE."SOURCE_SALE_KEY","SOURCE_FILE" = DBT_INTERNAL_SOURCE."SOURCE_FILE","LOAD_BATCH_ID" = DBT_INTERNAL_SOURCE."LOAD_BATCH_ID","LOAD_TS" = DBT_INTERNAL_SOURCE."LOAD_TS"
     
-    
-    
-    as (select
-  customer_key,
-  customer_name,
-  customer_phone,
-  customer_address
-from SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_customers
-where customer_key is not null
-qualify row_number() over (
-  partition by customer_key
-  order by customer_name, customer_phone, customer_address
-) = 1
-    )
+
+    when not matched then insert
+        ("CUSTOMER_KEY", "CUSTOMER_NAME", "CUSTOMER_PHONE", "CUSTOMER_ADDRESS", "SOURCE_SALE_KEY", "SOURCE_FILE", "LOAD_BATCH_ID", "LOAD_TS")
+    values
+        ("CUSTOMER_KEY", "CUSTOMER_NAME", "CUSTOMER_PHONE", "CUSTOMER_ADDRESS", "SOURCE_SALE_KEY", "SOURCE_FILE", "LOAD_BATCH_ID", "LOAD_TS")
+
 ;
-
-
-
-  
+    commit;

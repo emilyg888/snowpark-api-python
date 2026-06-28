@@ -1,0 +1,11 @@
+
+    
+    
+
+
+
+select SOURCE_SALE_KEY
+from SNOWPARK_SAMPLE_DATA.RAW.CAR_SALES
+where SOURCE_SALE_KEY is null
+
+

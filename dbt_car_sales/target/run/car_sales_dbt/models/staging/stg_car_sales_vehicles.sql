@@ -1,12 +1,19 @@
 
-  create or replace   view SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_vehicles
   
-  
-  
-  
-  as (
-    select
+    
+
+
+
+create or replace transient  table SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_vehicles
+    
+    
+    
+    
+    as (select
+  base.source_file,
   base.source_sale_key,
+  base.load_batch_id,
+  base.load_ts,
   vehicle.index::number as vehicle_index,
   vehicle.value:make::string as make,
   vehicle.value:model::string as model,
@@ -20,8 +27,12 @@
       coalesce(vehicle.value:year::string, '')
     )
   end as vehicle_key
-from SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_base as base,
-  lateral flatten(input => base.src:vehicle) as vehicle
+from SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_base base,
+  lateral flatten(input => base.src:vehicle) vehicle
 where vehicle.value is not null
-  );
+    )
+;
 
+
+
+  

@@ -1,12 +1,19 @@
 
-  create or replace   view SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_customers
   
-  
-  
-  
-  as (
-    select
+    
+
+
+
+create or replace transient  table SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_customers
+    
+    
+    
+    
+    as (select
+  base.source_file,
   base.source_sale_key,
+  base.load_batch_id,
+  base.load_ts,
   customer.index::number as customer_index,
   customer.value:name::string as customer_name,
   customer.value:phone::string as customer_phone,
@@ -19,8 +26,12 @@
       upper(coalesce(customer.value:address::string, ''))
     )
   end as customer_key
-from SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_base as base,
-  lateral flatten(input => base.src:customer) as customer
+from SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_base base,
+  lateral flatten(input => base.src:customer) customer
 where customer.value is not null
-  );
+    )
+;
 
+
+
+  

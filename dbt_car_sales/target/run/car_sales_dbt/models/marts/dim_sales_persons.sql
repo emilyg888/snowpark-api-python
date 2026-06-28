@@ -1,41 +1,30 @@
-
+-- back compat for old kwarg name
   
+  begin;
+    
+        
+            
+            
+            
+            
+        
     
 
+    
 
+    merge into SNOWPARK_SAMPLE_DATA.MART.dim_sales_persons as DBT_INTERNAL_DEST
+        using SNOWPARK_SAMPLE_DATA.MART.dim_sales_persons__dbt_tmp as DBT_INTERNAL_SOURCE
+        on ((DBT_INTERNAL_SOURCE.sales_person_key = DBT_INTERNAL_DEST.sales_person_key))
 
-create or replace transient  table SNOWPARK_SAMPLE_DATA.MART.dim_sales_persons
     
+    when matched then update set
+        "SALES_PERSON_KEY" = DBT_INTERNAL_SOURCE."SALES_PERSON_KEY","SALES_PERSON_ID" = DBT_INTERNAL_SOURCE."SALES_PERSON_ID","SALES_PERSON_NAME" = DBT_INTERNAL_SOURCE."SALES_PERSON_NAME","DEALERSHIP" = DBT_INTERNAL_SOURCE."DEALERSHIP","SOURCE_SALE_KEY" = DBT_INTERNAL_SOURCE."SOURCE_SALE_KEY","SOURCE_FILE" = DBT_INTERNAL_SOURCE."SOURCE_FILE","LOAD_BATCH_ID" = DBT_INTERNAL_SOURCE."LOAD_BATCH_ID","LOAD_TS" = DBT_INTERNAL_SOURCE."LOAD_TS"
     
-    
-    
-    as (select
-  sales_person_key,
-  sales_person_id,
-  sales_person_name,
-  dealership
-from (
-  select
-    case
-      when sales_person_id is null then null
-      else md5(
-        upper(coalesce(dealership, '')) || '|' ||
-        coalesce(sales_person_id, '')
-      )
-    end as sales_person_key,
-    sales_person_id,
-    sales_person_name,
-    dealership
-  from SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_base
-  where sales_person_id is not null
-)
-qualify row_number() over (
-  partition by sales_person_key
-  order by sales_person_id, sales_person_name, dealership
-) = 1
-    )
+
+    when not matched then insert
+        ("SALES_PERSON_KEY", "SALES_PERSON_ID", "SALES_PERSON_NAME", "DEALERSHIP", "SOURCE_SALE_KEY", "SOURCE_FILE", "LOAD_BATCH_ID", "LOAD_TS")
+    values
+        ("SALES_PERSON_KEY", "SALES_PERSON_ID", "SALES_PERSON_NAME", "DEALERSHIP", "SOURCE_SALE_KEY", "SOURCE_FILE", "LOAD_BATCH_ID", "LOAD_TS")
+
 ;
-
-
-
-  
+    commit;

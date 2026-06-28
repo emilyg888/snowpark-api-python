@@ -1,9 +1,12 @@
 select
+  base.source_file,
   base.source_sale_key,
+  base.load_batch_id,
+  base.load_ts,
   vehicle.index::number as vehicle_index,
-  extras.index::number as extra_index,
-  extras.value::string as extra,
-  md5(upper(coalesce(extras.value::string, ''))) as extra_key,
+  extra.index::number as extra_index,
+  extra.value::string as extra,
+  md5(upper(coalesce(extra.value::string, ''))) as extra_key,
   case
     when vehicle.value:make is null then null
     else md5(
@@ -12,8 +15,8 @@ select
       coalesce(vehicle.value:year::string, '')
     )
   end as vehicle_key
-from SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_base as base,
-  lateral flatten(input => base.src:vehicle) as vehicle,
-  lateral flatten(input => vehicle.value:extras) as extras
+from SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_base base,
+  lateral flatten(input => base.src:vehicle) vehicle,
+  lateral flatten(input => vehicle.value:extras) extra
 where vehicle.value is not null
-  and extras.value is not null
+  and extra.value is not null

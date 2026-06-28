@@ -1,3 +1,5 @@
+
+
 select
   md5(
     base.src::string || '|' ||
@@ -16,9 +18,19 @@ select
   customer.customer_key,
   vehicle.vehicle_key,
   vehicle.sale_price,
-  1 as vehicle_count
-from SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_base base
-join SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_customers customer
+  1 as vehicle_count,
+  base.source_sale_key,
+  base.source_file,
+  base.load_batch_id,
+  base.load_ts
+from SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_base as base
+inner join SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_customers as customer
   on base.source_sale_key = customer.source_sale_key
-join SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_vehicles vehicle
+inner join SNOWPARK_SAMPLE_DATA.STAGING.stg_car_sales_vehicles as vehicle
   on base.source_sale_key = vehicle.source_sale_key
+
+
+where base.load_ts >= (
+  select coalesce(max(load_ts), '1900-01-01'::timestamp_ntz)
+  from SNOWPARK_SAMPLE_DATA.MART.fact_vehicle_sales
+)

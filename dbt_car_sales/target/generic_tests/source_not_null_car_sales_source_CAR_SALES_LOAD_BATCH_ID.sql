@@ -1,0 +1,1 @@
+{{ test_not_null(column_name="LOAD_BATCH_ID", model=get_where_subquery(source('car_sales_source', 'CAR_SALES'))) }}
