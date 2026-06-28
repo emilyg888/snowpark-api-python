@@ -3,7 +3,7 @@ version: 2
 sources:
   - name: car_sales_source
     database: SNOWPARK_SAMPLE_DATA
-    schema: PUBLIC
+    schema: RAW
     description: Raw semi-structured car sales records loaded from JSON.
     tables:
       - name: CAR_SALES
