@@ -13,3 +13,15 @@ sources:
             description: VARIANT payload containing sale date, dealership, salesperson, customer array, and vehicle array.
             data_tests:
               - not_null
+          - name: SOURCE_FILE
+            data_tests:
+              - not_null
+          - name: SOURCE_SALE_KEY
+            data_tests:
+              - not_null
+          - name: LOAD_BATCH_ID
+            data_tests:
+              - not_null
+          - name: LOAD_TS
+            data_tests:
+              - not_null

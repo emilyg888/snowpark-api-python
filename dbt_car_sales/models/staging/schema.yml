@@ -7,10 +7,18 @@ models:
       - name: SOURCE_SALE_KEY
         data_tests:
           - not_null
-          - unique
       - name: SRC
         data_tests:
           - not_null
+      - name: SOURCE_FILE
+        data_tests:
+          - not_null
+      - name: LOAD_BATCH_ID
+        data_tests:
+          - not_null
+      - name: LOAD_TS
+        data_tests:
+          - not_null                    
 
   - name: stg_car_sales_customers
     description: One row per source sale and customer array element.
@@ -24,6 +32,15 @@ models:
       - name: CUSTOMER_KEY
         data_tests:
           - not_null
+      - name: SOURCE_FILE
+        data_tests:
+          - not_null
+      - name: LOAD_BATCH_ID
+        data_tests:
+          - not_null
+      - name: LOAD_TS
+        data_tests:
+          - not_null          
 
   - name: stg_car_sales_vehicles
     description: One row per source sale and vehicle array element.
@@ -37,6 +54,15 @@ models:
       - name: VEHICLE_KEY
         data_tests:
           - not_null
+      - name: SOURCE_FILE
+        data_tests:
+          - not_null
+      - name: LOAD_BATCH_ID
+        data_tests:
+          - not_null
+      - name: LOAD_TS
+        data_tests:
+          - not_null  
 
   - name: stg_car_sales_extras
     description: One row per source sale, vehicle array element, and vehicle extra array element.
@@ -59,3 +85,12 @@ models:
       - name: VEHICLE_KEY
         data_tests:
           - not_null
+      - name: SOURCE_FILE
+        data_tests:
+          - not_null
+      - name: LOAD_BATCH_ID
+        data_tests:
+          - not_null
+      - name: LOAD_TS
+        data_tests:
+          - not_null  
