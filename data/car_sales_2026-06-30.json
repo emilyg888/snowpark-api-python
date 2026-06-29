@@ -1,0 +1,164 @@
+[
+  {
+    "date": "2017-05-07",
+    "dealership": "Valley View Auto Sales",
+    "salesperson": {
+      "id": "88",
+      "name": "Nora Evans"
+    },
+    "customer": [
+      {
+        "name": "Harper Wilson",
+        "phone": "555-0131",
+        "address": "31 Laurel Street"
+      }
+    ],
+    "vehicle": [
+      {
+        "make": "Honda",
+        "model": "Pilot",
+        "year": 2020,
+        "price": 38600,
+        "extras": [
+          "navigation",
+          "tow package"
+        ]
+      }
+    ]
+  },
+  {
+    "date": "2017-05-07",
+    "dealership": "Northside Cars",
+    "salesperson": {
+      "id": "410",
+      "name": "Victor Chen"
+    },
+    "customer": [
+      {
+        "name": "Jack Mitchell",
+        "phone": "555-0176",
+        "address": "92 Forest Drive"
+      }
+    ],
+    "vehicle": [
+      {
+        "make": "Toyota",
+        "model": "Highlander",
+        "year": 2020,
+        "price": 41950,
+        "extras": [
+          "roof rack",
+          "all weather mats"
+        ]
+      }
+    ]
+  },
+  {
+    "date": "2017-05-08",
+    "dealership": "Northside Cars",
+    "salesperson": {
+      "id": "411",
+      "name": "Maya Robinson"
+    },
+    "customer": [
+      {
+        "name": "Zoe Bennett",
+        "phone": "555-0126",
+        "address": "450 Sunset Boulevard"
+      }
+    ],
+    "vehicle": [
+      {
+        "make": "Mazda",
+        "model": "Mazda3",
+        "year": 2020,
+        "price": 24680,
+        "extras": [
+          "backup camera",
+          "floor mats"
+        ]
+      }
+    ]
+  },
+  {
+    "date": "2017-05-08",
+    "dealership": "Metro Auto Plaza",
+    "salesperson": {
+      "id": "303",
+      "name": "Kelly Morgan"
+    },
+    "customer": [
+      {
+        "name": "Benjamin Hughes",
+        "phone": "555-0194",
+        "address": "12 Ocean View"
+      }
+    ],
+    "vehicle": [
+      {
+        "make": "Tesla",
+        "model": "Model X",
+        "year": 2020,
+        "price": 82300,
+        "extras": [
+          "autopilot",
+          "heated seats"
+        ]
+      }
+    ]
+  },
+  {
+    "date": "2017-05-09",
+    "dealership": "Summit Motors",
+    "salesperson": {
+      "id": "185",
+      "name": "Owen Scott"
+    },
+    "customer": [
+      {
+        "name": "Mila Cooper",
+        "phone": "555-0106",
+        "address": "63 Highland Avenue"
+      }
+    ],
+    "vehicle": [
+      {
+        "make": "Ford",
+        "model": "Explorer",
+        "year": 2020,
+        "price": 44750,
+        "extras": [
+          "premium audio",
+          "bed liner"
+        ]
+      }
+    ]
+  },
+  {
+    "date": "2017-05-09",
+    "dealership": "Summit Motors",
+    "salesperson": {
+      "id": "184",
+      "name": "Hannah Wright"
+    },
+    "customer": [
+      {
+        "name": "Samuel Price",
+        "phone": "555-0159",
+        "address": "710 Meadow Lane"
+      }
+    ],
+    "vehicle": [
+      {
+        "make": "Subaru",
+        "model": "Crosstrek",
+        "year": 2020,
+        "price": 28740,
+        "extras": [
+          "cargo net",
+          "quick charge"
+        ]
+      }
+    ]
+  }
+]
