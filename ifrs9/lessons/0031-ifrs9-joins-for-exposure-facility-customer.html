@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Lesson 0031: IFRS9 Exposure Joins</title><link rel="stylesheet" href="../assets/course.css"></head>
+<body><main>
+  <h1>IFRS9 Exposure Joins</h1>
+  <p class="subtitle">Goal: translate joins across loan account, customer, collateral, and parameter tables into Snowflake SQL with row-count controls.</p>
+  <div class="callout">A join migration is not done when the query runs. It is done when key uniqueness and row inflation are explained.</div>
+  <h2>Core Example</h2>
+  <pre><code>create or replace temp table IFRS9_EXPOSURE_JOINED as
+select
+  a.ACCOUNT_ID,
+  a.CUST_ID,
+  c.CUST_SEGMENT,
+  a.PORTFOLIO_CD,
+  p.PD_12M,
+  p.LGD_BASE
+from IFRS9.LOAN_ACCOUNT a
+left join IFRS9.CUSTOMER c on a.CUST_ID = c.CUST_ID
+left join IFRS9.PD_LGD_PARAMETER p
+  on a.PORTFOLIO_CD = p.PORTFOLIO_CD
+ and a.CURR_RISK_GRADE = p.RISK_GRADE;</code></pre>
+  <h2>Hands-On Exercise</h2>
+  <ol><li>Count rows in <code>ifrs9_loan_account.csv</code>.</li><li>Count joined rows after customer and parameter joins.</li><li>Find duplicate <code>CUST_ID</code> and parameter keys before trusting the result.</li></ol>
+  <h2>References</h2>
+  <p>Primary source: <a href="https://docs.snowflake.com/en/user-guide/querying-joins">Snowflake joins</a>. Course map: <a href="../reference/0029-ifrs9-sas-to-snowflake-migration-ladder.html">Migration Ladder</a>.</p>
+</main></body></html>

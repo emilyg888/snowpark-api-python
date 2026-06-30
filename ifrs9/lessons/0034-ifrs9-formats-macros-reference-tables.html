@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Lesson 0034: IFRS9 Formats And Macros</title><link rel="stylesheet" href="../assets/course.css"></head>
+<body><main>
+  <h1>IFRS9 Formats And Macros</h1>
+  <p class="subtitle">Goal: replace SAS formats and macro variables with Snowflake reference tables and parameters.</p>
+  <div class="callout">A format or macro often hides business logic. In this dataset, start with <code>%let as_of_dt</code>, <code>%let run_id</code>, and the PD/LGD parameter CSV.</div>
+  <h2>Core Example</h2>
+  <pre><code>create or replace table IFRS9_STAGE_RULES (
+  RULE_NAME string,
+  MIN_DPD number,
+  STAGE number
+);</code></pre>
+  <h2>Hands-On Exercise</h2>
+  <ol><li>List every SAS macro variable used in the query.</li><li>Classify each as environment, cutoff, threshold, or business rule.</li><li>Move business thresholds into a reference table.</li></ol>
+  <h2>References</h2>
+  <p>Primary source: <a href="https://docs.snowflake.com/en/sql-reference/sql/create-table">Snowflake CREATE TABLE</a>. Course map: <a href="../reference/0029-ifrs9-sas-to-snowflake-migration-ladder.html">Migration Ladder</a>.</p>
+</main></body></html>

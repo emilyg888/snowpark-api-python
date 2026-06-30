@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reference 0029: IFRS9 SAS-To-Snowflake Migration Ladder</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>IFRS9 SAS-To-Snowflake Migration Ladder</h1>
+  <p class="subtitle">A compact map for moving from SAS 9 <code>PROC SQL</code> to Snowflake SQL, Snowpark, and scheduled controls.</p>
+
+  <div class="callout">
+    Course dataset: <code>/Users/emilygao/LocalDocuments/Projects/bb_datasets/ifrs9</code>. Use the provided SAS batch, CSV files, lineage, and data dictionary for hands-on work.
+  </div>
+
+  <h2>Default Translation Path</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>SAS 9 habit</th>
+        <th>Snowflake first move</th>
+        <th>Snowpark move</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>proc sql; create table work.x as select ...</code></td>
+        <td><code>create or replace temp table x as select ...</code></td>
+        <td><code>session.table(...).select(...).write.save_as_table(...)</code></td>
+      </tr>
+      <tr>
+        <td><code>case when</code> derivations</td>
+        <td>Keep as SQL <code>case when</code></td>
+        <td>Use <code>when(...).otherwise(...)</code></td>
+      </tr>
+      <tr>
+        <td><code>group by</code> risk segment</td>
+        <td>Use Snowflake aggregate SQL</td>
+        <td>Use <code>group_by(...).agg(...)</code></td>
+      </tr>
+      <tr>
+        <td>Macro-driven repeated SQL</td>
+        <td>Replace with parameter tables or generated SQL only when needed</td>
+        <td>Use Python functions for reusable transformations</td>
+      </tr>
+      <tr>
+        <td>Batch run dependencies</td>
+        <td>Materialize stable intermediate tables</td>
+        <td>Wrap reusable steps in stored procedures and tasks</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>10-Lesson Sequence</h2>
+  <ol>
+    <li>Translate a simple IFRS9 <code>PROC SQL</code> staging query.</li>
+    <li>Port SAS numeric date filters and reporting cutoffs from <code>AS_OF_DT</code>.</li>
+    <li>Rebuild joins for loan account, customer, collateral, and parameter tables.</li>
+    <li>Convert risk segmentation and stage allocation logic.</li>
+    <li>Aggregate PD, LGD, EAD, and ECL by segment.</li>
+    <li>Replace SAS formats and macro variables with Snowflake reference tables.</li>
+    <li>Move reusable transformations into Snowpark DataFrames.</li>
+    <li>Add reconciliation checks against SAS outputs.</li>
+    <li>Package the pipeline with stored procedures and task graphs.</li>
+    <li>Prepare audit-ready migration evidence and extension points.</li>
+  </ol>
+
+  <h2>Rule Of Thumb</h2>
+  <p>Port the calculation in SQL first when the SAS code is already relational. Move to Snowpark when the same pattern repeats, needs Python testability, or must become a reusable procedure.</p>
+</main>
+</body>
+</html>

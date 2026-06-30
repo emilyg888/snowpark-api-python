@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Lesson 0036: IFRS9 Reconciliation Controls</title><link rel="stylesheet" href="../assets/course.css"></head>
+<body><main>
+  <h1>IFRS9 Reconciliation Controls</h1>
+  <p class="subtitle">Goal: build row-count and amount reconciliation checks between SAS and Snowflake outputs.</p>
+  <div class="callout">Migration quality is proven by differences, thresholds, and explanations.</div>
+  <h2>Core Example</h2>
+  <pre><code>select
+  s.CONTROL_NAME,
+  s.SAS_VALUE,
+  f.SNOWFLAKE_VALUE,
+  f.SNOWFLAKE_VALUE - s.SAS_VALUE as DIFFERENCE
+from SAS_CONTROLS s
+join SNOWFLAKE_CONTROLS f using (CONTROL_NAME);</code></pre>
+  <h2>Hands-On Exercise</h2>
+  <ol><li>Create controls for row count, total EAD, and total ECL.</li><li>Join SAS and Snowflake control tables.</li><li>Flag differences outside tolerance.</li></ol>
+  <h2>References</h2>
+  <p>Primary source: <a href="https://docs.snowflake.com/en/sql-reference/constructs/qualify">Snowflake QUALIFY</a>. Course map: <a href="../reference/0029-ifrs9-sas-to-snowflake-migration-ladder.html">Migration Ladder</a>.</p>
+</main></body></html>

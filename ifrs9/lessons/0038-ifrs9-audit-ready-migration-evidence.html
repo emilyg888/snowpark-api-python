@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Lesson 0038: IFRS9 Audit-Ready Migration Evidence</title><link rel="stylesheet" href="../assets/course.css"></head>
+<body><main>
+  <h1>IFRS9 Audit-Ready Migration Evidence</h1>
+  <p class="subtitle">Goal: produce migration evidence that explains code changes, controls, and remaining model-governance questions.</p>
+  <div class="callout">The final migration artifact is not just code. Use <code>sas_job_lineage.csv</code>, control totals, reconciliation output, and unresolved decisions.</div>
+  <h2>Evidence Pack</h2>
+  <table><thead><tr><th>Artifact</th><th>Purpose</th></tr></thead><tbody><tr><td>Translation map</td><td>Shows SAS block to Snowflake object mapping.</td></tr><tr><td>Control totals</td><td>Proves row and amount reconciliation.</td></tr><tr><td>Rule inventory</td><td>Identifies stage, PD, LGD, EAD, and override logic.</td></tr><tr><td>Open decisions</td><td>Separates engineering work from policy sign-off.</td></tr></tbody></table>
+  <h2>Hands-On Exercise</h2>
+  <ol><li>Choose one migrated query.</li><li>Write a three-row translation map.</li><li>Add row count, EAD, and ECL control totals.</li></ol>
+  <h2>References</h2>
+  <p>Primary source: <a href="https://www.ifrs.org/issued-standards/list-of-standards/ifrs-9-financial-instruments/">IFRS Foundation: IFRS 9</a>. Course map: <a href="../reference/0029-ifrs9-sas-to-snowflake-migration-ladder.html">Migration Ladder</a>.</p>
+</main></body></html>

@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Lesson 0037: IFRS9 Stored Procedures And Task Graphs</title><link rel="stylesheet" href="../assets/course.css"></head>
+<body><main>
+  <h1>IFRS9 Stored Procedures And Task Graphs</h1>
+  <p class="subtitle">Goal: package reviewed migration steps into callable Snowflake objects and task dependencies.</p>
+  <div class="callout">A task should call a stable Snowflake object or run one clear SQL statement. Do not schedule a local SAS script.</div>
+  <h2>Core Example</h2>
+  <pre><code>create or replace task IFRS9_RUN_STAGE_BASE
+  warehouse = COMPUTE_WH
+  schedule = 'USING CRON 0 6 * * * Australia/Sydney'
+as
+  call IFRS9_REFRESH_STAGE_BASE();</code></pre>
+  <h2>Hands-On Exercise</h2>
+  <ol><li>Wrap the staging query in a stored procedure.</li><li>Create a root task for the cutoff run.</li><li>Add a child task for reconciliations.</li></ol>
+  <h2>References</h2>
+  <p>Primary source: <a href="https://docs.snowflake.com/en/user-guide/tasks-intro">Snowflake tasks</a>. Related: <a href="0028-scheduling-lessons-13-16-with-snowflake-tasks.html">Task graph lesson</a>.</p>
+</main></body></html>

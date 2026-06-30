@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Lesson 0033: IFRS9 ECL Aggregation</title><link rel="stylesheet" href="../assets/course.css"></head>
+<body><main>
+  <h1>IFRS9 ECL Aggregation</h1>
+  <p class="subtitle">Goal: calculate and reconcile segment-level ECL in Snowflake.</p>
+  <div class="callout">The calculation can be simple; the control totals must be strict.</div>
+  <h2>Core Example</h2>
+  <pre><code>select
+  IFRS9_STAGE,
+  PRODUCT_CODE,
+  sum(EAD) as TOTAL_EAD,
+  sum(EAD * PD * LGD) as TOTAL_ECL
+from IFRS9_STAGE_BASE
+group by IFRS9_STAGE, PRODUCT_CODE;</code></pre>
+  <h2>Hands-On Exercise</h2>
+  <ol><li>Add sample <code>PD</code> and <code>LGD</code> columns.</li><li>Calculate ECL at account level.</li><li>Reconcile account totals to segment totals.</li></ol>
+  <h2>References</h2>
+  <p>Primary source: <a href="https://docs.snowflake.com/en/sql-reference/functions-aggregation">Snowflake aggregate functions</a>. Course map: <a href="../reference/0029-ifrs9-sas-to-snowflake-migration-ladder.html">Migration Ladder</a>.</p>
+</main></body></html>

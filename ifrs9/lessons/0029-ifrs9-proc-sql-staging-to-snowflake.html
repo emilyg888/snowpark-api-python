@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0029: IFRS9 PROC SQL Staging To Snowflake</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <h1>IFRS9 PROC SQL Staging To Snowflake</h1>
+  <p class="subtitle">Goal: translate the first SAS 9 <code>PROC SQL</code> pattern from the synthetic IFRS9 dataset into Snowflake SQL and Snowpark.</p>
+
+  <div class="callout">
+    Dataset: <code>/Users/emilygao/LocalDocuments/Projects/bb_datasets/ifrs9</code>. Start with the calculation shape, not the platform syntax. A SAS <code>create table ... as select</code> block usually becomes a Snowflake CTAS statement before it becomes a Snowpark DataFrame.
+  </div>
+
+  <h2>The SAS Pattern</h2>
+  <pre><code>%let as_of_dt = '31MAY2026'd;
+
+proc sql;
+  create table ifrs9.stage_result as
+  select
+      a.account_id,
+      a.cust_id,
+      a.portfolio_cd,
+      a.prod_cd,
+      a.drawn_amt,
+      a.undrawn_amt,
+      a.dpd,
+      a.curr_risk_grade,
+      case
+        when a.default_flg = 'Y' or a.dpd &gt;= 90 then '3'
+        when a.dpd &gt;= 30 or a.forbearance_flg = 'Y' then '2'
+        else '1'
+      end as ifrs9_stage length=1,
+      a.as_of_dt
+  from crdmart.loan_account a
+  where a.as_of_dt = &amp;as_of_dt;
+quit;</code></pre>
+
+  <h2>Snowflake SQL First</h2>
+  <pre><code>create or replace table IFRS9.STAGE_RESULT as
+select
+  ACCOUNT_ID,
+  CUST_ID,
+  PORTFOLIO_CD,
+  PROD_CD,
+  DRAWN_AMT,
+  UNDRAWN_AMT,
+  DPD,
+  CURR_RISK_GRADE,
+  case
+    when DEFAULT_FLG = 'Y' or DPD &gt;= 90 then '3'
+    when DPD &gt;= 30 or FORBEARANCE_FLG = 'Y' then '2'
+    else '1'
+  end as IFRS9_STAGE,
+  dateadd(day, AS_OF_DT, date '1960-01-01') as AS_OF_DT
+from IFRS9.LOAN_ACCOUNT
+where dateadd(day, AS_OF_DT, date '1960-01-01') = date '2026-05-31';</code></pre>
+
+  <p>The important migration decision is boring and valuable: keep relational SQL as relational SQL first. This lets you reconcile row counts, exposure totals, stage distributions, and SAS numeric date conversion before introducing a new abstraction.</p>
+
+  <h2>Snowpark Sample</h2>
+  <pre><code>from snowflake.snowpark.functions import col, dateadd, lit, when
+
+stage_base = (
+    session.table("IFRS9.LOAN_ACCOUNT")
+    .with_column("AS_OF_DATE", dateadd("day", col("AS_OF_DT"), lit("1960-01-01")))
+    .filter(col("AS_OF_DATE") == lit("2026-05-31"))
+    .select(
+        col("ACCOUNT_ID"),
+        col("CUST_ID"),
+        col("PORTFOLIO_CD"),
+        col("PROD_CD"),
+        col("DRAWN_AMT"),
+        col("UNDRAWN_AMT"),
+        col("DPD"),
+        col("CURR_RISK_GRADE"),
+        when((col("DEFAULT_FLG") == lit("Y")) | (col("DPD") &gt;= 90), lit("3"))
+        .when((col("DPD") &gt;= 30) | (col("FORBEARANCE_FLG") == lit("Y")), lit("2"))
+        .otherwise(lit("1"))
+        .alias("IFRS9_STAGE"),
+        col("AS_OF_DATE").alias("AS_OF_DT"),
+    )
+)
+
+stage_base.write.mode("overwrite").save_as_table("IFRS9.STAGE_RESULT_SP")</code></pre>
+
+  <h2>Translation Moves</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>SAS</th>
+        <th>Snowflake</th>
+        <th>Reason</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>ifrs9.stage_result</code></td>
+        <td><code>IFRS9.STAGE_RESULT</code></td>
+        <td>The dataset lineage maps SAS IFRS9 output tables to Snowflake target objects.</td>
+      </tr>
+      <tr>
+        <td><code>'31MAY2026'd</code></td>
+        <td><code>dateadd(day, AS_OF_DT, date '1960-01-01')</code></td>
+        <td>The CSV stores SAS numeric dates, so convert from the SAS epoch.</td>
+      </tr>
+      <tr>
+        <td><code>case when</code></td>
+        <td><code>case when</code></td>
+        <td>No need to change a clear SQL expression.</td>
+      </tr>
+      <tr>
+        <td><code>default_flg</code> and <code>forbearance_flg</code></td>
+        <td><code>DEFAULT_FLG</code> and <code>FORBEARANCE_FLG</code></td>
+        <td>Keep the rule inputs visible so stage allocation can be reviewed.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Check Yourself</h2>
+  <div class="quiz" data-answer="1">
+    <p><strong>What is the safest first move for a relational <code>PROC SQL</code> block?</strong></p>
+    <button>Rewrite macros now</button>
+    <button>Translate SQL first</button>
+    <button>Schedule task first</button>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="quiz" data-answer="0">
+    <p><strong>What must happen to SAS numeric dates before cutoff filtering?</strong></p>
+    <button>Convert from epoch</button>
+    <button>Sort by account</button>
+    <button>Drop the column</button>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>Your Turn</h2>
+  <ol>
+    <li>Load <code>ifrs9_loan_account.csv</code> into <code>IFRS9.LOAN_ACCOUNT</code> using the dataset's Snowflake mapping sketch.</li>
+    <li>Open <code>sql/LESSON29.sql</code> and run the stage-assignment CTAS in a Snowflake worksheet.</li>
+    <li>Confirm <code>IFRS9.STAGE_RESULT</code> has only the <code>2026-05-31</code> reporting cutoff.</li>
+    <li>Compare the stage distribution against the source <code>IFRS9_STAGE</code> column.</li>
+    <li>Open <code>snowpark/lesson29_ifrs9_stage_base.py</code> and identify the DataFrame equivalent of each SQL clause.</li>
+  </ol>
+
+  <p>Ask the agent to review your own SAS <code>PROC SQL</code> block before translating it. The review should identify source tables, temporary outputs, date literals, joins, filters, and reconciliation totals.</p>
+
+  <h2>References</h2>
+  <p>Primary source: <a href="https://documentation.sas.com/doc/en/pgmsascdc/9.4_3.5/sqlproc/titlepage.htm">SAS 9.4 SQL Procedure User's Guide</a>. Dataset: <a href="/Users/emilygao/LocalDocuments/Projects/bb_datasets/ifrs9/README.md">IFRS9 synthetic dataset README</a>. Snowflake SQL: <a href="https://docs.snowflake.com/en/sql-reference/sql/select">SELECT reference</a>. Snowpark: <a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/index">Snowpark Python Developer Guide</a>. Quick reference: <a href="../reference/0029-ifrs9-sas-to-snowflake-migration-ladder.html">IFRS9 Migration Ladder</a>.</p>
+</main>
+<script>
+  document.querySelectorAll(".quiz").forEach((quiz) => {
+    const buttons = Array.from(quiz.querySelectorAll("button"));
+    const feedback = quiz.querySelector(".feedback");
+    const answer = Number(quiz.dataset.answer);
+
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        if (index === answer) {
+          feedback.textContent = "Correct. Preserve the calculation shape before adding new machinery.";
+          feedback.className = "feedback good";
+        } else {
+          feedback.textContent = "Not yet. Ask which behavior the SAS code depends on.";
+          feedback.className = "feedback warn";
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

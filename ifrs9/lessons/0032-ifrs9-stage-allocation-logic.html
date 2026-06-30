@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Lesson 0032: IFRS9 Stage Allocation Logic</title><link rel="stylesheet" href="../assets/course.css"></head>
+<body><main>
+  <h1>IFRS9 Stage Allocation Logic</h1>
+  <p class="subtitle">Goal: move stage allocation rules from SAS SQL into reviewable Snowflake SQL.</p>
+  <div class="callout">Keep rule order explicit. Stage 3 rules usually need to win before Stage 2 rules.</div>
+  <h2>Core Example</h2>
+  <pre><code>case
+  when DEFAULT_FLAG = 'Y' or DAYS_PAST_DUE &gt;= 90 then 3
+  when SICR_FLAG = 'Y' or DAYS_PAST_DUE &gt;= 30 then 2
+  else 1
+end as IFRS9_STAGE</code></pre>
+  <h2>Hands-On Exercise</h2>
+  <ol><li>Write the stage rule as a truth table.</li><li>Translate it into <code>case when</code>.</li><li>Aggregate EAD by stage and compare to SAS.</li></ol>
+  <h2>References</h2>
+  <p>Primary source: <a href="https://docs.snowflake.com/en/sql-reference/functions/case">Snowflake CASE</a>. Course map: <a href="../reference/0029-ifrs9-sas-to-snowflake-migration-ladder.html">Migration Ladder</a>.</p>
+</main></body></html>

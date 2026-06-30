@@ -6,3 +6,4 @@ __pycache__/
 .env
 *.pyc
 src/LESSON15-external-function-design.md
+docs/adf_config.md
