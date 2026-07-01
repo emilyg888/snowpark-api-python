@@ -1,7 +1,8 @@
 use role accountadmin;
-use database ifrs9;
-create schema if not exists sample_data;
-use schema ifrs9.sample_data;
+use database IFRS9;
+create schema if not exists SAMPLE_DATA;
+create schema if not exists STG;
+use schema IFRS9.SAMPLE_DATA;
 
 -- Dataset source for this lesson:
 -- /Users/emilygao/LocalDocuments/Projects/bb_datasets/ifrs9/ifrs9_loan_account.csv
@@ -34,8 +35,8 @@ use schema ifrs9.sample_data;
 --   from crdmart.loan_account a
 --   where a.as_of_dt = &as_of_dt;
 -- quit;
-/* 
-create or replace table STAGE_RESULT as
+
+create or replace table STG.LOAN_ACCOUNT as
 select
   ACCOUNT_ID,
   CUST_ID,
@@ -54,14 +55,14 @@ select
 from LOAN_ACCOUNT
 where dateadd(day, AS_OF_DT, date '1960-01-01') = date '2026-05-31';
 
-select * from STAGE_RESULT order by ACCOUNT_ID limit 20;
+select * from STG.LOAN_ACCOUNT order by ACCOUNT_ID limit 20;
 
 select
   IFRS9_STAGE,
   count(*) as ACCOUNT_COUNT,
   sum(DRAWN_AMT) as TOTAL_DRAWN_AMT,
   sum(UNDRAWN_AMT) as TOTAL_UNDRAWN_AMT
-from STAGE_RESULT
+from STG.LOAN_ACCOUNT
 group by IFRS9_STAGE
 order by IFRS9_STAGE;
 
@@ -71,10 +72,9 @@ from LOAN_ACCOUNT
 where dateadd(day, AS_OF_DT, date '1960-01-01') = date '2026-05-31'
 union all
 select 'STAGED_ROWS', count(*)
-from STAGE_RESULT
+from STG.LOAN_ACCOUNT 
 union all
 select 'STAGE_MISMATCHES_VS_SOURCE', count(*)
-from STAGE_RESULT s
+from STG.LOAN_ACCOUNT s
 join LOAN_ACCOUNT a using (ACCOUNT_ID)
 where s.IFRS9_STAGE <> a.IFRS9_STAGE;
-*/
