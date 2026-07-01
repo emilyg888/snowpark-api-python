@@ -1,124 +1,80 @@
-use database SNOWPARK_SAMPLE_DATA;
-use schema PUBLIC;
+use role accountadmin;
+use database ifrs9;
+create schema if not exists sample_data;
+use schema ifrs9.sample_data;
 
--- Lesson 29 demo DAG:
--- This is intentionally a teaching DAG for Lessons 1-12. It records orchestration
--- checkpoints rather than pretending every learning script is a production step.
+-- Dataset source for this lesson:
+-- /Users/emilygao/LocalDocuments/Projects/bb_datasets/ifrs9/ifrs9_loan_account.csv
+--
+-- Load that CSV into IFRS9.LOAN_ACCOUNT before running this lesson. The source
+-- file stores *_DT fields as SAS numeric dates, where 0 = 1960-01-01.
+-- The dataset's DDL sketch is:
+-- /Users/emilygao/LocalDocuments/Projects/bb_datasets/ifrs9/sas_programs/ifrs9_snowflake_mapping.sql
 
-create schema if not exists ORCHESTRATION;
+-- SAS pattern being migrated:
+-- %let as_of_dt = '31MAY2026'd;
+--
+-- proc sql;
+--   create table ifrs9.stage_result as
+--   select
+--       a.account_id,
+--       a.cust_id,
+--       a.portfolio_cd,
+--       a.prod_cd,
+--       a.drawn_amt,
+--       a.undrawn_amt,
+--       a.dpd,
+--       a.curr_risk_grade,
+--       case
+--         when a.default_flg = 'Y' or a.dpd >= 90 then '3'
+--         when a.dpd >= 30 or a.forbearance_flg = 'Y' then '2'
+--         else '1'
+--       end as ifrs9_stage length=1,
+--       a.as_of_dt
+--   from crdmart.loan_account a
+--   where a.as_of_dt = &as_of_dt;
+-- quit;
+/* 
+create or replace table STAGE_RESULT as
+select
+  ACCOUNT_ID,
+  CUST_ID,
+  PORTFOLIO_CD,
+  PROD_CD,
+  DRAWN_AMT,
+  UNDRAWN_AMT,
+  DPD,
+  CURR_RISK_GRADE,
+  case
+    when DEFAULT_FLG = 'Y' or DPD >= 90 then '3'
+    when DPD >= 30 or FORBEARANCE_FLG = 'Y' then '2'
+    else '1'
+  end as IFRS9_STAGE,
+  dateadd(day, AS_OF_DT, date '1960-01-01') as AS_OF_DT
+from LOAN_ACCOUNT
+where dateadd(day, AS_OF_DT, date '1960-01-01') = date '2026-05-31';
 
-create or replace table ORCHESTRATION.LESSON_RUN_AUDIT (
-  RUN_ID string,
-  STEP_NAME string,
-  STEP_GROUP string,
-  STATUS string,
-  MESSAGE string,
-  CREATED_AT timestamp_ntz default current_timestamp()
-);
+select * from STAGE_RESULT order by ACCOUNT_ID limit 20;
 
-create or replace procedure ORCHESTRATION.LOG_LESSON_STEP(
-  RUN_ID string,
-  STEP_NAME string,
-  STEP_GROUP string,
-  STATUS string,
-  MESSAGE string
-)
-returns string
-language sql
-execute as owner
-as
-$$
-begin
-  insert into ORCHESTRATION.LESSON_RUN_AUDIT (
-    RUN_ID,
-    STEP_NAME,
-    STEP_GROUP,
-    STATUS,
-    MESSAGE
-  )
-  values (
-    :RUN_ID,
-    :STEP_NAME,
-    :STEP_GROUP,
-    :STATUS,
-    :MESSAGE
-  );
+select
+  IFRS9_STAGE,
+  count(*) as ACCOUNT_COUNT,
+  sum(DRAWN_AMT) as TOTAL_DRAWN_AMT,
+  sum(UNDRAWN_AMT) as TOTAL_UNDRAWN_AMT
+from STAGE_RESULT
+group by IFRS9_STAGE
+order by IFRS9_STAGE;
 
-  return STEP_NAME || ': ' || STATUS;
-end;
-$$;
-
-alter task if exists ORCHESTRATION.TASK_L01_L04_DATAFRAME_CORE suspend;
-alter task if exists ORCHESTRATION.TASK_L05_L07_DEPLOY_AND_DEBUG suspend;
-alter task if exists ORCHESTRATION.TASK_L08_L12_ADVANCED_DATAFRAME_FLOW suspend;
-alter task if exists ORCHESTRATION.TASK_L01_L12_DEMO_DAG_DONE suspend;
-
-create or replace task ORCHESTRATION.TASK_L01_L04_DATAFRAME_CORE
-  warehouse = COMPUTE_WH
-  schedule = 'USING CRON 0 8 * * * Australia/Sydney'
-as
-  call ORCHESTRATION.LOG_LESSON_STEP(
-    uuid_string(),
-    'LESSONS_01_04',
-    'Snowpark DataFrame core',
-    'READY',
-    'Lessons 1-4 scripts are deployed; use this demo task as the graph root.'
-  );
-
-create or replace task ORCHESTRATION.TASK_L05_L07_DEPLOY_AND_DEBUG
-  warehouse = COMPUTE_WH
-  after ORCHESTRATION.TASK_L01_L04_DATAFRAME_CORE
-as
-  call ORCHESTRATION.LOG_LESSON_STEP(
-    uuid_string(),
-    'LESSONS_05_07',
-    'CI deployment and debugging',
-    'READY',
-    'GitHub Actions uploaded workspace scripts; debugging lessons are available for manual execution.'
-  );
-
-create or replace task ORCHESTRATION.TASK_L08_L12_ADVANCED_DATAFRAME_FLOW
-  warehouse = COMPUTE_WH
-  after ORCHESTRATION.TASK_L05_L07_DEPLOY_AND_DEBUG
-as
-  call ORCHESTRATION.LOG_LESSON_STEP(
-    uuid_string(),
-    'LESSONS_08_12',
-    'Window, semi-structured, flatten, result boundary, save',
-    'READY',
-    'Advanced Snowpark API scripts are deployed; run individual scripts when teaching or validating behavior.'
-  );
-
-create or replace task ORCHESTRATION.TASK_L01_L12_DEMO_DAG_DONE
-  warehouse = COMPUTE_WH
-  after ORCHESTRATION.TASK_L08_L12_ADVANCED_DATAFRAME_FLOW
-as
-  call ORCHESTRATION.LOG_LESSON_STEP(
-    uuid_string(),
-    'LESSONS_01_12_DAG_COMPLETE',
-    'Demo orchestration',
-    'SUCCESS',
-    'The Lessons 1-12 demo DAG completed. ADF can trigger this graph only as an orchestration demo.'
-  );
-
--- Resume child tasks before the scheduled root task.
-alter task ORCHESTRATION.TASK_L01_L12_DEMO_DAG_DONE resume;
-alter task ORCHESTRATION.TASK_L08_L12_ADVANCED_DATAFRAME_FLOW resume;
-alter task ORCHESTRATION.TASK_L05_L07_DEPLOY_AND_DEBUG resume;
-alter task ORCHESTRATION.TASK_L01_L04_DATAFRAME_CORE resume;
-
--- Manual smoke run:
--- execute task ORCHESTRATION.TASK_L01_L04_DATAFRAME_CORE;
-
--- Monitor:
--- select *
--- from table(information_schema.task_history(
---   task_name => 'TASK_L01_L04_DATAFRAME_CORE',
---   result_limit => 20
--- ))
--- order by scheduled_time desc;
-
--- Audit:
--- select *
--- from ORCHESTRATION.LESSON_RUN_AUDIT
--- order by CREATED_AT desc;
+-- Control checks for reconciliation against the SAS run and source field.
+select 'SOURCE_ROWS_AT_CUTOFF' as CONTROL_NAME, count(*) as CONTROL_VALUE
+from LOAN_ACCOUNT
+where dateadd(day, AS_OF_DT, date '1960-01-01') = date '2026-05-31'
+union all
+select 'STAGED_ROWS', count(*)
+from STAGE_RESULT
+union all
+select 'STAGE_MISMATCHES_VS_SOURCE', count(*)
+from STAGE_RESULT s
+join LOAN_ACCOUNT a using (ACCOUNT_ID)
+where s.IFRS9_STAGE <> a.IFRS9_STAGE;
+*/
